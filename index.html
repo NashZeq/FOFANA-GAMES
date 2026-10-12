@@ -33,4 +33,1272 @@
             width: 100%; height: 8px; background: #333; border-radius: 4px; overflow: hidden; margin-bottom: 10px;
         }
         .guess-timer-fill {
-            height: 100%; background: #e74c3c; width: 100%; transition: width 1s linear
+            height: 100%; background: #e74c3c; width: 100%; transition: width 1s linear;
+        }
+        .result-row {
+            display: flex; justify-content: space-between; padding: 8px 12px; margin: 6px 0;
+            background: #262a3b; border-radius: 6px; font-size: 14px;
+        }
+
+        /* TABU STİLLERİ */
+        .teams-grid { display: flex; gap: 10px; margin: 15px 0; text-align: left; }
+        .team-col { flex: 1; padding: 12px; border-radius: 8px; min-height: 140px; }
+        .team-red { background: rgba(233, 69, 96, 0.15); border: 2px solid #e94560; }
+        .team-blue { background: rgba(15, 52, 96, 0.3); border: 2px solid #0f3460; }
+        .member-badge { padding: 4px 8px; margin: 4px 0; border-radius: 4px; font-size: 13px; display: flex; justify-content: space-between; background: #262a3b; }
+        .tabu-card { background: #fff; color: #222; border-radius: 12px; padding: 16px; margin: 15px 0; border: 4px solid #ff4d4d; }
+        .tabu-main { font-size: 26px; font-weight: 900; color: #ff4d4d; border-bottom: 2px solid #ddd; padding-bottom: 8px; margin-bottom: 10px; }
+        .tabu-forbidden { font-size: 16px; font-weight: bold; color: #555; margin: 6px 0; }
+        .tabu-score { display: flex; justify-content: space-around; font-weight: bold; font-size: 20px; }
+        .action-row { display: flex; gap: 8px; justify-content: space-between; }
+        .btn-correct { background: #2ecc71; }
+        .btn-pass { background: #f39c12; }
+        .btn-taboo { background: #e74c3c; }
+
+        .tabu-intermission-box {
+            background: #202433; border: 3px dashed #f39c12; border-radius: 12px;
+            padding: 30px 20px; margin: 20px 0; animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse { from { box-shadow: 0 0 10px rgba(243, 156, 18, 0.3); } to { box-shadow: 0 0 25px rgba(243, 156, 18, 0.8); } }
+
+        /* MONOPOLY STİLLERİ */
+        .mono-container { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        .mono-board {
+            display: grid; grid-template-columns: repeat(11, 1fr); grid-template-rows: repeat(11, 1fr);
+            width: 100%; max-width: 650px; aspect-ratio: 1 / 1; background: #0b0c10;
+            border: 4px solid #45a29e; border-radius: 8px; gap: 2px; padding: 4px;
+        }
+        .mono-tile {
+            background: #1f2833; border: 1px solid #333; display: flex; flex-direction: column;
+            justify-content: space-between; align-items: center; font-size: 8px; padding: 2px;
+            position: relative; text-align: center; overflow: hidden; cursor: pointer; transition: 0.1s;
+        }
+        .mono-tile:hover { filter: brightness(1.2); }
+        .tile-color-bar { width: 100%; height: 6px; border-radius: 2px; }
+        .mono-center {
+            grid-column: 2 / 11; grid-row: 2 / 11; background: #151821;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 15px; position: relative;
+        }
+        .tokens-holder { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; position: absolute; bottom: 2px; width: 100%; }
+        .player-token { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid #fff; transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .token-hop { animation: hop 0.25s ease; }
+        @keyframes hop { 0% { transform: scale(1) translateY(0); } 50% { transform: scale(1.6) translateY(-4px); } 100% { transform: scale(1) translateY(0); } }
+
+        .mono-hud { display: flex; width: 100%; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+        .player-stat-card { background: #202433; padding: 10px; border-radius: 6px; font-size: 13px; text-align: left; flex: 1; min-width: 140px; border-left: 4px solid #fff; position: relative; }
+        .mono-log { background: #10121a; width: 100%; max-height: 100px; overflow-y: auto; text-align: left; font-size: 12px; padding: 8px; border-radius: 6px; border: 1px solid #282c3f; }
+
+        /* 5 SANİYELİK VE ÇARPILI HUD BANNER */
+        .main-event-banner {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999;
+            width: 90%; max-width: 620px; padding: 16px 45px 16px 20px; border-radius: 12px;
+            font-size: 16px; font-weight: 800; display: none; text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 173, 181, 0.7);
+            background: linear-gradient(135deg, #101f30, #0a1120); border: 2px solid #00adb5; color: #fff; line-height: 1.4;
+            animation: popDown 0.35s ease;
+        }
+        .banner-close-btn {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3); color: #fff; width: 28px; height: 28px; border-radius: 50%;
+            font-size: 18px; font-weight: bold; line-height: 1; padding: 0; margin: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+        }
+        .banner-close-btn:hover { background: #e74c3c; border-color: #e74c3c; }
+        @keyframes popDown { from { opacity: 0; transform: translate(-50%, -20px) scale(0.9); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+
+        /* 🏎️ GENİŞLETİLMİŞ YARIŞ STİLLERİ (1200x750) */
+        .race-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        #raceCanvas {
+            background: #1e824c; border: 4px solid #333; border-radius: 10px; width: 100%; max-width: 900px;
+            height: auto; aspect-ratio: 1200 / 750; box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+        }
+        .mobile-controls { display: flex; justify-content: space-between; width: 100%; max-width: 600px; margin-top: 12px; }
+        .touch-btn { background: #262a3b; border: 1px solid #444; color: #fff; width: 55px; height: 55px; border-radius: 50%; font-size: 20px; user-select: none; touch-action: manipulation; }
+        .item-slot-hud {
+            display: inline-flex; align-items: center; gap: 8px; background: #262a3b; border: 2px solid #f1c40f;
+            padding: 6px 14px; border-radius: 20px; font-size: 16px; color: #f1c40f; margin-bottom: 8px;
+        }
+
+        /* MODALLAR */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #1a1d29; border: 2px solid #00adb5; border-radius: 12px; width: 90%; max-width: 480px; padding: 20px; max-height: 80vh; overflow-y: auto; text-align: left; }
+        .asset-item { background: #262a3b; padding: 10px 12px; border-radius: 6px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; font-size: 13px; border-left: 4px solid #00adb5; }
+
+        /* Renkler */
+        .c-brown { background: #8B4513; } .c-light_blue { background: #87CEEB; } .c-pink { background: #FF69B4; }
+        .c-orange { background: #FFA500; } .c-red { background: #FF0000; } .c-yellow { background: #FFFF00; }
+        .c-green { background: #008000; } .c-dark_blue { background: #00008B; } .c-pitch { background: #27ae60; }
+        .c-utility { background: #95a5a6; } .c-doblo { background: #e67e22; }
+    </style>
+</head>
+<body>
+
+<!-- 5 SANİYELİK VE ÇARPILI HUD BANNER -->
+<div id="mainEventBanner" class="main-event-banner">
+    <span id="bannerTextContent"></span>
+    <button class="banner-close-btn" onclick="closeMainEventBanner()">×</button>
+</div>
+
+<div class="box">
+    <!-- 1. GİRİŞ -->
+    <div id="view-login">
+        <h2>🎮 Oyun Platformu</h2>
+        <input type="text" id="username" placeholder="Rumuzunu yaz...">
+        <button onclick="join()">Lobiye Bağlan</button>
+    </div>
+
+    <!-- 2. ANA MENÜ (LOBİ) -->
+    <div id="view-lobby" style="display: none;">
+        <h2>Ana Menü</h2>
+        <p style="color:#aaa;">Odaki Oyuncular: <span id="lobbyPlayers"></span></p>
+        <hr style="border:0.5px solid #333; margin: 15px 0;">
+        <h3>Oyun Seçin</h3>
+        <button class="btn-menu" style="border-color:#9b59b6;" onclick="selectGame('guess')">🎯 İşkembeden Sallama</button>
+        <button class="btn-menu" onclick="selectGame('monopoly')">🎩 Monopoly (KTÜ)</button>
+        <button class="btn-menu" onclick="selectGame('race')">🏎️ Araba Yarışı (Grand Prix)</button>
+        <button class="btn-menu" onclick="selectGame('tabu')">🚫 Tabu</button>
+        <button class="btn-menu" onclick="selectGame('imposter')">🕵️ İmposter</button>
+    </div>
+
+    <!-- 3. 🎯 İŞKEMBEDEN SALLAMA EKRANI -->
+    <div id="view-guess" style="display: none;">
+        <h2>🎯 İşkembeden Sallama</h2>
+
+        <div id="guessLobbyPanel">
+            <div style="text-align: left; margin: 10px 0;">
+                <label style="font-size: 14px; color: #aaa;">Oyun Modunu Seçin:</label>
+                <select id="guessSubModeSelect">
+                    <option value="celebrity">1. Mod: Ünlülerin Yaşları (Türkiye & Dünya)</option>
+                    <option value="market">2. Mod: Pazar / Market / Eşya / Takı Fiyatları</option>
+                    <option value="car">3. Mod: Türkiye 2. El Araba Piyasası</option>
+                </select>
+            </div>
+
+            <div class="ready-panel">
+                <div style="margin-bottom: 8px; color: #aaa;">Oyuncu Hazır Durumu:</div>
+                <div id="guessReadyList"></div>
+            </div>
+
+            <button id="btnGuessReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
+            <button style="background: #2ecc71;" onclick="startGuessGame()">Oyunu Başlat 🚀</button>
+        </div>
+
+        <div id="guessArenaPanel" style="display: none;">
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 16px; margin-bottom: 5px;">
+                <span id="guessRoundIndicator" style="color: #f1c40f;">Soru 1 / 5</span>
+                <span id="guessTimerText" style="color: #e74c3c;">15s</span>
+            </div>
+            
+            <div class="guess-timer-bar">
+                <div id="guessTimerFill" class="guess-timer-fill"></div>
+            </div>
+
+            <div class="guess-card">
+                <div class="guess-img-holder">
+                    <img id="guessImage" src="" alt="Görsel">
+                </div>
+                <h3 id="guessTitle" style="margin: 8px 0; color: #00adb5;">---</h3>
+                <p id="guessHint" style="color: #aaa; font-size: 14px; margin: 0 0 15px 0;">---</p>
+
+                <div id="guessInputBox">
+                    <input type="number" id="userGuessInput" placeholder="Tahmininizi girin...">
+                    <button style="background: #9b59b6;" id="btnSubmitGuess" onclick="submitGuess()">Tahmini Kilitle 🔒</button>
+                </div>
+
+                <div id="guessSubmittedNotice" style="display: none; color: #2ecc71; font-weight: bold; margin-top: 10px;">
+                    ✓ Tahmininiz kilitlendi! Diğerleri bekleniyor...
+                </div>
+            </div>
+        </div>
+
+        <div id="guessRevealPanel" style="display: none; background: #202433; padding: 20px; border-radius: 12px; margin-top: 15px; border: 2px solid #00adb5;">
+            <h3 style="color:#aaa; margin:0;">GERÇEK DEĞER:</h3>
+            <div id="guessActualValue" style="font-size: 32px; font-weight: 900; color: #2ecc71; margin: 8px 0;">---</div>
+            <hr style="border: 0.5px solid #3d435e; margin: 15px 0;">
+            <h4>Bu Turun Puanları:</h4>
+            <div id="guessRoundScoresList"></div>
+        </div>
+
+        <div id="guessGameOverPanel" style="display: none; background: #202433; padding: 25px; border-radius: 12px; margin-top: 15px; border: 2px solid #f1c40f;">
+            <h2 style="color: #f1c40f;">🏆 ŞAMPİYON BELLİ OLDU!</h2>
+            <div id="guessFinalPodium"></div>
+            <button style="background: #2ecc71; margin-top: 15px;" onclick="resetGuessLobby()">Yeniden Oyna</button>
+        </div>
+
+        <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
+    </div>
+
+    <!-- 4. MONOPOLY EKRANI -->
+    <div id="view-monopoly" style="display: none;">
+        <h2>🎩 Monopoly (KTÜ Edition)</h2>
+        
+        <div id="monoLobbyControls">
+            <div class="ready-panel">
+                <div style="margin-bottom: 8px; color: #aaa;">Oyuncu Hazır Durumu:</div>
+                <div id="monoReadyList"></div>
+            </div>
+            <button id="btnMonoReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
+            <button style="background: #2ecc71;" onclick="socket.emit('startMonopolyGame')">Monopoly'yi Başlat 🚀</button>
+        </div>
+
+        <div id="monoGameArea" class="mono-container" style="display: none;">
+            <div style="width: 100%; display: flex; justify-content: flex-end;">
+                <button style="width: auto; padding: 6px 16px; background: #9b59b6; font-size: 14px;" onclick="openAssetsModal()">📜 Varlıklarım / Tapularım</button>
+            </div>
+            <div class="mono-hud" id="monoPlayersHud"></div>
+
+            <div class="mono-board" id="boardGrid">
+                <div class="mono-center">
+                    <h3 style="color:#45a29e; margin: 0;">MONOPOLY</h3>
+                    <div id="monoTurnInfo" style="margin: 8px 0; font-size: 15px; font-weight: bold;"></div>
+                    <div id="diceDisplay" style="font-size: 24px; margin-bottom: 8px;">🎲 1 - 1</div>
+                    
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <button id="btnRollDice" style="width: auto; padding: 10px 24px; background: #e74c3c;" onclick="socket.emit('monopolyRollDice')">Zar At 🎲</button>
+                        <button id="btnPayBail" style="width: auto; padding: 10px 16px; background: #f39c12; display: none;" onclick="socket.emit('monopolyPayJailBail')">100₺ Verip Dersten Kaç 🏃</button>
+                        <button id="btnUseCard" style="width: auto; padding: 10px 16px; background: #27ae60; display: none;" onclick="socket.emit('monopolyUseJailCard')">Konferansa Kaç 🎟️</button>
+                    </div>
+
+                    <div id="buyPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #f9d342;">
+                        <p id="buyPromptMsg" style="margin: 4px 0; font-size: 13px; font-weight: bold;"></p>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <button style="background: #2ecc71; padding: 8px;" onclick="buyDecision(true)">Satın Al</button>
+                            <button style="background: #777; padding: 8px;" onclick="buyDecision(false)">Pas Geç</button>
+                        </div>
+                    </div>
+
+                    <div id="buyoutPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #e74c3c;">
+                        <p id="buyoutPromptMsg" style="margin: 4px 0; font-size: 13px; font-weight: bold; color: #ff7675;"></p>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <button style="background: #e74c3c; padding: 8px;" onclick="buyoutDecision(true)">1.5x Bedelle Satın Al</button>
+                            <button style="background: #777; padding: 8px;" onclick="buyoutDecision(false)">İstemiyorum</button>
+                        </div>
+                    </div>
+
+                    <div id="dobloPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #e67e22;">
+                        <p style="margin: 4px 0; font-size: 13px; font-weight: bold; color: #f39c12;">🚐 Doblo nereye sürsün dostum? Seç ve gazla:</p>
+                        <select id="dobloTargetSelect" style="margin: 6px 0;"></select>
+                        <button style="background: #e67e22; padding: 8px;" onclick="submitDobloDrive()">Doblo'yu Oraya Sür 💨</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mono-log" id="monoLogBox"></div>
+        </div>
+
+        <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
+    </div>
+
+    <!-- 5. 🏎️ ARABA YARIŞI EKRANI (1200x750 PİST) -->
+    <div id="view-race" style="display: none;">
+        <h2>🏎️ KTÜ Grand Prix (Genişletilmiş Pist)</h2>
+        
+        <div id="raceLobbyControls">
+            <div class="ready-panel">
+                <div style="margin-bottom: 8px; color: #aaa;">Yarışçı Hazır Durumu:</div>
+                <div id="raceReadyList"></div>
+            </div>
+            <button id="btnRaceReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
+            <button style="background: #2ecc71;" onclick="socket.emit('startRaceGame')">Yarışı Başlat 🏁</button>
+        </div>
+
+        <div id="raceGameArea" class="race-container" style="display: none;">
+            <div style="display: flex; gap: 15px; align-items: center; justify-content: center; width: 100%;">
+                <div style="font-size: 18px; font-weight: bold; color: #f1c40f;" id="raceHud">
+                    Tur: 1 / 3
+                </div>
+                <div class="item-slot-hud" id="raceItemHud">
+                    Eşya: <span>Yok</span>
+                </div>
+            </div>
+
+            <canvas id="raceCanvas" width="1200" height="750"></canvas>
+
+            <div class="mobile-controls">
+                <div>
+                    <button class="touch-btn" id="btnLeft">◀</button>
+                    <button class="touch-btn" id="btnRight">▶</button>
+                </div>
+                <button class="touch-btn" style="background:#f39c12; width:70px; border-radius:12px;" onclick="socket.emit('raceUseItem')">Eşya 🚀</button>
+                <div>
+                    <button class="touch-btn" style="background:#2ecc71;" id="btnGas">▲</button>
+                    <button class="touch-btn" style="background:#e74c3c;" id="btnBrake">▼</button>
+                </div>
+            </div>
+
+            <div id="raceWinnerBox" style="display: none; background: #262a3b; padding: 15px; border-radius: 8px; margin-top: 10px; border: 2px solid #f1c40f;">
+                <h3 id="raceWinnerTitle" style="color: #f1c40f; margin: 0;"></h3>
+            </div>
+        </div>
+
+        <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
+    </div>
+
+    <!-- 6. TABU EKRANI -->
+    <div id="view-tabu" style="display: none;">
+        <h2>🚫 Tabu</h2>
+        <div id="tabuLobbyPanel">
+            <div style="text-align: left; margin: 10px 0;">
+                <label style="font-size: 14px; color: #aaa;">Toplam Tur Sayısı:</label>
+                <select id="tabuRoundSelect">
+                    <option value="1">1 Tur</option>
+                    <option value="3">3 Tur</option>
+                    <option value="5" selected>5 Tur</option>
+                    <option value="10">10 Tur</option>
+                </select>
+            </div>
+            <div class="teams-grid">
+                <div class="team-col team-red">
+                    <div style="color: #ff6b6b; font-weight: bold;">🔴 Kırmızı Takım</div>
+                    <div id="redTeamList"></div>
+                    <button style="background: #e94560; padding: 6px; font-size: 13px;" onclick="switchTeam('red')">Geç</button>
+                </div>
+                <div class="team-col team-blue">
+                    <div style="color: #4dabf7; font-weight: bold;">🔵 Mavi Takım</div>
+                    <div id="blueTeamList"></div>
+                    <button style="background: #0f3460; padding: 6px; font-size: 13px;" onclick="switchTeam('blue')">Geç</button>
+                </div>
+            </div>
+            <button id="btnTabuReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
+            <button id="btnStartTabu" style="background: #2ecc71;" onclick="startTabuGame()">Oyunu Başlat 🚀</button>
+        </div>
+
+        <div id="tabuIntermissionPanel" class="tabu-intermission-box" style="display: none;">
+            <h2 style="color: #f39c12; margin-top: 0;">📣 SIRADAKİ TUR BAŞLIYOR!</h2>
+            <h3 id="intermissionTeamTitle" style="margin: 8px 0;">---</h3>
+            <p id="intermissionDescriberText" style="font-size: 18px; margin: 12px 0;">---</p>
+            <div style="font-size: 40px; font-weight: 900; color: #00adb5;" id="intermissionCountdown">10</div>
+            <p style="color: #aaa; font-size: 13px; margin-bottom: 0;">Anlatıcı hazırlansın, süre bitince kart açılacak!</p>
+        </div>
+
+        <div id="tabuGamePanel" style="display: none;">
+            <div id="tabuRoundDisplay" style="color: #f9d342; font-weight: bold;">Tur: 1 / 5</div>
+            <div class="tabu-score">
+                <span style="color:#ff6b6b;">Kırmızı: <span id="scoreRed">0</span></span>
+                <span style="color:#4dabf7;">Mavi: <span id="scoreBlue">0</span></span>
+            </div>
+            <div id="tabuTimer" style="font-size: 26px; color: #f9d342; font-weight: bold;">60s</div>
+            <div id="tabuTurnMsg" style="font-size: 15px;"></div>
+
+            <div id="describerView" style="display: none;">
+                <div class="tabu-card">
+                    <div class="tabu-main" id="tMainWord">---</div>
+                    <div id="tForbiddens"></div>
+                </div>
+                <div id="passCountDisplay" style="color:#aaa; font-size: 14px;">Kalan Pas: 3</div>
+                <div class="action-row">
+                    <button class="btn-correct" onclick="sendAction('correct')">Doğru (+1)</button>
+                    <button class="btn-pass" id="btnPass" onclick="sendAction('pass')">Pas</button>
+                    <button class="btn-taboo" onclick="sendAction('taboo')">Tabu (-1)</button>
+                </div>
+            </div>
+
+            <div id="guesserView" style="display: none; padding: 30px 10px; background: #262a3b; border-radius: 8px; margin: 15px 0;">
+                <div style="font-size: 22px; font-weight: bold; color: #00adb5;">👂 haunu bi dinle bagayım ne anlatiyyyy</div>
+            </div>
+
+            <div id="opponentView" style="display: none; padding: 30px 10px; background: #262a3b; border-radius: 8px; margin: 15px 0;">
+                <div style="font-size: 20px; font-weight: bold; color: #aaa;">⏳ Lütfen takımınızın sırasını bekleyin...</div>
+            </div>
+
+            <button id="btnNextTurn" style="background: #00adb5; display: none; margin-top: 15px;" onclick="nextTabuTurn()">Sıradaki Tur ➡️</button>
+        </div>
+
+        <div id="tabuGameOverPanel" style="display: none; padding: 20px; background: #262a3b; border-radius: 8px;">
+            <h2 id="tabuWinnerTitle" style="color:#f9d342;">---</h2>
+            <p id="tabuFinalScoreMsg"></p>
+            <button style="background: #2ecc71;" onclick="resetTabuViews()">Yeni Maç</button>
+        </div>
+
+        <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
+    </div>
+
+    <!-- 7. İMPOSTER EKRANI -->
+    <div id="view-imposter" style="display: none;">
+        <h2>🕵️ İmposter</h2>
+        
+        <div id="impLobbyControls">
+            <div class="ready-panel">
+                <div style="margin-bottom: 8px; color: #aaa;">Ajan Hazır Durumu:</div>
+                <div id="impReadyList"></div>
+            </div>
+            <button id="btnImpReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
+            <button onclick="socket.emit('startImposter')">Oyunu Başlat</button>
+        </div>
+
+        <div id="impGameArea" style="display: none;">
+            <div id="imp-role" style="font-size: 18px; margin: 15px 0; font-weight: bold;"></div>
+            <div id="imp-timer" style="font-size: 26px; color: #f9d342;"></div>
+            <div id="imp-voting" style="display: none; margin-top: 15px;">
+                <p>Kime Oy Veriyorsun?</p>
+                <div id="imp-vote-btns"></div>
+            </div>
+            <div id="imp-guess-box" style="display: none; margin-top: 15px;">
+                <p style="color: #f9d342;">Kelimeyi Tahmin Et:</p>
+                <input type="text" id="impFinalGuess">
+                <button onclick="sendImpGuess()">Gönder</button>
+            </div>
+            <div id="imp-result" style="margin-top: 15px; font-weight: bold;"></div>
+        </div>
+
+        <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
+    </div>
+
+    <!-- VARLIKLARIM MODALI -->
+    <div id="assetsModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-top:0; color:#00adb5;">🏢 Sahip Olduğun Varlıklar & Kiralar</h3>
+            <div id="jailCardDisplay" style="color: #f1c40f; margin-bottom: 10px; font-weight: bold;"></div>
+            <div id="assetsList"></div>
+            <button style="background: #e74c3c; margin-top: 15px;" onclick="closeAssetsModal()">Kapat</button>
+        </div>
+    </div>
+
+    <!-- PAZARLIK MODALLARI -->
+    <div id="tradeOfferModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-top:0; color:#f39c12;">🤝 Tapu İçin Pazarlık Teklifi Ver</h3>
+            <p id="tradeTargetInfo" style="font-size:14px; color:#aaa;"></p>
+            <input type="number" id="tradeOfferInput" placeholder="Teklif etmek istediğin tutar (₺)...">
+            <div style="display: flex; gap: 8px;">
+                <button style="background: #2ecc71;" onclick="sendTradeOffer()">Teklifi Gönder</button>
+                <button style="background: #777;" onclick="closeTradeModal()">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="incomingTradeModal" class="modal-overlay">
+        <div class="modal-content" style="border-color: #f1c40f;">
+            <h3 style="margin-top:0; color:#f1c40f;">📬 Sana Pazarlık Teklifi Geldi!</h3>
+            <p id="incomingTradeMsg" style="font-size: 15px; margin: 15px 0;"></p>
+            <div style="display: flex; gap: 8px;">
+                <button style="background: #2ecc71;" onclick="respondTrade(true)">Kabul Et (Sat)</button>
+                <button style="background: #e74c3c;" onclick="respondTrade(false)">Reddet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    let myId = '';
+    let isReady = false;
+    let latestMonoState = null;
+    let selectedTileForTrade = null;
+
+    const localPlayerPositions = {};
+    let isAnimatingMovement = false;
+    let eventBannerTimeout = null;
+
+    const raceInputs = { up: false, down: false, left: false, right: false };
+
+    socket.on('connect', () => { myId = socket.id; });
+
+    function showView(viewId) {
+        ['view-login', 'view-lobby', 'view-guess', 'view-monopoly', 'view-race', 'view-tabu', 'view-imposter'].forEach(id => {
+            document.getElementById(id).style.display = id === viewId ? 'block' : 'none';
+        });
+    }
+
+    function join() {
+        const val = document.getElementById('username').value.trim();
+        if (!val) return alert('İsim yazmalısın!');
+        socket.emit('joinLobby', val);
+        showView('view-lobby');
+    }
+
+    function selectGame(game) { socket.emit('selectGame', game); }
+    function backToLobby() { socket.emit('backToLobby'); }
+
+    socket.on('updateLobby', (data) => {
+        document.getElementById('lobbyPlayers').innerText = data.players.map(p => p.name).join(', ');
+    });
+
+    socket.on('gameSelected', (game) => {
+        if (game === 'guess') {
+            showView('view-guess');
+            resetGuessLobby();
+        } else if (game === 'imposter') {
+            showView('view-imposter');
+            document.getElementById('impLobbyControls').style.display = 'block';
+            document.getElementById('impGameArea').style.display = 'none';
+        } else if (game === 'tabu') {
+            showView('view-tabu');
+            resetTabuViews();
+        } else if (game === 'monopoly') {
+            showView('view-monopoly');
+            document.getElementById('monoLobbyControls').style.display = 'block';
+            document.getElementById('monoGameArea').style.display = 'none';
+        } else if (game === 'race') {
+            showView('view-race');
+            document.getElementById('raceLobbyControls').style.display = 'block';
+            document.getElementById('raceGameArea').style.display = 'none';
+        } else {
+            showView('view-lobby');
+        }
+    });
+
+    function toggleGeneralReady() { socket.emit('toggleGeneralReady'); }
+
+    socket.on('updateLobbyStatuses', (data) => {
+        const pList = data.players;
+        const myP = pList.find(x => x.id === socket.id);
+        if (myP) {
+            isReady = myP.ready;
+            const text = isReady ? 'Hazır Vazgeç ❌' : 'Hazır Ol ✓';
+            const bg = isReady ? '#e74c3c' : '#2ecc71';
+
+            ['btnGuessReady', 'btnMonoReady', 'btnRaceReady', 'btnTabuReady', 'btnImpReady'].forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) { btn.innerText = text; btn.style.background = bg; }
+            });
+        }
+
+        const renderBadges = (elementId) => {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            el.innerHTML = pList.map(p => `
+                <span class="ready-badge ${p.ready ? 'is-ready' : 'not-ready'}">
+                    ${p.name}: ${p.ready ? '✓ HAZIR' : '⏳ BEKLİYOR'}
+                </span>
+            `).join('');
+        };
+
+        renderBadges('guessReadyList');
+        renderBadges('monoReadyList');
+        renderBadges('raceReadyList');
+        renderBadges('impReadyList');
+    });
+
+    // ==========================================
+    // CANLI HUD BANNER
+    // ==========================================
+    socket.on('monoGlobalAlert', (msg) => {
+        const banner = document.getElementById('mainEventBanner');
+        const textSpan = document.getElementById('bannerTextContent');
+        textSpan.innerHTML = `📢 ${msg}`;
+        banner.style.display = 'block';
+
+        if (eventBannerTimeout) clearTimeout(eventBannerTimeout);
+        eventBannerTimeout = setTimeout(() => {
+            banner.style.display = 'none';
+        }, 5000);
+    });
+
+    function closeMainEventBanner() {
+        const banner = document.getElementById('mainEventBanner');
+        banner.style.display = 'none';
+        if (eventBannerTimeout) clearTimeout(eventBannerTimeout);
+    }
+
+    // ==========================================
+    // 🧠 İŞKEMBEDEN SALLAMA İSTEMCİ MANTIĞI
+    // ==========================================
+    function resetGuessLobby() {
+        document.getElementById('guessLobbyPanel').style.display = 'block';
+        document.getElementById('guessArenaPanel').style.display = 'none';
+        document.getElementById('guessRevealPanel').style.display = 'none';
+        document.getElementById('guessGameOverPanel').style.display = 'none';
+    }
+
+    function startGuessGame() {
+        const mode = document.getElementById('guessSubModeSelect').value;
+        socket.emit('startGuessGame', mode);
+    }
+
+    socket.on('guessRoundStarted', (data) => {
+        document.getElementById('guessLobbyPanel').style.display = 'none';
+        document.getElementById('guessRevealPanel').style.display = 'none';
+        document.getElementById('guessArenaPanel').style.display = 'block';
+
+        document.getElementById('guessRoundIndicator').innerText = `Soru ${data.questionIndex} / ${data.maxQuestions}`;
+        document.getElementById('guessTimerText').innerText = `${data.timeLeft}s`;
+        document.getElementById('guessTimerFill').style.width = '100%';
+
+        document.getElementById('guessImage').src = data.question.img;
+        document.getElementById('guessTitle').innerText = data.question.title;
+        document.getElementById('guessHint').innerText = data.question.hint;
+
+        document.getElementById('guessInputBox').style.display = 'block';
+        document.getElementById('guessSubmittedNotice').style.display = 'none';
+        const inp = document.getElementById('userGuessInput');
+        inp.value = '';
+        inp.disabled = false;
+        inp.focus();
+    });
+
+    socket.on('guessTimerTick', (timeLeft) => {
+        document.getElementById('guessTimerText').innerText = `${timeLeft}s`;
+        const pct = (timeLeft / 15) * 100;
+        document.getElementById('guessTimerFill').style.width = `${pct}%`;
+    });
+
+    function submitGuess() {
+        const inp = document.getElementById('userGuessInput');
+        const val = inp.value.trim();
+        if (!val) return alert('Bir tahmin yazmalısın!');
+        socket.emit('submitGuess', val);
+        inp.disabled = true;
+        document.getElementById('guessInputBox').style.display = 'none';
+        document.getElementById('guessSubmittedNotice').style.display = 'block';
+    }
+
+    socket.on('guessLockedNotice', () => {
+        document.getElementById('guessInputBox').style.display = 'none';
+        document.getElementById('guessSubmittedNotice').style.display = 'block';
+    });
+
+    socket.on('guessRoundEnded', (data) => {
+        document.getElementById('guessArenaPanel').style.display = 'none';
+        document.getElementById('guessRevealPanel').style.display = 'block';
+
+        document.getElementById('guessActualValue').innerText = `${data.actual.toLocaleString('tr-TR')} ${data.unit}`;
+
+        const listEl = document.getElementById('guessRoundScoresList');
+        listEl.innerHTML = data.results.map(r => `
+            <div class="result-row">
+                <span><strong>${r.name}:</strong> Tahmin: ${typeof r.guess === 'number' ? r.guess.toLocaleString('tr-TR') : r.guess}</span>
+                <span style="color:#2ecc71;">+${r.scoreGained} Puan (Toplam: ${r.totalScore})</span>
+            </div>
+        `).join('');
+    });
+
+    socket.on('guessGameOver', (data) => {
+        document.getElementById('guessRevealPanel').style.display = 'none';
+        document.getElementById('guessGameOverPanel').style.display = 'block';
+
+        const listEl = document.getElementById('guessFinalPodium');
+        listEl.innerHTML = data.finalLeaderboard.map((r, idx) => `
+            <div class="result-row" style="font-size: 16px; border-left: 4px solid ${idx === 0 ? '#f1c40f' : '#3d435e'}">
+                <span>${idx + 1}. <strong>${r.name}</strong></span>
+                <span style="color:#f1c40f; font-weight:bold;">${r.totalScore} Puan</span>
+            </div>
+        `).join('');
+    });
+
+    // ==========================================
+    // 🏎️ YARIŞ İSTEMCİSİ (1200x750 RENDER)
+    // ==========================================
+    const canvas = document.getElementById('raceCanvas');
+    const ctx = canvas.getContext('2d');
+
+    window.addEventListener('keydown', (e) => {
+        let changed = false;
+        if (e.code === 'KeyW' || e.code === 'ArrowUp') { raceInputs.up = true; changed = true; }
+        if (e.code === 'KeyS' || e.code === 'ArrowDown') { raceInputs.down = true; changed = true; }
+        if (e.code === 'KeyA' || e.code === 'ArrowLeft') { raceInputs.left = true; changed = true; }
+        if (e.code === 'KeyD' || e.code === 'ArrowRight') { raceInputs.right = true; changed = true; }
+        if (e.code === 'Space') { socket.emit('raceUseItem'); }
+        if (changed) socket.emit('raceInput', raceInputs);
+    });
+
+    window.addEventListener('keyup', (e) => {
+        let changed = false;
+        if (e.code === 'KeyW' || e.code === 'ArrowUp') { raceInputs.up = false; changed = true; }
+        if (e.code === 'KeyS' || e.code === 'ArrowDown') { raceInputs.down = false; changed = true; }
+        if (e.code === 'KeyA' || e.code === 'ArrowLeft') { raceInputs.left = false; changed = true; }
+        if (e.code === 'KeyD' || e.code === 'ArrowRight') { raceInputs.right = false; changed = true; }
+        if (changed) socket.emit('raceInput', raceInputs);
+    });
+
+    function bindTouch(btnId, key) {
+        const el = document.getElementById(btnId);
+        el.addEventListener('touchstart', (e) => { e.preventDefault(); raceInputs[key] = true; socket.emit('raceInput', raceInputs); });
+        el.addEventListener('touchend', (e) => { e.preventDefault(); raceInputs[key] = false; socket.emit('raceInput', raceInputs); });
+    }
+    bindTouch('btnGas', 'up');
+    bindTouch('btnBrake', 'down');
+    bindTouch('btnLeft', 'left');
+    bindTouch('btnRight', 'right');
+
+    socket.on('raceStarted', (data) => {
+        document.getElementById('raceLobbyControls').style.display = 'none';
+        document.getElementById('raceGameArea').style.display = 'flex';
+        document.getElementById('raceWinnerBox').style.display = 'none';
+    });
+
+    socket.on('raceUpdate', (data) => {
+        renderRaceTrack();
+        renderItemBoxes(data.boxes);
+        renderTrackItems(data.items);
+
+        for (let id in data.cars) {
+            const car = data.cars[id];
+            renderCar(car);
+
+            if (id === socket.id) {
+                document.getElementById('raceHud').innerText = `Tur: ${Math.min(car.lap, 3)} / 3 ${car.finished ? '🏁 BİTTİ' : ''}`;
+                const itemSpan = document.querySelector('#raceItemHud span');
+                if (car.heldItem === 'banana') itemSpan.innerHTML = '🍌 Muz (Space)';
+                else if (car.heldItem === 'rocket') itemSpan.innerHTML = '🚀 Roket (Space)';
+                else itemSpan.innerHTML = 'Yok';
+            }
+        }
+    });
+
+    socket.on('raceFinished', (data) => {
+        const box = document.getElementById('raceWinnerBox');
+        box.style.display = 'block';
+        document.getElementById('raceWinnerTitle').innerHTML = `🏆 ŞAMPİYON: ${data.winner}! Damalı bayrağı ilk gören oldu.`;
+    });
+
+    const trackPoints = [
+        { x: 550, y: 640 }, { x: 920, y: 640 }, { x: 1080, y: 520 }, { x: 1080, y: 260 },
+        { x: 920, y: 140 }, { x: 680, y: 140 }, { x: 580, y: 320 }, { x: 420, y: 320 },
+        { x: 320, y: 140 }, { x: 140, y: 240 }, { x: 130, y: 520 }, { x: 320, y: 640 },
+        { x: 550, y: 640 }
+    ];
+
+    function renderRaceTrack() {
+        ctx.fillStyle = '#1e824c';
+        ctx.fillRect(0, 0, 1200, 750);
+
+        ctx.strokeStyle = '#2c3e50';
+        ctx.lineWidth = 130;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(trackPoints[0].x, trackPoints[0].y);
+        for (let i = 1; i < trackPoints.length; i++) {
+            ctx.lineTo(trackPoints[i].x, trackPoints[i].y);
+        }
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+        ctx.lineWidth = 4;
+        ctx.setLineDash([16, 16]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.save();
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(575, 575, 12, 130);
+        ctx.fillStyle = '#000';
+        for (let y = 575; y < 705; y += 20) {
+            ctx.fillRect(575, y, 6, 10);
+            ctx.fillRect(581, y + 10, 6, 10);
+        }
+        ctx.restore();
+    }
+
+    function renderItemBoxes(boxes) {
+        if (!boxes) return;
+        boxes.forEach(box => {
+            if (!box.active) return;
+            ctx.save();
+            ctx.translate(box.x, box.y);
+
+            ctx.fillStyle = '#f1c40f';
+            ctx.strokeStyle = '#d35400';
+            ctx.lineWidth = 3;
+            ctx.fillRect(-15, -15, 30, 30);
+            ctx.strokeRect(-15, -15, 30, 30);
+
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('?', 0, 1);
+            ctx.restore();
+        });
+    }
+
+    function renderTrackItems(items) {
+        if (!items) return;
+        items.forEach(item => {
+            if (item.type === 'banana') {
+                ctx.save();
+                ctx.font = '24px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🍌', item.x, item.y);
+                ctx.restore();
+            } else if (item.type === 'rocket') {
+                ctx.save();
+                ctx.translate(item.x, item.y);
+                ctx.rotate(item.angle);
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillRect(-10, -5, 20, 10);
+                ctx.fillStyle = '#f39c12';
+                ctx.fillRect(-16, -3, 6, 6);
+                ctx.restore();
+            }
+        });
+    }
+
+    function renderCar(car) {
+        ctx.save();
+        ctx.translate(car.x, car.y);
+        ctx.rotate(car.angle);
+
+        ctx.fillStyle = car.color || '#e74c3c';
+        ctx.fillRect(-15, -9, 30, 18);
+
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, -7, 8, 14);
+        ctx.fillRect(-10, -7, 5, 14);
+
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(13, -8, 2, 4);
+        ctx.fillRect(13, 4, 2, 4);
+
+        ctx.restore();
+
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(car.name, car.x, car.y - 16);
+    }
+
+    // ==========================================
+    // MONOPOLY İSTEMCİSİ
+    // ==========================================
+    function getTileGridStyle(id) {
+        if (id >= 0 && id <= 10) return `grid-column: ${11 - id}; grid-row: 11;`;
+        if (id > 10 && id <= 20) return `grid-column: 1; grid-row: ${11 - (id - 10)};`;
+        if (id > 20 && id <= 30) return `grid-column: ${1 + (id - 20)}; grid-row: 1;`;
+        if (id > 30 && id < 40) return `grid-column: 11; grid-row: ${1 + (id - 30)};`;
+        return '';
+    }
+
+    socket.on('monopolyStateUpdated', (state) => {
+        latestMonoState = state;
+        document.getElementById('monoLobbyControls').style.display = 'none';
+        document.getElementById('monoGameArea').style.display = 'flex';
+
+        const hud = document.getElementById('monoPlayersHud');
+        hud.innerHTML = state.players.map(p => `
+            <div class="player-stat-card" style="border-left-color: ${p.color}; opacity: ${p.bankrupt ? '0.4' : '1'}">
+                <strong>${p.name}</strong> ${p.bankrupt ? '(İFLAS)' : ''} ${p.inJail ? `🚨(BLOK DERSTE)` : ''}<br>
+                💰 ${p.money}₺ | 📍 Kare: ${p.position} ${p.jailCardCount > 0 ? `<br>🎟️ ${p.jailCardCount}x Konferans Kartı` : ''}
+            </div>
+        `).join('');
+
+        const cp = state.players[state.turnIndex];
+        const isMyTurn = socket.id === cp.id;
+        
+        let turnText = `Sıra: <span style="color:${cp.color};">${cp.name}</span> ${isMyTurn ? '(SENDE!)' : ''}`;
+        if (cp.inJail) {
+            turnText += ` <span style="color:#e74c3c;">[Blok Derste: ${cp.jailTurns + 1}. Tur Hak]</span>`;
+        } else if (state.doubleRollCount > 0) {
+            turnText += ` <span style="color:#f39c12;">[Çift: ${state.doubleRollCount}/3]</span>`;
+        }
+        document.getElementById('monoTurnInfo').innerHTML = turnText;
+        document.getElementById('diceDisplay').innerText = `🎲 ${state.dice[0]} - ${state.dice[1]}`;
+        
+        const canAct = (isMyTurn && state.active && !cp.bankrupt && !state.waitingForDecision && !state.waitingForDoblo && !isAnimatingMovement);
+        document.getElementById('btnRollDice').style.display = canAct ? 'inline-block' : 'none';
+
+        const showBail = canAct && cp.inJail && (cp.jailTurns < 2);
+        document.getElementById('btnPayBail').style.display = showBail ? 'inline-block' : 'none';
+
+        const showCard = canAct && cp.inJail && (cp.jailCardCount > 0);
+        document.getElementById('btnUseCard').style.display = showCard ? 'inline-block' : 'none';
+
+        document.getElementById('monoLogBox').innerHTML = state.log.map(l => `<div>• ${l}</div>`).join('');
+
+        syncBoardAndTokensWithAnimation(state);
+    });
+
+    function syncBoardAndTokensWithAnimation(state) {
+        const boardGrid = document.getElementById('boardGrid');
+        
+        if (boardGrid.querySelectorAll('.mono-tile').length === 0) {
+            state.board.forEach(tile => {
+                const div = document.createElement('div');
+                div.className = 'mono-tile';
+                div.id = `tile-node-${tile.id}`;
+                div.style = getTileGridStyle(tile.id);
+                div.onclick = () => onTileClick(tile);
+
+                let colorBar = '';
+                if (tile.group) colorBar = `<div class="tile-color-bar c-${tile.group}"></div>`;
+                else if (tile.type === 'pitch') colorBar = `<div class="tile-color-bar c-pitch"></div>`;
+                else if (tile.type === 'utility') colorBar = `<div class="tile-color-bar c-utility"></div>`;
+                else if (tile.type === 'doblo') colorBar = `<div class="tile-color-bar c-doblo"></div>`;
+
+                let priceText = tile.price ? `${tile.price}₺` : '';
+                if (tile.ownerName) priceText = `👑 ${tile.ownerName}`;
+                if (tile.type === 'doblo') priceText = '🚐 SÜR DOSTUM';
+
+                div.innerHTML = `
+                    ${colorBar}
+                    <div style="font-weight:bold; margin: 1px 0;">${tile.name}</div>
+                    <div style="color:#aaa;">${priceText}</div>
+                    <div class="tokens-holder" id="tokens-tile-${tile.id}"></div>
+                `;
+                boardGrid.appendChild(div);
+            });
+        } else {
+            state.board.forEach(tile => {
+                const tileNode = document.getElementById(`tile-node-${tile.id}`);
+                if (tileNode && tile.ownerName) {
+                    const priceDiv = tileNode.children[2];
+                    if (priceDiv) priceDiv.innerText = `👑 ${tile.ownerName}`;
+                }
+            });
+        }
+
+        state.players.forEach(p => {
+            if (p.bankrupt) {
+                const oldToken = document.getElementById(`token-${p.id}`);
+                if (oldToken) oldToken.remove();
+                return;
+            }
+
+            const currentTilePos = localPlayerPositions[p.id] !== undefined ? localPlayerPositions[p.id] : p.position;
+
+            if (localPlayerPositions[p.id] === undefined) {
+                localPlayerPositions[p.id] = p.position;
+                renderSingleToken(p, p.position);
+                return;
+            }
+
+            if (currentTilePos !== p.position) {
+                animateSteps(p, currentTilePos, p.position);
+            } else {
+                renderSingleToken(p, p.position);
+            }
+        });
+    }
+
+    function renderSingleToken(player, pos) {
+        let token = document.getElementById(`token-${player.id}`);
+        if (!token) {
+            token = document.createElement('div');
+            token.id = `token-${player.id}`;
+            token.className = 'player-token';
+            token.style.background = player.color;
+            token.title = player.name;
+        }
+
+        const holder = document.getElementById(`tokens-tile-${pos}`);
+        if (holder && token.parentElement !== holder) {
+            holder.appendChild(token);
+        }
+    }
+
+    function animateSteps(player, fromPos, toPos) {
+        isAnimatingMovement = true;
+        document.getElementById('btnRollDice').style.display = 'none';
+        document.getElementById('btnPayBail').style.display = 'none';
+        document.getElementById('btnUseCard').style.display = 'none';
+
+        let totalSteps = toPos >= fromPos ? (toPos - fromPos) : (40 - fromPos + toPos);
+
+        if (totalSteps > 12) {
+            localPlayerPositions[player.id] = toPos;
+            renderSingleToken(player, toPos);
+            isAnimatingMovement = false;
+            return;
+        }
+
+        let current = fromPos;
+        let stepCount = 0;
+
+        const interval = setInterval(() => {
+            current = (current + 1) % 40;
+            stepCount++;
+            localPlayerPositions[player.id] = current;
+            renderSingleToken(player, current);
+
+            const token = document.getElementById(`token-${player.id}`);
+            if (token) {
+                token.classList.remove('token-hop');
+                void token.offsetWidth;
+                token.classList.add('token-hop');
+            }
+
+            if (stepCount >= totalSteps) {
+                clearInterval(interval);
+                isAnimatingMovement = false;
+                localPlayerPositions[player.id] = toPos;
+                
+                if (latestMonoState) {
+                    const cp = latestMonoState.players[latestMonoState.turnIndex];
+                    if (socket.id === cp.id && latestMonoState.active && !cp.bankrupt && !latestMonoState.waitingForDecision && !latestMonoState.waitingForDoblo) {
+                        document.getElementById('btnRollDice').style.display = 'inline-block';
+                        if (cp.inJail && cp.jailTurns < 2) document.getElementById('btnPayBail').style.display = 'inline-block';
+                        if (cp.inJail && cp.jailCardCount > 0) document.getElementById('btnUseCard').style.display = 'inline-block';
+                    }
+                }
+            }
+        }, 180);
+    }
+
+    function onTileClick(tile) {
+        if (!tile.owner) return;
+        if (tile.owner === socket.id) {
+            alert(`Bu tapu zaten senin: ${tile.name}`);
+            return;
+        }
+        selectedTileForTrade = tile;
+        document.getElementById('tradeTargetInfo').innerText = `Mülk: ${tile.name} (Liste Fiyatı: ${tile.price}₺) | Sahibi: ${tile.ownerName}`;
+        document.getElementById('tradeOfferInput').value = Math.floor(tile.price * 1.2);
+        document.getElementById('tradeOfferModal').style.display = 'flex';
+    }
+
+    function sendTradeOffer() {
+        const amount = document.getElementById('tradeOfferInput').value;
+        if (!amount || !selectedTileForTrade) return;
+        socket.emit('initiateTradeOffer', { tileId: selectedTileForTrade.id, offerAmount: amount });
+        closeTradeModal();
+    }
+
+    function closeTradeModal() {
+        document.getElementById('tradeOfferModal').style.display = 'none';
+        selectedTileForTrade = null;
+    }
+
+    socket.on('incomingTradeOffer', (trade) => {
+        document.getElementById('incomingTradeMsg').innerHTML = `
+            <strong>${trade.buyerName}</strong>, sana ait <u>${trade.tileName}</u> tapusu için 
+            <strong style="color:#2ecc71; font-size:18px;">${trade.offerAmount}₺</strong> teklif ediyor! Kabul ediyor musun?
+        `;
+        document.getElementById('incomingTradeModal').style.display = 'flex';
+    });
+
+    function respondTrade(accept) {
+        socket.emit('respondTradeOffer', accept);
+        document.getElementById('incomingTradeModal').style.display = 'none';
+    }
+
+    socket.on('tradePendingNotice', (msg) => alert(msg));
+
+    socket.on('monopolyBuyPrompt', (data) => {
+        document.getElementById('buyPromptBox').style.display = 'block';
+        document.getElementById('buyPromptMsg').innerText = `🏛️ ${data.tile.name} sahipsiz! Fiyat: ${data.tile.price}₺. Satın almak istiyor musun?`;
+        document.getElementById('btnRollDice').style.display = 'none';
+        document.getElementById('btnPayBail').style.display = 'none';
+        document.getElementById('btnUseCard').style.display = 'none';
+    });
+
+    function buyDecision(buy) {
+        socket.emit('monopolyBuyDecision', buy);
+        document.getElementById('buyPromptBox').style.display = 'none';
+    }
+
+    socket.on('monopolyBuyoutPrompt', (data) => {
+        document.getElementById('buyoutPromptBox').style.display = 'block';
+        document.getElementById('buyoutPromptMsg').innerText = `💥 ${data.ownerName}'in ${data.tile.name} mülkünü 1.5 katına (${data.buyoutPrice}₺) zorla satın almak ister misin?`;
+        document.getElementById('btnRollDice').style.display = 'none';
+        document.getElementById('btnPayBail').style.display = 'none';
+        document.getElementById('btnUseCard').style.display = 'none';
+    });
+
+    function buyoutDecision(buyout) {
+        socket.emit('monopolyBuyoutDecision', buyout);
+        document.getElementById('buyoutPromptBox').style.display = 'none';
+    }
+
+    socket.on('monopolyDobloPrompt', (data) => {
+        const box = document.getElementById('dobloPromptBox');
+        const sel = document.getElementById('dobloTargetSelect');
+        sel.innerHTML = '';
+        data.board.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.id;
+            opt.innerText = `${t.id}: ${t.name}`;
+            sel.appendChild(opt);
+        });
+        box.style.display = 'block';
+        document.getElementById('btnRollDice').style.display = 'none';
+        document.getElementById('btnPayBail').style.display = 'none';
+        document.getElementById('btnUseCard').style.display = 'none';
+    });
+
+    function submitDobloDrive() {
+        const targetId = document.getElementById('dobloTargetSelect').value;
+        socket.emit('monopolyDobloDrive', targetId);
+        document.getElementById('dobloPromptBox').style.display = 'none';
+    }
+
+    function openAssetsModal() {
+        if (!latestMonoState) return;
+        const list = document.getElementById('assetsList');
+        list.innerHTML = '';
+
+        const me = latestMonoState.players.find(p => p.id === socket.id);
+        const cardDisplay = document.getElementById('jailCardDisplay');
+        if (me && me.jailCardCount > 0) {
+            cardDisplay.innerText = `🎟️ Sahip Olduğun Konferansa Katılma Kartı: ${me.jailCardCount} Adet`;
+        } else {
+            cardDisplay.innerText = '';
+        }
+
+        const myAssets = latestMonoState.board.filter(t => t.owner === socket.id);
+        if (myAssets.length === 0) {
+            list.innerHTML = '<p style="color:#aaa;">Henüz hiç tapu satın almadın.</p>';
+        } else {
+            myAssets.forEach(a => {
+                let currentRentDesc = '';
+                if (a.type === 'property') {
+                    const groupTiles = latestMonoState.board.filter(t => t.type === 'property' && t.group === a.group);
+                    const isMonopoly = groupTiles.every(t => t.owner === socket.id);
+                    const rent = isMonopoly ? (a.baseRent * 2) : a.baseRent;
+                    currentRentDesc = isMonopoly ? `Kira: ${rent}₺ 🔥 (TEKEL x2)` : `Kira: ${rent}₺`;
+                } else if (a.type === 'pitch') {
+                    const count = latestMonoState.board.filter(t => t.type === 'pitch' && t.owner === socket.id).length;
+                    let r = count === 1 ? 25 : (count === 2 ? 50 : (count === 3 ? 100 : 200));
+                    currentRentDesc = `Kira: ${r}₺ (${count} Halısaha)`;
+                } else if (a.type === 'utility') {
+                    const count = latestMonoState.board.filter(t => t.type === 'utility' && t.owner === socket.id).length;
+                    currentRentDesc = `Zar x ${count === 2 ? 10 : 4}₺`;
+                }
+
+                const div = document.createElement('div');
+                div.className = 'asset-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${a.name}</strong><br>
+                        <small style="color:#aaa;">Değer: ${a.price}₺</small>
+                    </div>
+                    <span style="color:#2ecc71; font-weight:bold;">${currentRentDesc}</span>
+                `;
+                list.appendChild(div);
+            });
+        }
+        document.getElementById('assetsModal').style.display = 'flex';
+    }
+
+    function closeAssetsModal() {
+        document.getElementById('assetsModal').style.display = 'none';
+    }
+
+    // ==========================================
+    // TABU & İMPOSTER
+    // ==========================================
+    function resetTabuViews() {
+        document.getElementById('tabuLobbyPanel').style.display = 'block';
+        document.getElementById('tabuIntermissionPanel').style.display = 'none';
+        document.getElementById('tabuGamePanel').style.display = 'none';
+        document.getElementById('tabuGameOverPanel').style.display = 'none';
+    }
+    function switchTeam(team) { socket.emit('switchTabuTeam', team); }
+    function startTabuGame() { socket.emit('startTabuGame', document.getElementById('tabuRoundSelect').value); }
+    function sendAction(action) { socket.emit('tabuAction', action); }
+    function nextTabuTurn() { socket.emit('tabuNextTurn'); }
+
+    socket.on('updateTabuLobby', (data) => {
+        const redList = document.getElementById('redTeamList');
+        const blueList = document.getElementById('blueTeamList');
+        redList.innerHTML = ''; blueList.innerHTML = '';
+        data.players.forEach(p => {
+            const row = document.createElement('div');
+            row.className = 'member-badge';
+            row.innerHTML = `<span>${p.name}</span><span style="color:${p.ready ? '#2ecc71' : '#e74c3c'}">${p.ready ? '✓' : '✗'}</span>`;
+            if (p.team === 'red') redList.appendChild(row);
+            else blueList.appendChild(row);
+        });
+    });
+
+    socket.on('tabuIntermissionStart', (data) => {
+        document.getElementById('tabuLobbyPanel').style.display = 'none';
+        document.getElementById('tabuGamePanel').style.display = 'none';
+        document.getElementById('tabuGameOverPanel').style.display = 'none';
+        document.getElementById('tabuIntermissionPanel').style.display = 'block';
+
+        const isMe = socket.id === data.describerId;
+        const teamName = data.team === 'red' ? '🔴 KIRMIZI TAKIM' : '🔵 MAVİ TAKIM';
+        
+        document.getElementById('intermissionTeamTitle').innerHTML = `Sıra: <span style="color:${data.team === 'red' ? '#ff6b6b' : '#4dabf7'};">${teamName}</span>`;
+        document.getElementById('intermissionDescriberText').innerHTML = `Anlatacak Kişi: <strong>${data.describerName}</strong> ${isMe ? '<br><span style="color:#f39c12;">👉 SIRA SENDE! Hazırlan!</span>' : ''}`;
+        document.getElementById('intermissionCountdown').innerText = data.prepTime;
+    });
+
+    socket.on('tabuIntermissionTick', (time) => {
+        document.getElementById('intermissionCountdown').innerText = time;
+    });
+
+    socket.on('tabuTurnStarted', (data) => {
+        document.getElementById('tabuLobbyPanel').style.display = 'none';
+        document.getElementById('tabuIntermissionPanel').style.display = 'none';
+        document.getElementById('tabuGamePanel').style.display = 'block';
+        document.getElementById('btnNextTurn').style.display = 'none';
+
+        document.getElementById('tabuRoundDisplay').innerText = `Tur: ${data.currentRound} / ${data.maxRounds}`;
+        document.getElementById('scoreRed').innerText = data.scores.red;
+        document.getElementById('scoreBlue').innerText = data.scores.blue;
+
+        document.getElementById('describerView').style.display = data.role === 'describer' ? 'block' : 'none';
+        document.getElementById('guesserView').style.display = data.role === 'guesser' ? 'block' : 'none';
+        document.getElementById('opponentView').style.display = data.role === 'opponent' ? 'block' : 'none';
+
+        if (data.role === 'describer' && data.card) {
+            document.getElementById('tMainWord').innerText = data.card.kelime;
+            document.getElementById('tForbiddens').innerHTML = data.card.yasaklar.map(y => `<div class="tabu-forbidden">${y}</div>`).join('');
+            document.getElementById('passCountDisplay').innerText = `Kalan Pas: ${data.passCount}`;
+        }
+    });
+
+    socket.on('tabuNewCardForDescriber', (card) => {
+        document.getElementById('tMainWord').innerText = card.kelime;
+        document.getElementById('tForbiddens').innerHTML = card.yasaklar.map(y => `<div class="tabu-forbidden">${y}</div>`).join('');
+    });
+    socket.on('tabuScoreUpdated', (data) => {
+        document.getElementById('scoreRed').innerText = data.scores.red;
+        document.getElementById('scoreBlue').innerText = data.scores.blue;
+        document.getElementById('passCountDisplay').innerText = `Kalan Pas: ${data.passCount}`;
+    });
+    socket.on('tabuTimer', (t) => { document.getElementById('tabuTimer').innerText = `${t}s`; });
+    
+    socket.on('tabuTurnEnded', (data) => {
+        document.getElementById('describerView').style.display = 'none';
+        document.getElementById('guesserView').style.display = 'none';
+        document.getElementById('opponentView').style.display = 'none';
+        document.getElementById('btnNextTurn').style.display = 'block';
+        document.getElementById('tabuTurnMsg').innerHTML = `⏱️ Süre Bitti! Sıradaki tur: <strong>${data.nextTeam === 'red' ? 'Kırmızı' : 'Mavi'} Takım</strong>`;
+    });
+
+    socket.on('tabuMatchOver', (data) => {
+        document.getElementById('tabuIntermissionPanel').style.display = 'none';
+        document.getElementById('tabuGamePanel').style.display = 'none';
+        document.getElementById('tabuGameOverPanel').style.display = 'block';
+        document.getElementById('tabuWinnerTitle').innerText = `🏆 Kazanan: ${data.winner} Takım!`;
+        document.getElementById('tabuFinalScoreMsg').innerText = `Kırmızı: ${data.scores.red} | Mavi: ${data.scores.blue}`;
+    });
+
+    socket.on('imposterRole', (data) => {
+        document.getElementById('impLobbyControls').style.display = 'none';
+        document.getElementById('impGameArea').style.display = 'block';
+        document.getElementById('imp-result').innerText = '';
+        document.getElementById('imp-voting').style.display = 'none';
+        document.getElementById('imp-guess-box').style.display = 'none';
+        const role = document.getElementById('imp-role');
+        role.innerText = data.info;
+        role.style.color = data.isImposter ? '#ff4d4d' : '#00adb5';
+    });
+    socket.on('imposterTimer', (t) => { document.getElementById('imp-timer').innerText = t > 0 ? `⏳ ${t}s` : ''; });
+    socket.on('imposterStartVoting', (players) => {
+        document.getElementById('imp-voting').style.display = 'block';
+        const c = document.getElementById('imp-vote-btns');
+        c.innerHTML = '';
+        players.forEach(p => {
+            if (p.id !== socket.id) {
+                const b = document.createElement('button');
+                b.innerText = p.name;
+                b.onclick = () => { socket.emit('imposterVote', p.id); c.innerHTML = '<p>Oyun verildi...</p>'; };
+                c.appendChild(b);
+            }
+        });
+    });
+    socket.on('imposterLastChance', () => {
+        document.getElementById('imp-voting').style.display = 'none';
+        document.getElementById('imp-guess-box').style.display = 'block';
+    });
+    socket.on('imposterWaitGuess', (name) => {
+        document.getElementById('imp-voting').style.display = 'none';
+        document.getElementById('imp-result').innerText = `${name} son tahminini yapıyor...`;
+    });
+    function sendImpGuess() {
+        socket.emit('imposterGuess', document.getElementById('impFinalGuess').value.trim());
+        document.getElementById('imp-guess-box').style.display = 'none';
+    }
+    socket.on('imposterResult', (res) => {
+        document.getElementById('imp-result').innerText = `${res.winner === 'IMPOSTER' ? '😈 İmposter Kazandı!' : '🎉 Masadakiler Kazandı!'} (${res.msg}) - Kelime: ${res.word}`;
+    });
+
+    socket.on('errorMsg', (msg) => alert(msg));
+</script>
+</body>
+</html>
