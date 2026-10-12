@@ -1,7 +1,12 @@
 let latestMonoState = null;
 let selectedTileForTrade = null;
-const localPlayerPositions = {}; // Piyonların kare kare yürümesi için konum hafızası
+const localPlayerPositions = {}; // Piyonların konum hafızası
+const previousBalances = {};     // Uçuşan para efekti için bakiye hafızası
+let lastDiceValues = [1, 1];     // Zar değişimini yakalamak için hafıza
 const activeAnimations = {};
+
+// Gerçek zar emojileriyle daha net görünüm
+const diceFaces = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
 
 function getTileGridStyle(id) {
     if (id >= 0 && id <= 10) return `grid-column: ${11 - id}; grid-row: 11;`;
@@ -11,7 +16,6 @@ function getTileGridStyle(id) {
     return '';
 }
 
-// Satın Alma ve Zorla Alma Karar Fonksiyonları (Kutuları Anında Kapatır, Oyunu Kitlemez)
 function decideBuy(buy) {
     document.getElementById('buyPromptBox').style.display = 'none';
     socket.emit('monopolyBuyDecision', buy);
@@ -22,12 +26,35 @@ function decideBuyout(buyout) {
     socket.emit('monopolyBuyoutDecision', buyout);
 }
 
+// Zar Çalkalama Efekti Fonksiyonu
+function triggerDiceAnimation(d1, d2) {
+    const diceEl = document.getElementById('diceDisplay');
+    if (!diceEl) return;
+
+    diceEl.classList.remove('dice-rolling');
+    void diceEl.offsetWidth; // Reflow ile animasyonu sıfırla
+    diceEl.classList.add('dice-rolling');
+
+    // Çalkalanırken rastgele yüzler göster, sonunda gerçek zarı bas
+    let ticks = 0;
+    const rollInterval = setInterval(() => {
+        ticks++;
+        const r1 = Math.floor(Math.random() * 6) + 1;
+        const r2 = Math.floor(Math.random() * 6) + 1;
+        diceEl.innerHTML = `🎲 ${diceFaces[r1]} ${r1} - ${r2} ${diceFaces[r2]}`;
+        if (ticks >= 5) {
+            clearInterval(rollInterval);
+            const isDouble = d1 === d2;
+            diceEl.innerHTML = `🎲 ${diceFaces[d1]} <strong>${d1} - ${d2}</strong> ${diceFaces[d2]} ${isDouble ? '<span style="color:#f1c40f; font-size:14px;">(ÇİFT!)</span>' : ''}`;
+        }
+    }, 65);
+}
+
 socket.on('monopolyStateUpdated', (state) => {
     latestMonoState = state;
     document.getElementById('monoLobbyControls').style.display = 'none';
     document.getElementById('monoGameArea').style.display = 'flex';
 
-    // Eğer sunucuda karar bekleme bittiyse tüm açık kutuları zorla kapat (Güvenlik kilidi)
     if (!state.waitingForDecision) {
         document.getElementById('buyPromptBox').style.display = 'none';
         document.getElementById('buyoutPromptBox').style.display = 'none';
@@ -36,27 +63,43 @@ socket.on('monopolyStateUpdated', (state) => {
         document.getElementById('dobloPromptBox').style.display = 'none';
     }
 
-    // Oyuncu HUD Kartları
+    // 1. Oyuncu Kartlarını ve Uçuşan Para (+ / -) Efektlerini Çiz
     const hud = document.getElementById('monoPlayersHud');
     hud.innerHTML = state.players.map((p, idx) => {
         const isTurn = idx === state.turnIndex && state.active;
+        
+        // Bakiye farkını hesapla
+        let diffHtml = '';
+        if (previousBalances[p.id] !== undefined && previousBalances[p.id] !== p.money) {
+            const diff = p.money - previousBalances[p.id];
+            const sign = diff > 0 ? '+' : '';
+            const cls = diff > 0 ? 'money-plus' : 'money-minus';
+            diffHtml = `<div class="money-diff-popup ${cls}">${sign}${diff}₺</div>`;
+        }
+        previousBalances[p.id] = p.money;
+
         return `
-            <div class="player-stat-card" style="border-left-color: ${p.color}; opacity: ${p.bankrupt ? '0.4' : '1'}; box-shadow: ${isTurn ? '0 0 12px ' + p.color : 'none'};">
+            <div class="player-stat-card ${isTurn ? 'active-turn-card' : ''}" 
+                 style="position: relative; border-left-color: ${p.color}; opacity: ${p.bankrupt ? '0.4' : '1'}; box-shadow: ${isTurn ? '0 0 16px ' + p.color : 'none'}; transition: all 0.3s ease;">
+                ${diffHtml}
                 <strong>${p.name}</strong> ${p.bankrupt ? '💀(İFLAS)' : ''} ${p.inJail ? '🚨(BLOK DERS)' : ''}<br>
-                💰 <strong>${p.money}₺</strong> | 📍 Kare: ${p.position}
+                💰 <strong style="color:#2ecc71;">${p.money}₺</strong> | 📍 Kare: ${p.position}
                 ${p.jailCardCount > 0 ? `<br><span style="color:#f1c40f;">🎟️ ${p.jailCardCount}x Konferans Kartı</span>` : ''}
             </div>
         `;
     }).join('');
 
+    // 2. Sıra Bilgisi ve Zar Animasyonu
     const cp = state.players[state.turnIndex];
     if (cp) {
         const isMyTurn = socket.id === cp.id;
         document.getElementById('monoTurnInfo').innerHTML = state.active 
-            ? `Sıra: <span style="color:${cp.color};">${cp.name}</span> ${isMyTurn ? '👉 (SENDE!)' : ''}`
-            : `<span style="color:#f1c40f;">🏆 OYUN SONA ERDİ!</span>`;
+            ? `Sıra: <span style="color:${cp.color}; text-shadow: 0 0 8px ${cp.color};">${cp.name}</span> ${isMyTurn ? '👉 (SENDE!)' : ''}`
+            : `<span style="color:#f1c40f; font-size:18px;">🏆 OYUN SONA ERDİ!</span>`;
         
-        document.getElementById('diceDisplay').innerText = `🎲 ${state.dice[0]} - ${state.dice[1]}`;
+        // Zar değiştiyse veya yeni atıldıysa çalkala
+        triggerDiceAnimation(state.dice[0], state.dice[1]);
+        lastDiceValues = [...state.dice];
 
         const canAct = isMyTurn && state.active && !cp.bankrupt && !state.waitingForDecision && !state.waitingForDoblo;
         document.getElementById('btnRollDice').style.display = canAct ? 'inline-block' : 'none';
@@ -64,14 +107,21 @@ socket.on('monopolyStateUpdated', (state) => {
         document.getElementById('btnUseCard').style.display = (canAct && cp.inJail && cp.jailCardCount > 0) ? 'inline-block' : 'none';
     }
 
-    document.getElementById('monoLogBox').innerHTML = state.log.map(l => `<div style="margin-bottom:3px;">• ${l}</div>`).join('');
+    // 3. Olay Günlüğü (En son gelen olayı parlatarak kaydır)
+    const logBox = document.getElementById('monoLogBox');
+    logBox.innerHTML = state.log.map((l, index) => `
+        <div class="${index === 0 ? 'log-entry-new' : ''}" style="margin-bottom:3px; color:${index === 0 ? '#fff' : '#aaa'};">
+            ${index === 0 ? '⚡ ' : '• '}${l}
+        </div>
+    `).join('');
+
     syncMonoBoard(state);
 });
 
 function syncMonoBoard(state) {
     const boardGrid = document.getElementById('boardGrid');
     
-    // 1. Tahta kareleri henüz oluşturulmadıysa oluştur
+    // Tahta karelerini oluştur
     if (boardGrid.querySelectorAll('.mono-tile').length === 0) {
         state.board.forEach(tile => {
             const div = document.createElement('div');
@@ -89,7 +139,7 @@ function syncMonoBoard(state) {
             div.innerHTML = `
                 ${colorBar}
                 <div style="font-weight:bold; margin: 1px 0; line-height:1.1;">${tile.name}</div>
-                <div id="tile-owner-badge-${tile.id}" style="font-size:7px; font-weight:bold; padding:1px 3px; border-radius:3px;"></div>
+                <div id="tile-owner-badge-${tile.id}" style="font-size:7px; font-weight:bold; padding:1px 3px; border-radius:3px; transition: all 0.3s ease;"></div>
                 <div style="color:#aaa; margin-bottom:10px;">${tile.price ? tile.price + '₺' : ''}</div>
                 <div class="tokens-holder" id="tokens-tile-${tile.id}"></div>
             `;
@@ -97,7 +147,7 @@ function syncMonoBoard(state) {
         });
     }
 
-    // 2. Satın alınan tapuların sahiplerini ve renklerini tahtada güncelle
+    // Tapu sahiplerinin renklerini güncelle
     state.board.forEach(tile => {
         const tileEl = document.getElementById(`tile-node-${tile.id}`);
         const badgeEl = document.getElementById(`tile-owner-badge-${tile.id}`);
@@ -117,7 +167,7 @@ function syncMonoBoard(state) {
         }
     });
 
-    // 3. Piyonları kare kare zıplatarak yürüt
+    // Piyonları yürüt
     state.players.forEach(p => {
         let token = document.getElementById(`token-${p.id}`);
         if (p.bankrupt) {
@@ -142,7 +192,7 @@ function syncMonoBoard(state) {
     });
 }
 
-// Piyonu ışınlamak yerine kare kare zıplatarak götüren fonksiyon
+// Piyon Kare Kare Yürür ve Hedefe Varınca O Kareyi Parlatır
 function animateTokenStepByStep(playerId, startPos, targetPos) {
     if (activeAnimations[playerId]) clearInterval(activeAnimations[playerId]);
     let curr = startPos;
@@ -151,8 +201,17 @@ function animateTokenStepByStep(playerId, startPos, targetPos) {
         if (curr === targetPos) {
             clearInterval(activeAnimations[playerId]);
             delete activeAnimations[playerId];
+
+            // Hedef kareye varıldığında spot ışığı efekti yak!
+            const targetTileEl = document.getElementById(`tile-node-${targetPos}`);
+            if (targetTileEl) {
+                targetTileEl.classList.remove('tile-landing-glow');
+                void targetTileEl.offsetWidth;
+                targetTileEl.classList.add('tile-landing-glow');
+            }
             return;
         }
+
         curr = (curr + 1) % 40;
         localPlayerPositions[playerId] = curr;
         const token = document.getElementById(`token-${playerId}`);
@@ -163,10 +222,10 @@ function animateTokenStepByStep(playerId, startPos, targetPos) {
             void token.offsetWidth;
             token.classList.add('token-hop');
         }
-    }, 110);
+    }, 125); // Her kare arası 125ms tatlı zıplama süresi
 }
 
-// Tahtadaki bir kareye tıklayınca pazarlık teklifi açma
+// Pazarlık ve diğer modallar
 function onTileClick(tileId) {
     if (!latestMonoState || !latestMonoState.active) return;
     const tile = latestMonoState.board.find(t => t.id === tileId);
@@ -241,7 +300,6 @@ socket.on('monopolyBuyoutPrompt', (data) => {
     document.getElementById('buyoutPromptMsg').innerText = `💥 ${data.ownerName}'in ${data.tile.name} tapusunu 1.5 katına (${data.buyoutPrice}₺) zorla satın alacak mısın?`;
 });
 
-// Varlıklarım / Tapularım ve Tekel (x2 Kira) Gösterimi
 function openAssetsModal() {
     if (!latestMonoState) return;
     const list = document.getElementById('assetsList');
