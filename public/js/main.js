@@ -39,8 +39,11 @@ socket.on('gameSelected', (game) => {
         document.getElementById('raceGameArea').style.display = 'none';
     } else if (game === 'tabu') {
         showView('view-tabu');
+        if (typeof resetTabuViews === 'function') resetTabuViews();
     } else if (game === 'imposter') {
         showView('view-imposter');
+        document.getElementById('impLobbyControls').style.display = 'block';
+        document.getElementById('impGameArea').style.display = 'none';
     } else {
         showView('view-lobby');
     }
@@ -48,6 +51,7 @@ socket.on('gameSelected', (game) => {
 
 function toggleGeneralReady() { socket.emit('toggleGeneralReady'); }
 
+// TÜM OYUNLARIN HAZIR BUTONLARINI VE ROZETLERİNİ GÜNCELLEYEN MERKEZ
 socket.on('updateLobbyStatuses', (data) => {
     const pList = data.players;
     const myP = pList.find(x => x.id === socket.id);
@@ -56,7 +60,7 @@ socket.on('updateLobbyStatuses', (data) => {
         const text = isReady ? 'Hazır Vazgeç ❌' : 'Hazır Ol ✓';
         const bg = isReady ? '#e74c3c' : '#2ecc71';
 
-        ['btnGuessReady', 'btnMonoReady', 'btnRaceReady'].forEach(id => {
+        ['btnGuessReady', 'btnMonoReady', 'btnRaceReady', 'btnTabuReady', 'btnImpReady'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) { btn.innerText = text; btn.style.background = bg; }
         });
@@ -75,6 +79,7 @@ socket.on('updateLobbyStatuses', (data) => {
     renderBadges('guessReadyList');
     renderBadges('monoReadyList');
     renderBadges('raceReadyList');
+    renderBadges('impReadyList'); // İmposter ekranındaki hazır kutusunu doldurur
 });
 
 socket.on('monoGlobalAlert', (msg) => {
