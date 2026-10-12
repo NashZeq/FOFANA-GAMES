@@ -1,3 +1,6 @@
+let latestMonoState = null;
+let selectedTileForTrade = null;
+
 function getTileGridStyle(id) {
     if (id >= 0 && id <= 10) return `grid-column: ${11 - id}; grid-row: 11;`;
     if (id > 10 && id <= 20) return `grid-column: 1; grid-row: ${11 - (id - 10)};`;
@@ -7,6 +10,7 @@ function getTileGridStyle(id) {
 }
 
 socket.on('monopolyStateUpdated', (state) => {
+    latestMonoState = state;
     document.getElementById('monoLobbyControls').style.display = 'none';
     document.getElementById('monoGameArea').style.display = 'flex';
 
@@ -14,7 +18,7 @@ socket.on('monopolyStateUpdated', (state) => {
     hud.innerHTML = state.players.map(p => `
         <div class="player-stat-card" style="border-left-color: ${p.color}; opacity: ${p.bankrupt ? '0.4' : '1'}">
             <strong>${p.name}</strong> ${p.bankrupt ? '(İFLAS)' : ''} ${p.inJail ? `🚨(BLOK DERS)` : ''}<br>
-            💰 ${p.money}₺ | 📍 Kare: ${p.position}
+            💰 ${p.money}₺ | 📍 Kare: ${p.position} ${p.jailCardCount > 0 ? `<br>🎟️ ${p.jailCardCount}x Kart` : ''}
         </div>
     `).join('');
 
@@ -23,9 +27,10 @@ socket.on('monopolyStateUpdated', (state) => {
     document.getElementById('monoTurnInfo').innerHTML = `Sıra: <span style="color:${cp.color};">${cp.name}</span> ${isMyTurn ? '(SENDE!)' : ''}`;
     document.getElementById('diceDisplay').innerText = `🎲 ${state.dice[0]} - ${state.dice[1]}`;
 
-    document.getElementById('btnRollDice').style.display = (isMyTurn && state.active && !cp.bankrupt && !state.waitingForDecision && !state.waitingForDoblo) ? 'inline-block' : 'none';
-    document.getElementById('btnPayBail').style.display = (isMyTurn && cp.inJail && cp.money >= 100) ? 'inline-block' : 'none';
-    document.getElementById('btnUseCard').style.display = (isMyTurn && cp.inJail && cp.jailCardCount > 0) ? 'inline-block' : 'none';
+    const canAct = isMyTurn && state.active && !cp.bankrupt && !state.waitingForDecision && !state.waitingForDoblo;
+    document.getElementById('btnRollDice').style.display = canAct ? 'inline-block' : 'none';
+    document.getElementById('btnPayBail').style.display = (canAct && cp.inJail && cp.money >= 100) ? 'inline-block' : 'none';
+    document.getElementById('btnUseCard').style.display = (canAct && cp.inJail && cp.jailCardCount > 0) ? 'inline-block' : 'none';
 
     document.getElementById('monoLogBox').innerHTML = state.log.map(l => `<div>• ${l}</div>`).join('');
     syncMonoBoard(state);
@@ -39,10 +44,13 @@ function syncMonoBoard(state) {
             div.className = 'mono-tile';
             div.id = `tile-node-${tile.id}`;
             div.style = getTileGridStyle(tile.id);
+            div.onclick = () => onTileClick(tile);
 
             let colorBar = '';
             if (tile.group) colorBar = `<div class="tile-color-bar c-${tile.group}"></div>`;
             else if (tile.type === 'doblo') colorBar = `<div class="tile-color-bar c-doblo"></div>`;
+            else if (tile.type === 'pitch') colorBar = `<div class="tile-color-bar c-pitch"></div>`;
+            else if (tile.type === 'utility') colorBar = `<div class="tile-color-bar c-utility"></div>`;
 
             div.innerHTML = `
                 ${colorBar}
@@ -67,6 +75,41 @@ function syncMonoBoard(state) {
         if (holder && token.parentElement !== holder) holder.appendChild(token);
     });
 }
+
+function onTileClick(tile) {
+    if (!tile.owner || tile.owner === socket.id) return;
+    selectedTileForTrade = tile;
+    document.getElementById('tradeTargetInfo').innerText = `Mülk: ${tile.name} (Sahibi: ${tile.ownerName})`;
+    document.getElementById('tradeOfferInput').value = Math.floor(tile.price * 1.2);
+    document.getElementById('tradeOfferModal').style.display = 'flex';
+}
+
+function sendTradeOffer() {
+    const amount = document.getElementById('tradeOfferInput').value;
+    if (!amount || !selectedTileForTrade) return;
+    socket.emit('initiateTradeOffer', { tileId: selectedTileForTrade.id, offerAmount: amount });
+    closeTradeModal();
+}
+
+function closeTradeModal() {
+    document.getElementById('tradeOfferModal').style.display = 'none';
+    selectedTileForTrade = null;
+}
+
+socket.on('incomingTradeOffer', (trade) => {
+    document.getElementById('incomingTradeMsg').innerHTML = `
+        <strong>${trade.buyerName}</strong>, sana ait <u>${trade.tileName}</u> tapusu için 
+        <strong style="color:#2ecc71;">${trade.offerAmount}₺</strong> teklif ediyor!
+    `;
+    document.getElementById('incomingTradeModal').style.display = 'flex';
+});
+
+function respondTrade(accept) {
+    socket.emit('respondTradeOffer', accept);
+    document.getElementById('incomingTradeModal').style.display = 'none';
+}
+
+socket.on('tradePendingNotice', (msg) => alert(msg));
 
 socket.on('monopolyDobloPrompt', (data) => {
     const box = document.getElementById('dobloPromptBox');
@@ -96,3 +139,28 @@ socket.on('monopolyBuyoutPrompt', (data) => {
     document.getElementById('buyoutPromptBox').style.display = 'block';
     document.getElementById('buyoutPromptMsg').innerText = `💥 ${data.ownerName}'in ${data.tile.name} tapusunu 1.5 katına (${data.buyoutPrice}₺) satın alacak mısın?`;
 });
+
+function openAssetsModal() {
+    if (!latestMonoState) return;
+    const list = document.getElementById('assetsList');
+    list.innerHTML = '';
+    const me = latestMonoState.players.find(p => p.id === socket.id);
+    document.getElementById('jailCardDisplay').innerText = me && me.jailCardCount > 0 ? `🎟️ Konferans Kartı: ${me.jailCardCount} Adet` : '';
+
+    const myAssets = latestMonoState.board.filter(t => t.owner === socket.id);
+    if (myAssets.length === 0) {
+        list.innerHTML = '<p style="color:#aaa;">Henüz tapun yok.</p>';
+    } else {
+        myAssets.forEach(a => {
+            const div = document.createElement('div');
+            div.style.cssText = 'background:#262a3b; padding:8px; border-radius:6px; margin:6px 0; display:flex; justify-content:space-between;';
+            div.innerHTML = `<span><strong>${a.name}</strong></span><span style="color:#2ecc71;">${a.price}₺</span>`;
+            list.appendChild(div);
+        });
+    }
+    document.getElementById('assetsModal').style.display = 'flex';
+}
+
+function closeAssetsModal() {
+    document.getElementById('assetsModal').style.display = 'none';
+}

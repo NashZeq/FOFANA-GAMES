@@ -1,3 +1,4 @@
+// 1. Lobiyi ve Ekranları Başlangıç Haline Getirir
 function resetGuessLobby() {
     document.getElementById('guessLobbyPanel').style.display = 'block';
     document.getElementById('guessArenaPanel').style.display = 'none';
@@ -5,12 +6,14 @@ function resetGuessLobby() {
     document.getElementById('guessGameOverPanel').style.display = 'none';
 }
 
+// 2. Mod ve Tur Sayısını Alıp Sunucuya Başlatma Emri Verir
 function startGuessGame() {
     const mode = document.getElementById('guessSubModeSelect').value;
     const rounds = document.getElementById('guessRoundsSelect').value;
     socket.emit('startGuessGame', { mode: mode, rounds: rounds });
 }
 
+// 3. Yeni Soru Geldiğinde Görseli, Süreyi ve Kutuları Hazırlar
 socket.on('guessRoundStarted', (data) => {
     document.getElementById('guessLobbyPanel').style.display = 'none';
     document.getElementById('guessRevealPanel').style.display = 'none';
@@ -26,18 +29,21 @@ socket.on('guessRoundStarted', (data) => {
 
     document.getElementById('guessInputBox').style.display = 'block';
     document.getElementById('guessSubmittedNotice').style.display = 'none';
+    
     const inp = document.getElementById('userGuessInput');
     inp.value = '';
     inp.disabled = false;
     inp.focus();
 });
 
+// 4. Kırmızı Zaman Çubuğunu Her Saniye Eritir
 socket.on('guessTimerTick', (timeLeft) => {
     document.getElementById('guessTimerText').innerText = `${timeLeft}s`;
     const pct = (timeLeft / 15) * 100;
     document.getElementById('guessTimerFill').style.width = `${pct}%`;
 });
 
+// 5. Oyuncunun Tahminini Sunucuya Gönderir
 function submitGuess() {
     const inp = document.getElementById('userGuessInput');
     const val = inp.value.trim();
@@ -48,14 +54,17 @@ function submitGuess() {
     document.getElementById('guessSubmittedNotice').style.display = 'block';
 }
 
+// Tahmin kilitlendiğinde giriş kutusunu gizler
 socket.on('guessLockedNotice', () => {
     document.getElementById('guessInputBox').style.display = 'none';
     document.getElementById('guessSubmittedNotice').style.display = 'block';
 });
 
+// 6. Tur Sonu: Gerçek Değeri ve Puan Tablosunu Ekrana Basar
 socket.on('guessRoundEnded', (data) => {
     document.getElementById('guessArenaPanel').style.display = 'none';
     document.getElementById('guessRevealPanel').style.display = 'block';
+
     document.getElementById('guessActualValue').innerText = `${data.actual.toLocaleString('tr-TR')} ${data.unit}`;
 
     const listEl = document.getElementById('guessRoundScoresList');
@@ -74,6 +83,7 @@ socket.on('guessRoundEnded', (data) => {
     renderNextRoundBadges(data.readyStatus);
 });
 
+// 7. Sıradaki Soru İçin Hazır Olma İşlemleri
 function toggleNextRoundReady() {
     socket.emit('guessNextRoundReadyToggle');
     const btn = document.getElementById('btnNextRoundReady');
@@ -96,6 +106,7 @@ function renderNextRoundBadges(readyList) {
     `).join('');
 }
 
+// 8. Final Podyumu: Kazananı İlan Eder
 socket.on('guessGameOver', (data) => {
     document.getElementById('guessRevealPanel').style.display = 'none';
     document.getElementById('guessGameOverPanel').style.display = 'block';

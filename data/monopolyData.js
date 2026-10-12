@@ -52,14 +52,16 @@ const sansKartlari = [
     { text: "Susadın ve su aldın 15tl öde", action: "pay_15" },
     { text: "Geçenki çayın parasını arkadaşın attı 50 tl al", action: "gain_50" },
     { text: "Emirin ayağını gördün göz sağlığı sigortası için 150 tl öde", action: "pay_150" },
-    { text: "Puding tenceresini yaktın arkadaşına tencere masrafı için 150 tl öde", action: "pay_150" },
     { text: "sercü soğan yiyip yüzüne üfledi acillik oldun serum masrafı: 100tl öde", action: "pay_100" },
     { text: "osmandan özürlü oyuncağı aldın: 50tl öde", action: "pay_50" },
     { text: "KYK fazladan yattı OHA LAN! 100tl al", action: "gain_100" },
+    { text: "Puding tenceresini yaktın arkadaşına tencere masrafı için 150 tl öde", action: "pay_150" },
     { text: "Barış ceketi nerden aldın diyip sallarken yırttı terzi parası 100 tl öde", action: "pay_100" },
     { text: "oziye bir şey yapalım dedin ve göz kaşımaya başladı sinirden dişini kırdın muayene parası 100 tl öde", action: "pay_100" },
     { text: "Yeni aldığın şeye herkes oooo parayı buldun dedi nazar değdi ve yolda 175 lira düşürdün", action: "pay_175" },
-    { text: "Thanos seni çağırdı: Doğrudan Thanos'un Evi karesine git.", action: "go_to_thanos" }
+    { text: "Thanos seni çağırdı: Doğrudan Thanos'un Evi karesine git.", action: "go_to_thanos" },
+    { text: "Fotokopi ve kırtasiye masrafı: 50₺ öde.", action: "pay_50" },
+    { text: "KYK bursun yattı: 200₺ al.", action: "gain_200" }
 ];
 
 const kamuFonuKartlari = [
@@ -68,10 +70,10 @@ const kamuFonuKartlari = [
     { text: "burs yattı moruq 100 tl al", action: "gain_100" },
     { text: "kupon yaptın geldiii bebeğimmm 10tl al", action: "gain_10" },
     { text: "kartın asgarisini ödedin faiz olarak 20 tl öde", action: "pay_20" },
-    { text: "Bizde yok ki abi demekten dil belası oldu dostum 100tl öde", action: "pay_100" },
-    { text: "Doğruca blok derse! Seçmeseydin o dersi hadi trafo mrafo aynen hadi abicim", action: "go_to_jail" },
-    { text: "Blok dersten kaçmak için konferansa katılma kartı kazandın", action: "get_jail_card" },
-    { text: "Yemekhane kartına çift bakiye yüklendi: Bankadan 150₺ al.", action: "gain_150" },
+    { text: "Bizde yok ki abi demekten dil belası oldu dostum 100tl öde dil belası kardeşim", action: "pay_100" },
+    { text: "Doğruca blok derse kardeşim seçmeseydin o dersi hadi trafo mrafo aynen hadi abicim", action: "go_to_jail" },
+    { text: "Blok dersten kaçmak için konferansa katılma kartı daralırsan kullan dostum", action: "get_jail_card" },
+    { text: "Yemekhane kartına yanlışlıkla çift bakiye yüklendi: Bankadan 150₺ al.", action: "gain_150" },
     { text: "Kalkınma'da cüzdan düşürdün: 50₺ kaybettin.", action: "pay_50" }
 ];
 
