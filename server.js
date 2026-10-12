@@ -19,311 +19,134 @@ function shuffleArray(array) {
     return arr;
 }
 
-// İmposter Kelimeleri
-const rawImposterKelimeler = [
-    { kelime: "AYNA", ipucu: "TERS" }, { kelime: "GÜNEŞ", ipucu: "GÖLGE" },
-    { kelime: "KÜTÜPHANE", ipucu: "KOKU" }, { kelime: "DOKTOR", ipucu: "İMZA" },
-    { kelime: "PENGUEN", ipucu: "SMOKİN" }, { kelime: "SİNEMA", ipucu: "YATAKLI" },
-    { kelime: "DEPREM", ipucu: "ÇATLAK" }, { kelime: "FOTOĞRAF", ipucu: "KARE" },
-    { kelime: "KALE", ipucu: "TAŞ" }, { kelime: "OKYANUS", ipucu: "ARAŞTIRILMAYAN" },
-    { kelime: "BALON", ipucu: "İĞNE" }, { kelime: "HAPİSHANE", ipucu: "MÜHLET" },
-    { kelime: "RÜZGAR", ipucu: "ISLIK" }, { kelime: "MUM", ipucu: "ZAMAN" },
-    { kelime: "PİL", ipucu: "KUTUP" }, { kelime: "PIRLANTA", ipucu: "IŞILTI" },
-    { kelime: "LABİRENT", ipucu: "İP" }, { kelime: "MÜZE", ipucu: "TOZ" },
-    { kelime: "YILDIRIM", ipucu: "GECİKME" }, { kelime: "ORMAN", ipucu: "BÖCEK" },
-    { kelime: "HEYKEL", ipucu: "POZ" }, { kelime: "ÇÖL", ipucu: "TANE" },
-    { kelime: "TİYATRO", ipucu: "MASKE" }, { kelime: "RADYO", ipucu: "PARAZİT" },
-    { kelime: "UÇURTMA", ipucu: "KUYRUK" }, { kelime: "KÖPRÜ", ipucu: "GEÇİŞ" },
-    { kelime: "VOLKAN", ipucu: "KÜL" }, { kelime: "ŞEMSİYE", ipucu: "ISLAK" },
-    { kelime: "BUZUL", ipucu: "ÇATLAMA" }, { kelime: "HARİTA", ipucu: "ÖLÇEK" },
-    { kelime: "GEMİ", ipucu: "DÜMEN" }, { kelime: "TELESKOP", ipucu: "GECE" },
-    { kelime: "ZEHİR", ipucu: "DAMLA" }, { kelime: "UYDU", ipucu: "SİNYAL" },
-    { kelime: "KUMARHANE", ipucu: "KASA" }, { kelime: "ASANSÖR", ipucu: "KABİN" },
-    { kelime: "HAZİNE", ipucu: "KİLİT" }, { kelime: "DENİZALTI", ipucu: "PERİSKOP" },
-    { kelime: "SİRK", ipucu: "ÇADIR" }, { kelime: "PİRAMİT", ipucu: "KÖŞE" },
-    { kelime: "YANARDAĞ", ipucu: "DUMAN" }, { kelime: "CASUS", ipucu: "KİMLİK" },
-    { kelime: "METRO", ipucu: "TÜNEL" }, { kelime: "CENAZE", ipucu: "SİYAH" },
-    { kelime: "AKVARYUM", ipucu: "CAM" }, { kelime: "POSTA", ipucu: "PUL" },
-    { kelime: "BANKA", ipucu: "SIRA" }, { kelime: "SAVAŞ", ipucu: "SİREN" },
-    { kelime: "ORUÇ", ipucu: "TOP" }
-];
+// ==========================================
+// GENİŞLETİLMİŞ İŞKEMBEDEN SALLAMA SORU HAVUZU
+// ==========================================
+const iskembedenData = {
+    // 1. MOD: Ünlü Yaşları (Türkiye & Dünya)
+    celebrity: [
+        { title: "Tarkan", hint: "Megastar", actual: 54, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" },
+        { title: "Cristiano Ronaldo", hint: "Portekizli Futbol Efsanesi", actual: 41, img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=600&q=80" },
+        { title: "Acun Ilıcalı", hint: "Televizyoncu ve Kulüp Sahibi", actual: 57, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Hadise", hint: "Pop Şarkıcısı", actual: 41, img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80" },
+        { title: "Elon Musk", hint: "Tesla & SpaceX Kurucusu", actual: 55, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Cem Yılmaz", hint: "Komedyen ve Sinemacı", actual: 53, img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Taylor Swift", hint: "Dünyaca Ünlü Pop İkonu", actual: 36, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" },
+        { title: "Lionel Messi", hint: "Arjantinli Dünya Şampiyonu", actual: 39, img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80" },
+        { title: "Morgan Freeman", hint: "Efsanevi Aktör", actual: 89, img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Kıvanç Tatlıtuğ", hint: "Oyuncu", actual: 43, img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80" },
+        { title: "Kenan İmirzalıoğlu", hint: "Aktör ve Sunucu", actual: 52, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Şener Şen", hint: "Yeşilçam Efsanesi", actual: 84, img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Haluk Bilginer", hint: "Emmy Ödüllü Aktör", actual: 72, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Sezen Aksu", hint: "Minik Serçe", actual: 72, img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80" },
+        { title: "Ajda Pekkan", hint: "Süperstar", actual: 80, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" },
+        { title: "Bülent Ersoy", hint: "Diva", actual: 74, img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80" },
+        { title: "Arda Güler", hint: "Real Madrid Yıldızı", actual: 21, img: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=600&q=80" },
+        { title: "Kylian Mbappé", hint: "Fransız Süperstar", actual: 27, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Erling Haaland", hint: "Norveçli Gol Makinesi", actual: 26, img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Leonardo DiCaprio", hint: "Oscar Ödüllü Aktör", actual: 51, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Brad Pitt", hint: "Hollywood Yıldızı", actual: 62, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Tom Cruise", hint: "Görevimiz Tehlike Yıldızı", actual: 64, img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Keanu Reeves", hint: "John Wick / Matrix", actual: 62, img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Beyoncé", hint: "Dünya Pop Yıldızı", actual: 45, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" },
+        { title: "Shakira", hint: "Latin Müziğin Kraliçesi", actual: 49, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" },
+        { title: "Eminem", hint: "Rap Tanrısı", actual: 54, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Dwayne Johnson (The Rock)", hint: "Aktör & Güreşçi", actual: 54, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Serenay Sarıkaya", hint: "Dizi ve Sinema Oyuncusu", actual: 34, img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80" },
+        { title: "Hande Erçel", hint: "Oyuncu", actual: 32, img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80" },
+        { title: "Çağatay Ulusoy", hint: "Oyuncu", actual: 36, img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80" },
+        { title: "Murat Boz", hint: "Pop Şarkıcısı & Jüri", actual: 46, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
+        { title: "İbrahim Tatlıses", hint: "İmparator", actual: 74, img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Fatih Terim", hint: "İmparator / Teknik Direktör", actual: 73, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Zendaya", hint: "Genç Kuşak Hollywood Yıldızı", actual: 30, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" }
+    ],
 
-// Tabu Kartları
-const rawTabuKartlari = [
-    { kelime: "FUTBOL", yasaklar: ["TOP", "KALE", "MAÇ", "GOL", "HAKEM"] },
-    { kelime: "TELEFON", yasaklar: ["ARAMAK", "EKRAN", "ŞARJ", "AKILLI", "MESAJ"] },
-    { kelime: "DOKTOR", yasaklar: ["HASTANE", "İLAÇ", "REÇETE", "ÖNLÜK", "MUAYENE"] },
-    { kelime: "GİTAR", yasaklar: ["MÜZİK", "TEL", "AKOR", "PENA", "ÇALMAK"] },
-    { kelime: "KAHVE", yasaklar: ["FİNCAN", "ÇEKİRDEK", "TELVE", "KAFEİN", "SABAH"] },
-    { kelime: "BİLGİSAYAR", yasaklar: ["KLAVYE", "FARE", "MONİTÖR", "KOD", "İNTERNET"] },
-    { kelime: "SİNEMA", yasaklar: ["FİLM", "BİLET", "MISIR", "SALON", "PERDE"] },
-    { kelime: "DENİZ", yasaklar: ["SU", "TUZ", "BALIK", "YÜZMEK", "DALGA"] },
-    { kelime: "PİZZA", yasaklar: ["HAMUR", "PEYNİR", "DİLİM", "İTALYAN", "FIRIN"] },
-    { kelime: "ÖĞRETMEN", yasaklar: ["OKUL", "DERS", "SINAV", "NOT", "ÖĞRENCİ"] },
-    { kelime: "ÇAY", yasaklar: ["RİZE", "DEMLİK", "ŞEKER", "BARDAK", "KAHVALTI"] },
-    { kelime: "ARABA", yasaklar: ["TEKERLEK", "MOTOR", "DİREKSİYON", "YOL", "VİTES"] },
-    { kelime: "INSTAGRAM", yasaklar: ["FOTOĞRAF", "TAKİPÇİ", "BEĞENİ", "HİKAYE", "REELS"] },
-    { kelime: "BERBER", yasaklar: ["SAÇ", "MAKAS", "TIRAŞ", "AYNA", "KOLTUK"] },
-    { kelime: "GÖZLÜK", yasaklar: ["GÖZ", "CAM", "ÇERÇEVE", "NUMARA", "LENS"] },
-    { kelime: "DÜĞÜN", yasaklar: ["GELİN", "DAMAT", "HALAY", "ALTIN", "PASTA"] },
-    { kelime: "UÇAK", yasaklar: ["KANAT", "HAVAALANI", "PİLOT", "UÇMAK", "BİLET"] },
-    { kelime: "ASANSÖR", yasaklar: ["KAT", "BİNA", "İNMEK", "ÇIKMAK", "BUTON"] },
-    { kelime: "DOLMUŞ", yasaklar: ["ŞOFÖR", "ÜCRET", "PARAYI UZATMAK", "İNECEK VAR", "MİNİBÜS"] },
-    { kelime: "YURT", yasaklar: ["ODA", "RANZA", "ÖĞRENCİ", "KYK", "YEMEKHANE"] },
-    { kelime: "VİZE", yasaklar: ["FİNAL", "SINAV", "ÜNİVERSİTE", "NOT", "BÜT"] },
-    { kelime: "KUMANDA", yasaklar: ["TELEVİZYON", "TUŞ", "PİL", "KANAL", "KOLTUK"] },
-    { kelime: "AYNA", yasaklar: ["YANSIMA", "BAKMAK", "CAM", "KENDİN", "SÜSLENMEK"] },
-    { kelime: "BUZDOLABI", yasaklar: ["SOĞUK", "YEMEK", "MUTFAK", "KAPAK", "DONDURUCU"] },
-    { kelime: "DİŞ FIRÇASI", yasaklar: ["MACUN", "AĞIZ", "SABAH", "BANYO", "TEMİZLEMEK"] },
-    { kelime: "KÜTÜPHANE", yasaklar: ["KİTAP", "SESSİZ", "DERS", "MASA", "OKUMAK"] },
-    { kelime: "KEDİ", yasaklar: ["MİYAV", "MAMA", "PATİ", "KUM", "TÜY"] },
-    { kelime: "KÖPEK", yasaklar: ["HAV", "TASMA", "SADIK", "KUYRUK", "CİNS"] },
-    { kelime: "ZAMAN", yasaklar: ["SAAT", "DAKİKA", "GEÇMEK", "AKREP", "YELKOVAN"] },
-    { kelime: "PARFÜM", yasaklar: ["KOKU", "SIKMAK", "ŞİŞE", "GÜZEL", "DEODORANT"] },
-    { kelime: "CÜZDAN", yasaklar: ["PARA", "KART", "KİMLİK", "CEP", "DERİ"] },
-    { kelime: "PASAPORT", yasaklar: ["YURT DIŞI", "VİZE", "HAVAALANI", "ÜLKE", "SEYAHAT"] },
-    { kelime: "MANGAL", yasaklar: ["ET", "KÖMÜR", "ATEŞ", "PİKNİK", "YELLEMEK"] },
-    { kelime: "KUMPİR", yasaklar: ["PATATES", "ORTAKÖY", "KAŞAR", "TEREYAĞI", "MEZE"] },
-    { kelime: "TAVLA", yasaklar: ["ZAR", "PUL", "DÜŞEŞ", "KAPI", "MARS"] },
-    { kelime: "OKEY", yasaklar: ["TAŞ", "ISTAKA", "GÖSTERGE", "PER", "ÇİFTE"] },
-    { kelime: "PİLAV", yasaklar: ["PİRİNÇ", "TAVUK", "TEREYAĞI", "LAPA", "TENCERE"] },
-    { kelime: "MENEMEN", yasaklar: ["YUMURTA", "DOMATES", "BİBER", "SOĞAN", "TAVA"] },
-    { kelime: "LAHMACUN", yasaklar: ["KIYMA", "LİMON", "MAYDANOZ", "ÇITIR", "AYRAN"] },
-    { kelime: "BAKLAVA", yasaklar: ["ŞERBET", "FISTIK", "ANTEP", "BAYRAM", "TATLI"] },
-    { kelime: "KARPUZ", yasaklar: ["KAVUN", "ÇEKİRDEK", "DİLİM", "YAZ", "PEYNİR"] },
-    { kelime: "HAMAM", yasaklar: ["KESE", "KÖPÜK", "GÖBEK TAŞI", "SICAK", "TELLAK"] },
-    { kelime: "ŞEMSİYE", yasaklar: ["YAĞMUR", "ISLANMAK", "AÇMAK", "RÜZGAR", "HAVA"] },
-    { kelime: "YASTIK", yasaklar: ["UYKU", "YATAK", "KILIFA", "BAŞ", "YUMUŞAK"] },
-    { kelime: "ÇORAP", yasaklar: ["AYAK", "GİYMEK", "KOKU", "AYAKKABI", "ÇİFT"] },
-    { kelime: "KÜPE", yasaklar: ["KULAK", "DELİK", "TAKI", "GÜMÜŞ", "ALTIN"] },
-    { kelime: "DÖVME", yasaklar: ["İĞNE", "MÜREKKEP", "DERİ", "KOL", "DESEN"] },
-    { kelime: "SPOR SALONU", yasaklar: ["AĞIRLIK", "KAS", "FITNESS", "HALTER", "KARDİYO"] },
-    { kelime: "DİYET", yasaklar: ["KİLO", "YEMEK", "ZAYIFLAMAK", "PAZARTESİ", "SALATA"] },
-    { kelime: "ALARM", yasaklar: ["SABAH", "UYANDIRMA", "TELEFON", "ERTELEMEK", "ÇALMAK"] },
-    { kelime: "TRAFİK", yasaklar: ["ARABA", "IŞIK", "SIKIŞIK", "KORNA", "YOL"] },
-    { kelime: "BORÇ", yasaklar: ["PARA", "BANKA", "ÖDEMEK", "KREDİ", "İSTEMEK"] },
-    { kelime: "GÜNEŞ GÖZLÜĞÜ", yasaklar: ["YAZ", "GÖZ", "IŞIK", "DENİZ", "CAM"] },
-    { kelime: "KORSAN", yasaklar: ["GEMİ", "DENİZ", "KAPTI-KAÇTI", "GÖZ BANDI", "HAZİNE"] },
-    { kelime: "BOMBA", yasaklar: ["PATLAMAK", "FÜNYE", "İMHA", "İMHA UZMANI", "BARUT"] },
-    { kelime: "GİZLİ AJAN", yasaklar: ["CASUS", "GÖREV", "TAKIM ELBİSE", "SİLAH", "007"] },
-    { kelime: "DEDEKTİF", yasaklar: ["BÜYÜTEÇ", "İPUCU", "CİNAYET", "SHERLOCK", "İZ"] },
-    { kelime: "PİYANGO", yasaklar: ["BİLET", "YILBAŞI", "İKRAMİYE", "ÇEKİLİŞ", "ZENGİN"] },
-    { kelime: "DEDİKODU", yasaklar: ["KONUŞMAK", "ARKASINDAN", "SIR", "KULAK", "GIZLI"] },
-    { kelime: "KABUS", yasaklar: ["RÜYA", "KORKU", "UYKU", "UYANMAK", "GECE"] }
-];
+    // 2. MOD: Pazar, Market, Ev Eşyası & Takı Fiyatları (TL)
+    market: [
+        { title: "Çeyrek Altın (Yeni Tarihli)", hint: "Kuyumcu Satış Fiyatı (TL)", actual: 5400, img: "https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Gram Altın (24 Ayar)", hint: "Kapalıçarşı Güncel Gram Fiyatı (TL)", actual: 3300, img: "https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Cumhuriyet / Tam Altın", hint: "Kuyumcu Satış Fiyatı (TL)", actual: 21500, img: "https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Nutella Kakaolu Fındık Kreması 750g", hint: "Süpermarket Raf Fiyatı (TL)", actual: 195, img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80" },
+        { title: "Dyson V15 Şarjlı Dikey Süpürge", hint: "Orijinal Satış Fiyatı (TL)", actual: 29999, img: "https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=600&q=80" },
+        { title: "PlayStation 5 Slim 1TB", hint: "Konsol Satış Fiyatı (TL)", actual: 26500, img: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80" },
+        { title: "1 Koli Yumurta (30'lu L Boy)", hint: "Market Raf Fiyatı (TL)", actual: 165, img: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80" },
+        { title: "AirPods Pro (2. Nesil USB-C)", hint: "Apple Mağaza Fiyatı (TL)", actual: 10499, img: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=600&q=80" },
+        { title: "Stanley Klasik Vakumlu Termos 1.4L", hint: "Outdoor Ekipman Fiyatı (TL)", actual: 2450, img: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=600&q=80" },
+        { title: "Pırlanta Tektaş Yüzük (0.30 Karat)", hint: "Kuyumcu Liste Fiyatı (TL)", actual: 34500, img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=600&q=80" },
+        { title: "iPhone 16 Pro 128GB", hint: "Resmi Türkiye Fiyatı (TL)", actual: 82999, img: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&q=80" },
+        { title: "Samsung Galaxy S24 Ultra 256GB", hint: "Amiral Gemisi Telefon (TL)", actual: 68500, img: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80" },
+        { title: "Çaykur Rize Turist Çayı 1 kg", hint: "Süpermarket Fiyatı (TL)", actual: 190, img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80" },
+        { title: "Dana Kıyma 1 kg (Kasap)", hint: "Güncel Kasap Kilogram Fiyatı (TL)", actual: 480, img: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&w=600&q=80" },
+        { title: "Taze Kaşar Peyniri 1 kg", hint: "Market Blok Kaşar Fiyatı (TL)", actual: 320, img: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Zeytinyağı 5L Teneke (Natürel Sızma)", hint: "Ege Sızma Zeytinyağı Tenekesi (TL)", actual: 1650, img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=600&q=80" },
+        { title: "Philips Airfryer XXL Fritöz", hint: "Sıcak Hava Fritözü (TL)", actual: 6500, img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80" },
+        { title: "De'Longhi Tam Otomatik Kahve Makinesi", hint: "Çekirdek Öğütücülü Espresso (TL)", actual: 17500, img: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&w=600&q=80" },
+        { title: "LG 65 inç 4K OLED Akıllı TV", hint: "OLED Panel Televizyon (TL)", actual: 65000, img: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=600&q=80" },
+        { title: "Sony WH-1000XM5 Bluetooth Kulaklık", hint: "Gürültü Engelleyici Kulaklık (TL)", actual: 14500, img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Rolex Submariner Date Saat", hint: "Lüks Çelik Saat 2. El/Piyasa (TL)", actual: 520000, img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80" },
+        { title: "Casio G-Shock Klasik Saat", hint: "Dayanıklı Spor Saat (TL)", actual: 3800, img: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Ray-Ban Classic Wayfarer Gözlük", hint: "Orijinal Polarize Güneş Gözlüğü (TL)", actual: 5200, img: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80" },
+        { title: "Nike Air Force 1 '07 Spor Ayakkabı", hint: "Orijinal Sneaker Fiyatı (TL)", actual: 4400, img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80" },
+        { title: "Tuvalet Kağıdı 32'li Rulo (3 Katlı)", hint: "Market Paket Fiyatı (TL)", actual: 275, img: "https://images.unsplash.com/photo-1584556812952-905ffd0c611a?auto=format&fit=crop&w=600&q=80" },
+        { title: "Bulaşık Makinesi Tableti (80'li Kutu)", hint: "Market Temizlik Ürünü (TL)", actual: 460, img: "https://images.unsplash.com/photo-1585670270638-74dd01404617?auto=format&fit=crop&w=600&q=80" },
+        { title: "1 Kilo Fıstıklı Antep Baklavası", hint: "Kaliteli Pastane Kilo Fiyatı (TL)", actual: 950, img: "https://images.unsplash.com/photo-1598214886806-c87b84b7078b?auto=format&fit=crop&w=600&q=80" },
+        { title: "Starbucks Grande White Chocolate Mocha", hint: "Kahve Zinciri Fiyatı (TL)", actual: 135, img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80" },
+        { title: "MacBook Air 13 inç M3 256GB", hint: "Apple Laptop Satış Fiyatı (TL)", actual: 48999, img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80" },
+        { title: "Bosch Çamaşır Makinesi 9 kg", hint: "1200 Devir A Enerji (TL)", actual: 24500, img: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=600&q=80" },
+        { title: "Hakiki Trabzon Yayla Tereyağı 1 kg", hint: "Köy Ürünü Kilogram Fiyatı (TL)", actual: 390, img: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=600&q=80" }
+    ],
 
-// Şans ve Kamu Fonu
-const sansKartlari = [
-    { text: "Gülüm başlangıç noktasına git hele 200 tl al yolluk yaparsın", action: "go_to_go" },
-    { text: "Telefonun çalıyor çantayı hazırla en yakın halısahaya koş servis geliyor.", action: "nearest_pitch" },
-    { text: "Paran vardır senin kanka en pahalı mülke git bakiyim sen.", action: "go_to_thanos" },
-    { text: "250 gr zurna yedin az yürü ve 3 kare ileri git.", action: "forward_3" },
-    { text: "Kodesi blok ders olarak değiştirelim ve blok derse git not al bize lazım not botu seni.", action: "go_to_jail" },
-    { text: "Blok dersten çıkış için konferansa katılma kartı kazandın daralırsan blok dersten hemen kaç dostum :)", action: "get_jail_card" },
-    { text: "Fofana Teame çay ısmarladın her oyuncu için 50tl öde", action: "pay_each_50" },
-    { text: "Susadın ve su aldın 15tl öde", action: "pay_15" },
-    { text: "Geçenki çayın parasını arkadaşın attı 50 tl al", action: "gain_50" },
-    { text: "Emirin ayağını gördün göz sağlığı sigortası için 150 tl öde", action: "pay_150" },
-    { text: "sercü soğan yiyip yüzüne üfledi acillik oldun serum masrafı: 100tl öde", action: "pay_100" },
-    { text: "osmandan özürlü oyuncağı aldın: 50tl öde", action: "pay_50" },
-    { text: "KYK fazladan yattı OHA LAN! 100tl al", action: "gain_100" },
-    { text: "Barış ceketi nerden aldın diyip sallarken yırttı terzi parası 100 tl öde", action: "pay_100" },
-    { text: "oziye bir şey yapalım dedin ve göz kaşımaya başladı sinirden dişini kırdın muayene parası 100 tl öde", action: "pay_100" },
-    { text: "Yeni aldığın şeye herkes oooo parayı buldun dedi nazar değdi ve yolda 175 lira düşürdün", action: "pay_175" },
-    { text: "Thanos seni çağırdı: Doğrudan Thanos'un Evi karesine git.", action: "go_to_thanos" },
-    { text: "Fotokopi ve kırtasiye masrafı: 50₺ öde.", action: "pay_50" },
-    { text: "KYK bursun yattı: 200₺ al.", action: "gain_200" }
-];
-
-const kamuFonuKartlari = [
-    { text: "Halısahaya para atarken yanlış hesaplandı 150tl fazla ödedin", action: "pay_150" },
-    { text: "Bugün doğum günün her oyuncudan 10 tl al", action: "collect_each_10" },
-    { text: "burs yattı moruq 100 tl al", action: "gain_100" },
-    { text: "kupon yaptın geldiii bebeğimmm 10tl al", action: "gain_10" },
-    { text: "kartın asgarisini ödedin faiz olarak 20 tl öde", action: "pay_20" },
-    { text: "Bizde yok ki abi demekten dil belası oldu dostum 100tl öde dil belası kardeşim", action: "pay_100" },
-    { text: "Doğruca blok derse kardeşim seçmeseydin o dersi hadi trafo mrafo aynen hadi abicim", action: "go_to_jail" },
-    { text: "Blok dersten kaçmak için konferansa katılma kartı daralırsan kullan dostum", action: "get_jail_card" },
-    { text: "Yemekhane kartına yanlışlıkla çift bakiye yüklendi: Bankadan 150₺ al.", action: "gain_150" },
-    { text: "Kalkınma'da cüzdan düşürdün: 50₺ kaybettin.", action: "pay_50" }
-];
-
-const initialMonopolyBoard = [
-    { id: 0, name: "BAŞLANGIÇ", type: "go" },
-    { id: 1, name: "İBF Kantin", type: "property", group: "brown", price: 60, baseRent: 2 },
-    { id: 2, name: "Kamu Fonu", type: "chest" },
-    { id: 3, name: "Mavi Playstation", type: "property", group: "brown", price: 60, baseRent: 4 },
-    { id: 4, name: "Gelir Vergisi", type: "tax", amount: 200 },
-    { id: 5, name: "Uzunlar Halısaha", type: "pitch", price: 200 },
-    { id: 6, name: "Balance", type: "property", group: "light_blue", price: 100, baseRent: 6 },
-    { id: 7, name: "Şans", type: "chance" },
-    { id: 8, name: "Oba Market", type: "property", group: "light_blue", price: 100, baseRent: 6 },
-    { id: 9, name: "Lokal", type: "property", group: "light_blue", price: 120, baseRent: 8 },
-    { id: 10, name: "BLOK DERS / ZİYARET", type: "jail" },
-    { id: 11, name: "Makine Bölümü", type: "property", group: "pink", price: 140, baseRent: 10 },
-    { id: 12, name: "Çoruh Elektrik", type: "utility", price: 150 },
-    { id: 13, name: "Elektronik Bölümü", type: "property", group: "pink", price: 140, baseRent: 10 },
-    { id: 14, name: "Köşem", type: "property", group: "pink", price: 160, baseRent: 12 },
-    { id: 15, name: "Saha 3", type: "pitch", price: 200 },
-    { id: 16, name: "Doksanoğlu", type: "property", group: "orange", price: 180, baseRent: 14 },
-    { id: 17, name: "Kamu Fonu", type: "chest" },
-    { id: 18, name: "Makine Kantini", type: "property", group: "orange", price: 180, baseRent: 14 },
-    { id: 19, name: "Şenlik", type: "property", group: "orange", price: 200, baseRent: 16 },
-    { id: 20, name: "Doblo Zamanı Dostum", type: "doblo" },
-    { id: 21, name: "Ganita", type: "property", group: "red", price: 220, baseRent: 18 },
-    { id: 22, name: "Şans", type: "chance" },
-    { id: 23, name: "Kalkınma", type: "property", group: "red", price: 220, baseRent: 18 },
-    { id: 24, name: "Konaklar", type: "property", group: "red", price: 240, baseRent: 20 },
-    { id: 25, name: "Bayramoğlu Halısaha", type: "pitch", price: 200 },
-    { id: 26, name: "KD Döner", type: "property", group: "yellow", price: 260, baseRent: 22 },
-    { id: 27, name: "Meydan", type: "property", group: "yellow", price: 260, baseRent: 22 },
-    { id: 28, name: "Kütüphane", type: "utility", price: 150 },
-    { id: 29, name: "Koru", type: "property", group: "yellow", price: 280, baseRent: 24 },
-    { id: 30, name: "BLOK DERSE GİT!", type: "go_to_jail" },
-    { id: 31, name: "Cafe 5", type: "property", group: "green", price: 300, baseRent: 26 },
-    { id: 32, name: "Rize", type: "property", group: "green", price: 300, baseRent: 26 },
-    { id: 33, name: "Kamu Fonu", type: "chest" },
-    { id: 34, name: "Çaykara", type: "property", group: "green", price: 320, baseRent: 28 },
-    { id: 35, name: "10 Numara Halısaha", type: "pitch", price: 200 },
-    { id: 36, name: "Şans", type: "chance" },
-    { id: 37, name: "Bektaş Yaylası", type: "property", group: "dark_blue", price: 350, baseRent: 35 },
-    { id: 38, name: "Lüks Vergisi", type: "tax", amount: 100 },
-    { id: 39, name: "Thanos'un Evi", type: "property", group: "dark_blue", price: 400, baseRent: 50 }
-];
+    // 3. MOD: Türkiye 2. El Araba Piyasası (Ortalama Piyasa Değeri TL)
+    car: [
+        { title: "2016 Fiat Egea 1.3 Multijet Easy (160.000 KM)", hint: "Temiz / Değişensiz 2. El Değeri (TL)", actual: 560000, img: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80" },
+        { title: "2017 VW Passat 1.6 TDI Comfortline (140.000 KM)", hint: "Otomatik / Hatasız Piyasa Değeri (TL)", actual: 1350000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2013 Renault Clio 1.5 dCi Icon (180.000 KM)", hint: "Manuel Dizel 2. El Değeri (TL)", actual: 520000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2020 Honda Civic 1.6 i-DTEC Elegance (85.000 KM)", hint: "Otomatik Sedan Piyasa Değeri (TL)", actual: 1220000, img: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=600&q=80" },
+        { title: "1998 Tofaş Şahin 1.6 S (Orijinal / LPG)", hint: "Diri Koleksiyonluk Piyasa Değeri (TL)", actual: 215000, img: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=600&q=80" },
+        { title: "2021 Dacia Duster 1.0 TCe Comfort (60.000 KM)", hint: "Manuel Benzinli SUV (TL)", actual: 820000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2015 BMW 320i ED 1.6 M Sport (130.000 KM)", hint: "Orijinal M Paket Sedan (TL)", actual: 1480000, img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=80" },
+        { title: "2014 VW Golf 1.6 TDI Highline (170.000 KM)", hint: "Dolu Paket Hatchback (TL)", actual: 870000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2022 Toyota Corolla 1.5 Vision Otomatik (40.000 KM)", hint: "Kazasız Aile Sedanı (TL)", actual: 1050000, img: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=600&q=80" },
+        { title: "2018 Peugeot 3008 1.5 BlueHDi Allure (110.000 KM)", hint: "Cam Tavanlı Fransız SUV (TL)", actual: 1420000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2015 Mercedes C200d AMG (160.000 KM)", hint: "Dizel Otomatik Lüks Sedan (TL)", actual: 1650000, img: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=600&q=80" },
+        { title: "2012 Ford Focus 1.6 TDCi Titanium (210.000 KM)", hint: "Dizel Manuel Hatchback (TL)", actual: 580000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2023 Hyundai i20 1.4 MPI Jump Otomatik (25.000 KM)", hint: "Şehir İçi B Segment (TL)", actual: 890000, img: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80" },
+        { title: "2011 Opel Astra 1.3 CDTI Enjoy (220.000 KM)", hint: "Ekonomik Dizel Hatchback (TL)", actual: 440000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2020 Skoda Octavia 1.5 e-TEC Premium (70.000 KM)", hint: "Geniş Bagaj Hibrit Sedan (TL)", actual: 1380000, img: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=600&q=80" },
+        { title: "2017 Seat Leon 1.6 TDI Style (130.000 KM)", hint: "Dizel Otomatik Spor Hatchback (TL)", actual: 830000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2019 Nissan Qashqai 1.3 DIG-T Tekna (90.000 KM)", hint: "Benzinli Otomatik C-SUV (TL)", actual: 1150000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2008 Honda Civic 1.6 i-VTEC Elegance (240.000 KM)", hint: "FD6 Kasa Efsane VTEC (TL)", actual: 490000, img: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=600&q=80" },
+        { title: "2016 Audi A3 Sedan 1.6 TDI Ambition (150.000 KM)", hint: "S-Tronic Premium Sedan (TL)", actual: 1180000, img: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=600&q=80" },
+        { title: "2004 VW Bora 1.6 Pacific (260.000 KM)", hint: "Temiz Manuel Aile Arabası (TL)", actual: 360000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2022 Kia Sportage 1.6 T-GDI Elegance (35.000 KM)", hint: "Yeni Kasa Benzinli SUV (TL)", actual: 1620000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2015 Volvo S60 2.0 D4 Advance (180.000 KM)", hint: "Güvenlik Odaklı Dizel Sedan (TL)", actual: 1100000, img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=80" },
+        { title: "1994 Renault Toros 1.4 SW", hint: "Köy/Bağ Klasiği Orijinal Kasa (TL)", actual: 165000, img: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=600&q=80" },
+        { title: "2018 Fiat Doblo Combi 1.6 Multijet Premio (150.000 KM)", hint: "En Dolu Paket Enişte Arabası (TL)", actual: 580000, img: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80" },
+        { title: "2023 Chery Omoda 5 Excellent (20.000 KM)", hint: "Dolu Paket Çinli SUV (TL)", actual: 1320000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2019 VW Polo 1.0 TSI Comfortline (75.000 KM)", hint: "Benzinli Otomatik Şehir Arabası (TL)", actual: 860000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2021 Cupra Formentor 1.5 TSI VZ-Line (45.000 KM)", hint: "Sportif Crossover (TL)", actual: 1780000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2017 BMW 520i 1.6 Executive M Sport (120.000 KM)", hint: "Makam Arabası G30 Kasa (TL)", actual: 2450000, img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=80" },
+        { title: "2016 Range Rover Evoque 2.0 TD4 HSE (140.000 KM)", hint: "Premium Şık SUV (TL)", actual: 1850000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2010 Ford Fiesta 1.4 TDCi Titanium (230.000 KM)", hint: "Dizel Ekonomik Hatchback (TL)", actual: 390000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" }
+    ]
+};
 
 let players = [];
 let currentGame = null;
-
 const playerColors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#e84393', '#00cec9', '#fdcb6e'];
 
-let monoState = {
+// İŞKEMBEDEN SALLAMA STATE
+let guessState = {
     active: false,
-    board: JSON.parse(JSON.stringify(initialMonopolyBoard)),
-    players: [],
-    turnIndex: 0,
-    dice: [1, 1],
-    doubleRollCount: 0,
-    waitingForDecision: false,
-    waitingForDoblo: false,
-    activeTrade: null,
-    log: []
+    mode: 'celebrity',
+    currentQuestionIndex: 0,
+    questions: [],
+    timer: null,
+    timeLeft: 15,
+    guesses: {},
+    totalScores: {},
+    maxQuestions: 5
 };
-
-let currentImposterDeck = [];
-let currentTabuDeck = [];
-let imposterState = { word: '', imposterId: '', imposterName: '', votes: {}, timer: null };
-
-let tabuState = {
-    scores: { red: 0, blue: 0 }, currentCard: null, describerId: null,
-    currentTeam: 'red', passCount: 3, timer: null, timeLeft: 60,
-    roundActive: false, isIntermission: false, intermissionTimer: null,
-    maxRounds: 5, currentRound: 1, teamTurnCount: 0
-};
-
-// ==========================================
-// 🏎️ BÜYÜTÜLMÜŞ (1200x750) PİST & GELİŞMİŞ DRİFT MOTORU
-// ==========================================
-let raceState = {
-    active: false,
-    cars: {},
-    items: [],
-    itemBoxes: [
-        { id: 1, x: 380, y: 640, active: true, respawnTimer: 0 },
-        { id: 2, x: 1060, y: 380, active: true, respawnTimer: 0 },
-        { id: 3, x: 620, y: 160, active: true, respawnTimer: 0 },
-        { id: 4, x: 160, y: 340, active: true, respawnTimer: 0 },
-        { id: 5, x: 580, y: 320, active: true, respawnTimer: 0 } // S-virajı ortası
-    ],
-    loopInterval: null,
-    totalLaps: 3,
-    winner: null
-};
-
-// 1200x750 Mega Pist Omurgası
-const trackWaypoints = [
-    { x: 550, y: 640 },
-    { x: 920, y: 640 },
-    { x: 1080, y: 520 },
-    { x: 1080, y: 260 },
-    { x: 920, y: 140 },
-    { x: 680, y: 140 },
-    { x: 580, y: 320 }, // S-Virajı içi
-    { x: 420, y: 320 },
-    { x: 320, y: 140 },
-    { x: 140, y: 240 },
-    { x: 130, y: 520 },
-    { x: 320, y: 640 },
-    { x: 550, y: 640 }
-];
-
-function distToSegment(p, v, w) {
-    const l2 = (v.x - w.x) * (v.x - w.x) + (v.y - w.y) * (v.y - w.y);
-    if (l2 === 0) return Math.hypot(p.x - v.x, p.y - v.y);
-    let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-    t = Math.max(0, Math.min(1, t));
-    return Math.hypot(p.x - (v.x + t * (w.x - v.x)), p.y - (v.y + t * (w.y - v.y)));
-}
-
-function isCarOnTrack(x, y) {
-    let minDist = 9999;
-    for (let i = 0; i < trackWaypoints.length - 1; i++) {
-        const d = distToSegment({ x, y }, trackWaypoints[i], trackWaypoints[i + 1]);
-        if (d < minDist) minDist = d;
-    }
-    return minDist <= 65; // Geniş asfalt yarıçapı
-}
-
-function broadcastMonoLog(msg) {
-    monoState.log.unshift(msg);
-    io.emit('monoGlobalAlert', msg);
-}
-
-function getRentDetails(tile, diceSum) {
-    if (tile.type === 'property') {
-        const groupTiles = monoState.board.filter(t => t.type === 'property' && t.group === tile.group);
-        const ownedInGroup = groupTiles.filter(t => t.owner === tile.owner);
-        const isMonopoly = groupTiles.length === ownedInGroup.length;
-        const finalRent = isMonopoly ? (tile.baseRent * 2) : tile.baseRent;
-        return {
-            rent: finalRent,
-            isMonopoly: isMonopoly,
-            note: isMonopoly ? '🔥 TEKEL ZAMMI (x2 Kat Kira)' : 'Standart Kira'
-        };
-    }
-    if (tile.type === 'pitch') {
-        const ownedPitches = monoState.board.filter(t => t.type === 'pitch' && t.owner === tile.owner).length;
-        let r = 25;
-        if (ownedPitches === 2) r = 50;
-        if (ownedPitches === 3) r = 100;
-        if (ownedPitches === 4) r = 200;
-        return {
-            rent: r,
-            isMonopoly: ownedPitches === 4,
-            note: `⚽ ${ownedPitches} Halısaha Sahibi`
-        };
-    }
-    if (tile.type === 'utility') {
-        const ownedUtils = monoState.board.filter(t => t.type === 'utility' && t.owner === tile.owner).length;
-        const multiplier = ownedUtils === 2 ? 10 : 4;
-        return {
-            rent: diceSum * multiplier,
-            isMonopoly: ownedUtils === 2,
-            note: `💡 ${ownedUtils} Kamu Binası (Zar x ${multiplier})`
-        };
-    }
-    return { rent: 0, isMonopoly: false, note: '' };
-}
-
-function checkHalısahaWin(ownerId, ownerName) {
-    const pitchCount = monoState.board.filter(t => t.type === 'pitch' && t.owner === ownerId).length;
-    if (pitchCount === 4) {
-        monoState.active = false;
-        broadcastMonoLog(`🏆🏆 GOLDEN GOAL! ${ownerName} 4 HALISAHAIN HEPSİNİ ALARAK OYUNU KAZANDI! 🏆🏆`);
-        io.emit('monopolyStateUpdated', monoState);
-        return true;
-    }
-    return false;
-}
 
 io.on('connection', (socket) => {
     socket.on('joinLobby', (name) => {
@@ -355,923 +178,149 @@ io.on('connection', (socket) => {
 
     socket.on('backToLobby', () => {
         currentGame = null;
-        if (imposterState.timer) clearInterval(imposterState.timer);
-        if (tabuState.timer) clearInterval(tabuState.timer);
-        if (tabuState.intermissionTimer) clearInterval(tabuState.intermissionTimer);
-        if (raceState.loopInterval) clearInterval(raceState.loopInterval);
-        tabuState.roundActive = false;
-        tabuState.isIntermission = false;
-        raceState.active = false;
+        if (guessState.timer) clearInterval(guessState.timer);
+        guessState.active = false;
         players.forEach(p => p.ready = false);
         io.emit('gameSelected', 'lobby');
         io.emit('updateLobby', { players, currentGame });
     });
 
     // ==========================================
-    // 🏎️ YARIŞ VE GELİŞMİŞ DRİFT / SPIN FİZİĞİ
+    // 🧠 İŞKEMBEDEN SALLAMA MOTORU
     // ==========================================
-    socket.on('startRaceGame', () => {
-        if (players.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu gerekir!');
-        if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Oyunu başlatmak için herkes HAZIR olmalı!');
-        if (raceState.loopInterval) clearInterval(raceState.loopInterval);
+    socket.on('startGuessGame', (selectedSubMode) => {
+        if (players.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
+        if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmalı!');
 
-        raceState.active = true;
-        raceState.winner = null;
-        raceState.cars = {};
-        raceState.items = [];
+        const subMode = selectedSubMode || 'celebrity';
+        const pool = iskembedenData[subMode] || iskembedenData.celebrity;
 
-        players.forEach((p, idx) => {
-            raceState.cars[p.id] = {
-                id: p.id,
-                name: p.name,
-                color: p.color,
-                x: 480 - (idx * 35),
-                y: 640,
-                angle: 0, // Sağa doğru kalkış
-                speed: 0,
-                // Kayma vektörleri (Spin sırasında yönünü korur)
-                vx: 0,
-                vy: 0,
-                lap: 1,
-                checkpoints: [false, false, false],
-                heldItem: null,
-                isSpinning: false,
-                spinAngleSpeed: 0,
-                finished: false,
-                inputs: { up: false, down: false, left: false, right: false }
-            };
-        });
-
-        io.emit('raceStarted', { totalLaps: raceState.totalLaps });
-
-        // 30 FPS Fizik Döngüsü
-        raceState.loopInterval = setInterval(() => {
-            if (!raceState.active) return;
-
-            // Kutu yeniden doğma süreleri
-            raceState.itemBoxes.forEach(box => {
-                if (!box.active) {
-                    box.respawnTimer--;
-                    if (box.respawnTimer <= 0) box.active = true;
-                }
-            });
-
-            // Roketler
-            for (let i = raceState.items.length - 1; i >= 0; i--) {
-                const item = raceState.items[i];
-                if (item.type === 'rocket') {
-                    item.x += Math.cos(item.angle) * 14;
-                    item.y += Math.sin(item.angle) * 14;
-                    item.life--;
-
-                    for (let id in raceState.cars) {
-                        const car = raceState.cars[id];
-                        if (id !== item.ownerId && !car.finished) {
-                            if (Math.hypot(car.x - item.x, car.y - item.y) < 28) {
-                                // Patlama: Hızı sıfırlama, savur ve döndür!
-                                car.isSpinning = true;
-                                car.spinAngleSpeed = 0.35;
-                                car.vx = Math.cos(item.angle) * 4;
-                                car.vy = Math.sin(item.angle) * 4;
-                                car.speed = Math.max(1.5, car.speed * 0.6);
-                                item.life = 0;
-                                io.emit('monoGlobalAlert', `💥 ${item.ownerName}'in Roketi ${car.name}'i savurdu!`);
-                                break;
-                            }
-                        }
-                    }
-
-                    if (item.life <= 0 || item.x < 0 || item.x > 1200 || item.y < 0 || item.y > 750) {
-                        raceState.items.splice(i, 1);
-                    }
-                }
-            }
-
-            // Arabaların Hareketi
-            for (let id in raceState.cars) {
-                const car = raceState.cars[id];
-                if (car.finished) continue;
-
-                const onTrack = isCarOnTrack(car.x, car.y);
-                const maxSpeed = onTrack ? 7.2 : 2.6;
-
-                // --- SPİN / MUZ / ROKET KAYMA FİZİĞİ ---
-                if (car.isSpinning) {
-                    car.angle += car.spinAngleSpeed;
-                    car.spinAngleSpeed *= 0.94; // Dönüş yavaşça durur
-
-                    // Hızı taş gibi sıfırlamaz, momentumla kızaklar
-                    car.speed *= 0.94;
-                    car.x += car.vx;
-                    car.y += car.vy;
-                    car.vx *= 0.94;
-                    car.vy *= 0.94;
-
-                    // Dönüş yavaşlayınca kontrol oyuncuya geri geçer
-                    if (Math.abs(car.spinAngleSpeed) < 0.03) {
-                        car.isSpinning = false;
-                        car.spinAngleSpeed = 0;
-                    }
-                } else {
-                    // Normal Sürüş
-                    if (car.inputs.up) car.speed += onTrack ? 0.28 : 0.09;
-                    if (car.inputs.down) car.speed -= 0.2;
-
-                    car.speed *= onTrack ? 0.96 : 0.88;
-                    if (car.speed > maxSpeed) car.speed = maxSpeed;
-                    if (car.speed < -2.0) car.speed = -2.0;
-
-                    if (Math.abs(car.speed) > 0.1) {
-                        const dir = car.speed > 0 ? 1 : -1;
-                        if (car.inputs.left) car.angle -= 0.065 * dir;
-                        if (car.inputs.right) car.angle += 0.065 * dir;
-                    }
-
-                    car.vx = Math.cos(car.angle) * car.speed;
-                    car.vy = Math.sin(car.angle) * car.speed;
-                    car.x += car.vx;
-                    car.y += car.vy;
-                }
-
-                // Ekran Sınırları
-                car.x = Math.max(20, Math.min(1180, car.x));
-                car.y = Math.max(20, Math.min(730, car.y));
-
-                // Kutu Toplama
-                raceState.itemBoxes.forEach(box => {
-                    if (box.active && Math.hypot(car.x - box.x, car.y - box.y) < 30) {
-                        box.active = false;
-                        box.respawnTimer = 150;
-                        if (!car.heldItem) {
-                            car.heldItem = Math.random() < 0.5 ? 'banana' : 'rocket';
-                        }
-                    }
-                });
-
-                // Muza Çarpma
-                for (let i = raceState.items.length - 1; i >= 0; i--) {
-                    const item = raceState.items[i];
-                    if (item.type === 'banana') {
-                        if (Math.hypot(car.x - item.x, car.y - item.y) < 22) {
-                            // Muza basınca hızı sıfırlama! Yavaşlayıp dönerek kaysın
-                            car.isSpinning = true;
-                            car.spinAngleSpeed = 0.38;
-                            car.vx = Math.cos(car.angle) * (car.speed * 0.8);
-                            car.vy = Math.sin(car.angle) * (car.speed * 0.8);
-                            car.speed *= 0.7; // Hafif hız korur
-                            raceState.items.splice(i, 1);
-                            io.emit('monoGlobalAlert', `🍌 ${car.name} muza bastı ve drift atarak döndü!`);
-                            break;
-                        }
-                    }
-                }
-
-                // Checkpointler (1200x750 Pist Noktaları)
-                if (car.x > 950 && car.y < 350) car.checkpoints[0] = true;
-                if (car.x < 650 && car.x > 500 && car.y < 380) car.checkpoints[1] = true;
-                if (car.x < 250 && car.y > 350) car.checkpoints[2] = true;
-
-                // Bitiş Çizgisinden Geçiş (x: 580 civarı, y > 580)
-                if (car.checkpoints[0] && car.checkpoints[1] && car.checkpoints[2]) {
-                    if (car.x > 570 && car.x < 605 && car.y > 580) {
-                        car.checkpoints = [false, false, false];
-                        car.lap++;
-
-                        if (car.lap > raceState.totalLaps) {
-                            car.finished = true;
-                            if (!raceState.winner) {
-                                raceState.winner = car.name;
-                                raceState.active = false;
-                                clearInterval(raceState.loopInterval);
-                                io.emit('raceFinished', { winner: car.name });
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            io.emit('raceUpdate', {
-                cars: raceState.cars,
-                items: raceState.items,
-                boxes: raceState.itemBoxes
-            });
-        }, 1000 / 30);
-    });
-
-    socket.on('raceInput', (inputs) => {
-        if (raceState.active && raceState.cars[socket.id]) {
-            raceState.cars[socket.id].inputs = inputs;
-        }
-    });
-
-    socket.on('raceUseItem', () => {
-        if (!raceState.active || !raceState.cars[socket.id]) return;
-        const car = raceState.cars[socket.id];
-        if (!car.heldItem || car.isSpinning) return;
-
-        if (car.heldItem === 'banana') {
-            raceState.items.push({
-                type: 'banana',
-                x: car.x - Math.cos(car.angle) * 26,
-                y: car.y - Math.sin(car.angle) * 26
-            });
-        } else if (car.heldItem === 'rocket') {
-            raceState.items.push({
-                type: 'rocket',
-                ownerId: car.id,
-                ownerName: car.name,
-                x: car.x + Math.cos(car.angle) * 28,
-                y: car.y + Math.sin(car.angle) * 28,
-                angle: car.angle,
-                life: 100
-            });
-        }
-        car.heldItem = null;
-    });
-
-    // ==========================================
-    // MONOPOLY MOTORU
-    // ==========================================
-    socket.on('startMonopolyGame', () => {
-        if (players.length < 2) return socket.emit('errorMsg', 'En az 2 oyuncu gerekli!');
-        if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan oyun başlamaz!');
-
-        monoState = {
+        guessState = {
             active: true,
-            board: JSON.parse(JSON.stringify(initialMonopolyBoard)),
-            players: players.map((p, idx) => ({
-                id: p.id,
-                name: p.name,
-                color: playerColors[idx % playerColors.length],
-                money: 1500,
-                position: 0,
-                inJail: false,
-                jailTurns: 0,
-                jailCardCount: 0,
-                bankrupt: false
-            })),
-            turnIndex: 0,
-            dice: [1, 1],
-            doubleRollCount: 0,
-            waitingForDecision: false,
-            waitingForDoblo: false,
-            activeTrade: null,
-            log: []
+            mode: subMode,
+            currentQuestionIndex: 0,
+            questions: shuffleArray(pool).slice(0, 5), // Devasa havuzdan rastgele 5 soru
+            timer: null,
+            timeLeft: 15,
+            guesses: {},
+            totalScores: {},
+            maxQuestions: 5
         };
 
-        broadcastMonoLog('Oyun başladı! Bol şans.');
-        io.emit('monopolyStateUpdated', monoState);
+        players.forEach(p => { guessState.totalScores[p.id] = 0; });
+        startGuessRound();
     });
 
-    socket.on('monopolyUseJailCard', () => {
-        if (!monoState.active) return;
-        const cp = monoState.players[monoState.turnIndex];
-        if (socket.id !== cp.id) return socket.emit('errorMsg', 'Sıra sende değil!');
-        if (!cp.inJail) return socket.emit('errorMsg', 'Blok derste değilsin!');
-        if (cp.jailCardCount <= 0) return socket.emit('errorMsg', 'Konferansa katılma kartın yok!');
+    function startGuessRound() {
+        guessState.guesses = {};
+        guessState.timeLeft = 15;
+        const q = guessState.questions[guessState.currentQuestionIndex];
 
-        cp.jailCardCount--;
-        cp.inJail = false;
-        cp.jailTurns = 0;
-        broadcastMonoLog(`🎟️ ${cp.name} Konferans Kartını kullandı ve blok dersten kaçtı!`);
+        io.emit('guessRoundStarted', {
+            mode: guessState.mode,
+            questionIndex: guessState.currentQuestionIndex + 1,
+            maxQuestions: guessState.maxQuestions,
+            question: {
+                title: q.title,
+                hint: q.hint,
+                img: q.img
+            },
+            timeLeft: guessState.timeLeft
+        });
 
-        const d1 = Math.floor(Math.random() * 6) + 1;
-        const d2 = Math.floor(Math.random() * 6) + 1;
-        monoState.dice = [d1, d2];
-        const total = d1 + d2;
-        broadcastMonoLog(`🎲 ${cp.name} zar attı: [${d1}-${d2} = ${total}]`);
+        if (guessState.timer) clearInterval(guessState.timer);
+        guessState.timer = setInterval(() => {
+            guessState.timeLeft--;
+            io.emit('guessTimerTick', guessState.timeLeft);
 
-        advancePlayer(cp, total, false);
+            if (guessState.timeLeft <= 0) {
+                clearInterval(guessState.timer);
+                endGuessRound();
+            }
+        }, 1000);
+    }
+
+    socket.on('submitGuess', (val) => {
+        if (!guessState.active || guessState.guesses[socket.id]) return;
+        const num = parseFloat(val);
+        if (isNaN(num)) return;
+
+        guessState.guesses[socket.id] = {
+            value: num,
+            timeLeft: guessState.timeLeft,
+            scoreGained: 0
+        };
+
+        socket.emit('guessLockedNotice');
+
+        if (Object.keys(guessState.guesses).length === players.length) {
+            clearInterval(guessState.timer);
+            endGuessRound();
+        }
     });
 
-    socket.on('monopolyPayJailBail', () => {
-        if (!monoState.active) return;
-        const cp = monoState.players[monoState.turnIndex];
-        if (socket.id !== cp.id) return socket.emit('errorMsg', 'Sıra sende değil!');
-        if (!cp.inJail) return socket.emit('errorMsg', 'Blok derste değilsin!');
-        if (cp.money < 100) return socket.emit('errorMsg', 'Kefalet için 100₺ paran yok!');
+    function endGuessRound() {
+        const q = guessState.questions[guessState.currentQuestionIndex];
+        const actual = q.actual;
+        const roundResults = [];
 
-        cp.money -= 100;
-        cp.inJail = false;
-        cp.jailTurns = 0;
-        broadcastMonoLog(`🔓 ${cp.name} 100₺ kefalet ödedi ve blok dersten tüyüp zarlarını attı!`);
+        players.forEach(p => {
+            const userGuess = guessState.guesses[p.id];
+            let score = 0;
 
-        const d1 = Math.floor(Math.random() * 6) + 1;
-        const d2 = Math.floor(Math.random() * 6) + 1;
-        monoState.dice = [d1, d2];
-        const total = d1 + d2;
-        broadcastMonoLog(`🎲 ${cp.name} zar attı: [${d1}-${d2} = ${total}]`);
+            if (userGuess) {
+                const diff = Math.abs(userGuess.value - actual);
+                let accuracyScore = 0;
 
-        advancePlayer(cp, total, false);
-    });
-
-    socket.on('monopolyRollDice', () => {
-        if (!monoState.active) return;
-        const cp = monoState.players[monoState.turnIndex];
-        if (socket.id !== cp.id) return socket.emit('errorMsg', 'Sıra sende değil!');
-        if (monoState.waitingForDecision || monoState.waitingForDoblo) return socket.emit('errorMsg', 'Önce mevcut kararını tamamla!');
-
-        const d1 = Math.floor(Math.random() * 6) + 1;
-        const d2 = Math.floor(Math.random() * 6) + 1;
-        const isDouble = d1 === d2;
-        const total = d1 + d2;
-        monoState.dice = [d1, d2];
-
-        if (cp.inJail) {
-            cp.jailTurns++;
-
-            if (cp.jailTurns < 3) {
-                broadcastMonoLog(`🚨 ${cp.name} Blok derste çift atmayı denedi [${cp.jailTurns}. Hak]: ${d1}-${d2}`);
-                if (isDouble) {
-                    cp.inJail = false;
-                    cp.jailTurns = 0;
-                    broadcastMonoLog(`🎉 ÇİFT ZAR! ${cp.name} Blok dersten bedava çıktı!`);
-                    advancePlayer(cp, total, isDouble);
-                    return;
+                if (guessState.mode === 'celebrity') {
+                    // Yaş Modu: Fark 120 puan düşürür
+                    accuracyScore = Math.max(0, 1000 - (diff * 120));
                 } else {
-                    broadcastMonoLog(`🔒 Çift gelmedi! ${cp.name} blok derste kaldı.`);
-                    finishTurn();
-                    io.emit('monopolyStateUpdated', monoState);
-                    return;
+                    // Fiyat ve Araba Modu: Yüzdelik Sapma
+                    const ratio = diff / actual;
+                    accuracyScore = ratio > 1 ? 0 : Math.round(1000 * (1 - ratio));
                 }
-            } else {
-                cp.inJail = false;
-                cp.jailTurns = 0;
-                broadcastMonoLog(`⚖️ 3. TUR BİTTİ! ${cp.name} dersten bedava çıktı ve [${total}] ilerliyor.`);
-                advancePlayer(cp, total, isDouble);
-                return;
+
+                // Hız Çarpanı Formülü
+                const speedMult = 0.5 + (0.5 * (userGuess.timeLeft / 15));
+                score = Math.round(accuracyScore * speedMult);
+
+                userGuess.scoreGained = score;
+                guessState.totalScores[p.id] = (guessState.totalScores[p.id] || 0) + score;
             }
-        }
 
-        if (isDouble) {
-            monoState.doubleRollCount++;
-            broadcastMonoLog(`🎲 ${cp.name} ÇİFT ZAR ATTI! (${d1}-${d2}) [${monoState.doubleRollCount}. Çift]`);
-            if (monoState.doubleRollCount === 3) {
-                cp.position = 10;
-                cp.inJail = true;
-                cp.jailTurns = 0;
-                broadcastMonoLog(`🚨 3 Kez üst üste çift atan ${cp.name} BLOK DERSE GÖNDERİLDİ!`);
-                finishTurn();
-                io.emit('monopolyStateUpdated', monoState);
-                return;
-            }
-        } else {
-            monoState.doubleRollCount = 0;
-        }
-
-        advancePlayer(cp, total, isDouble);
-    });
-
-    function advancePlayer(cp, total, isDouble) {
-        const oldPos = cp.position;
-        let newPos = (oldPos + total) % 40;
-
-        if (newPos < oldPos) {
-            cp.money += 200;
-            broadcastMonoLog(`💵 ${cp.name} Başlangıçtan geçti ve 200₺ aldı.`);
-        }
-
-        cp.position = newPos;
-        handleTileLanding(cp, newPos, isDouble, total);
-    }
-
-    function handleTileLanding(cp, pos, isDouble, diceSum) {
-        const tile = monoState.board[pos];
-
-        if (tile.type === 'doblo') {
-            broadcastMonoLog(`🚐 ${cp.name} DOBLO ZAMANI DOSTUM karesine bastı! İstediğin yere sür dostum dobloyla evreni dolaşabilirsin!`);
-            monoState.waitingForDoblo = true;
-            io.to(cp.id).emit('monopolyDobloPrompt', {
-                board: monoState.board.map(t => ({ id: t.id, name: t.name }))
-            });
-            io.emit('monopolyStateUpdated', monoState);
-            return;
-        } else if (tile.type === 'go_to_jail') {
-            cp.position = 10;
-            cp.inJail = true;
-            cp.jailTurns = 0;
-            broadcastMonoLog(`🚨 ${cp.name} BLOK DERSE GİTTİ!`);
-            finishTurn();
-            io.emit('monopolyStateUpdated', monoState);
-            return;
-        } else if (tile.type === 'tax') {
-            cp.money -= tile.amount;
-            broadcastMonoLog(`💸 ${cp.name} vergi ödedi: -${tile.amount}₺`);
-            checkBankruptcy(cp);
-            postTileAction(isDouble);
-            return;
-        } else if (tile.type === 'chance') {
-            handleChanceCard(cp, isDouble);
-            return;
-        } else if (tile.type === 'chest') {
-            handleChestCard(cp, isDouble);
-            return;
-        } else if (tile.owner && tile.owner !== cp.id) {
-            const owner = monoState.players.find(p => p.id === tile.owner);
-            if (owner && !owner.bankrupt) {
-                const rentInfo = getRentDetails(tile, diceSum || (monoState.dice[0] + monoState.dice[1]));
-                cp.money -= rentInfo.rent;
-                owner.money += rentInfo.rent;
-
-                const msg = `⚠️ ${cp.name}, ${owner.name}'in ${tile.name} mülküne bastı! ${rentInfo.note} ➜ Ödenen Kira: ${rentInfo.rent}₺`;
-                broadcastMonoLog(msg);
-
-                checkBankruptcy(cp);
-
-                const buyoutPrice = Math.floor(tile.price * 1.5);
-                if (cp.money >= buyoutPrice && !cp.bankrupt) {
-                    monoState.waitingForDecision = true;
-                    io.to(cp.id).emit('monopolyBuyoutPrompt', {
-                        tile,
-                        buyoutPrice,
-                        ownerName: owner.name
-                    });
-                    io.emit('monopolyStateUpdated', monoState);
-                    return;
-                }
-            }
-            postTileAction(isDouble);
-            return;
-        }
-
-        const canBuy = (tile.type === 'property' || tile.type === 'pitch' || tile.type === 'utility') && !tile.owner;
-        if (canBuy && cp.money >= tile.price) {
-            monoState.waitingForDecision = true;
-            io.to(cp.id).emit('monopolyBuyPrompt', { tile });
-        } else {
-            postTileAction(isDouble);
-        }
-
-        io.emit('monopolyStateUpdated', monoState);
-    }
-
-    socket.on('monopolyDobloDrive', (targetTileId) => {
-        const cp = monoState.players[monoState.turnIndex];
-        if (socket.id !== cp.id || !monoState.waitingForDoblo) return;
-
-        const targetId = parseInt(targetTileId);
-        if (isNaN(targetId) || targetId < 0 || targetId >= 40) return;
-
-        monoState.waitingForDoblo = false;
-        const targetTile = monoState.board[targetId];
-
-        if (targetId < cp.position) {
-            cp.money += 200;
-            broadcastMonoLog(`💵 ${cp.name} Doblo'yla Başlangıçtan geçti ve 200₺ yolluk aldı.`);
-        }
-
-        cp.position = targetId;
-        broadcastMonoLog(`🚐💨 ${cp.name} Doblo'yu gazladı ve doğrudan [${targetTile.name}] karesine yanaştı!`);
-
-        const isDouble = monoState.dice[0] === monoState.dice[1] && monoState.doubleRollCount > 0 && monoState.doubleRollCount < 3;
-        handleTileLanding(cp, targetId, isDouble, 7);
-    });
-
-    function handleChanceCard(cp, isDouble) {
-        const card = sansKartlari[Math.floor(Math.random() * sansKartlari.length)];
-        broadcastMonoLog(`🎲 [ŞANS KARTI - ${cp.name}]: "${card.text}"`);
-        executeCardAction(cp, card.action, isDouble);
-    }
-
-    function handleChestCard(cp, isDouble) {
-        const card = kamuFonuKartlari[Math.floor(Math.random() * kamuFonuKartlari.length)];
-        broadcastMonoLog(`📦 [KAMU FONU - ${cp.name}]: "${card.text}"`);
-        executeCardAction(cp, card.action, isDouble);
-    }
-
-    function executeCardAction(cp, action, isDouble) {
-        const otherPlayers = monoState.players.filter(p => p.id !== cp.id && !p.bankrupt);
-
-        switch (action) {
-            case 'go_to_go':
-                cp.position = 0;
-                cp.money += 200;
-                postTileAction(isDouble);
-                break;
-            case 'go_to_thanos':
-                if (cp.position > 39) cp.money += 200;
-                cp.position = 39;
-                handleTileLanding(cp, 39, isDouble, 7);
-                break;
-            case 'nearest_pitch':
-                const pitches = [5, 15, 25, 35];
-                let nextPitch = pitches.find(p => p > cp.position);
-                if (!nextPitch) {
-                    nextPitch = 5;
-                    cp.money += 200;
-                }
-                cp.position = nextPitch;
-                handleTileLanding(cp, nextPitch, isDouble, 7);
-                break;
-            case 'forward_3':
-                cp.position = (cp.position + 3) % 40;
-                handleTileLanding(cp, cp.position, isDouble, 7);
-                break;
-            case 'go_to_jail':
-                cp.position = 10;
-                cp.inJail = true;
-                cp.jailTurns = 0;
-                finishTurn();
-                break;
-            case 'get_jail_card':
-                cp.jailCardCount = (cp.jailCardCount || 0) + 1;
-                broadcastMonoLog(`🎟️ ${cp.name} 1 adet "Konferansa Katılma Kartı" kazandı!`);
-                postTileAction(isDouble);
-                break;
-            case 'pay_each_50':
-                otherPlayers.forEach(p => {
-                    cp.money -= 50;
-                    p.money += 50;
-                });
-                checkBankruptcy(cp);
-                postTileAction(isDouble);
-                break;
-            case 'collect_each_10':
-                otherPlayers.forEach(p => {
-                    p.money -= 10;
-                    cp.money += 10;
-                    checkBankruptcy(p);
-                });
-                postTileAction(isDouble);
-                break;
-            case 'gain_10': cp.money += 10; postTileAction(isDouble); break;
-            case 'gain_50': cp.money += 50; postTileAction(isDouble); break;
-            case 'gain_100': cp.money += 100; postTileAction(isDouble); break;
-            case 'gain_150': cp.money += 150; postTileAction(isDouble); break;
-            case 'gain_200': cp.money += 200; postTileAction(isDouble); break;
-            case 'pay_15': cp.money -= 15; checkBankruptcy(cp); postTileAction(isDouble); break;
-            case 'pay_20': cp.money -= 20; checkBankruptcy(cp); postTileAction(isDouble); break;
-            case 'pay_50': cp.money -= 50; checkBankruptcy(cp); postTileAction(isDouble); break;
-            case 'pay_100': cp.money -= 100; checkBankruptcy(cp); postTileAction(isDouble); break;
-            case 'pay_150': cp.money -= 150; checkBankruptcy(cp); postTileAction(isDouble); break;
-            case 'pay_175': cp.money -= 175; checkBankruptcy(cp); postTileAction(isDouble); break;
-            default:
-                postTileAction(isDouble);
-        }
-
-        io.emit('monopolyStateUpdated', monoState);
-    }
-
-    socket.on('monopolyBuyDecision', (buy) => {
-        const cp = monoState.players[monoState.turnIndex];
-        if (socket.id !== cp.id) return;
-        monoState.waitingForDecision = false;
-
-        const tile = monoState.board[cp.position];
-        if (buy && tile && !tile.owner && cp.money >= tile.price) {
-            cp.money -= tile.price;
-            tile.owner = cp.id;
-            tile.ownerName = cp.name;
-            broadcastMonoLog(`🛒 ${cp.name}, ${tile.name} tapusunu ${tile.price}₺ karşılığında satın aldı!`);
-            if (checkHalısahaWin(cp.id, cp.name)) return;
-        }
-
-        const isDouble = monoState.dice[0] === monoState.dice[1] && monoState.doubleRollCount > 0 && monoState.doubleRollCount < 3;
-        postTileAction(isDouble);
-        io.emit('monopolyStateUpdated', monoState);
-    });
-
-    socket.on('monopolyBuyoutDecision', (buyout) => {
-        const cp = monoState.players[monoState.turnIndex];
-        if (socket.id !== cp.id) return;
-        monoState.waitingForDecision = false;
-
-        const tile = monoState.board[cp.position];
-        const buyoutPrice = Math.floor(tile.price * 1.5);
-        const prevOwner = monoState.players.find(p => p.id === tile.owner);
-
-        if (buyout && prevOwner && cp.money >= buyoutPrice) {
-            cp.money -= buyoutPrice;
-            prevOwner.money += buyoutPrice;
-            tile.owner = cp.id;
-            tile.ownerName = cp.name;
-            broadcastMonoLog(`💥 EL DEĞİŞTİRDİ! ${cp.name}, ${prevOwner.name}'in ${tile.name} mülkünü 1.5 katı bedelle (${buyoutPrice}₺) zorla satın aldı!`);
-            if (checkHalısahaWin(cp.id, cp.name)) return;
-        }
-
-        const isDouble = monoState.dice[0] === monoState.dice[1] && monoState.doubleRollCount > 0 && monoState.doubleRollCount < 3;
-        postTileAction(isDouble);
-        io.emit('monopolyStateUpdated', monoState);
-    });
-
-    socket.on('initiateTradeOffer', (data) => {
-        const buyer = monoState.players.find(p => p.id === socket.id);
-        const tile = monoState.board.find(t => t.id === data.tileId);
-        if (!buyer || !tile || !tile.owner || tile.owner === socket.id) return;
-
-        const amount = parseInt(data.offerAmount);
-        if (isNaN(amount) || amount <= 0 || buyer.money < amount) {
-            return socket.emit('errorMsg', 'Geçersiz teklif tutarı veya yetersiz bakiye!');
-        }
-
-        const seller = monoState.players.find(p => p.id === tile.owner);
-        if (!seller) return;
-
-        monoState.activeTrade = {
-            buyerId: buyer.id,
-            buyerName: buyer.name,
-            sellerId: seller.id,
-            tileId: tile.id,
-            tileName: tile.name,
-            offerAmount: amount
-        };
-
-        io.to(seller.id).emit('incomingTradeOffer', monoState.activeTrade);
-        socket.emit('tradePendingNotice', `Teklif (${amount}₺) ${seller.name} oyuncusuna iletildi, yanıt bekleniyor...`);
-    });
-
-    socket.on('respondTradeOffer', (accepted) => {
-        if (!monoState.activeTrade || socket.id !== monoState.activeTrade.sellerId) return;
-
-        const trade = monoState.activeTrade;
-        const buyer = monoState.players.find(p => p.id === trade.buyerId);
-        const seller = monoState.players.find(p => p.id === trade.sellerId);
-        const tile = monoState.board.find(t => t.id === trade.tileId);
-
-        if (accepted) {
-            if (buyer.money >= trade.offerAmount && tile.owner === seller.id) {
-                buyer.money -= trade.offerAmount;
-                seller.money += trade.offerAmount;
-                tile.owner = buyer.id;
-                tile.ownerName = buyer.name;
-
-                broadcastMonoLog(`🤝 ANLAŞMA SAĞLANDI! ${buyer.name}, ${seller.name}'den ${tile.name} tapusunu ${trade.offerAmount}₺ bedelle pazarlıkla satın aldı!`);
-                io.emit('monopolyStateUpdated', monoState);
-
-                checkHalısahaWin(buyer.id, buyer.name);
-            } else {
-                io.to(buyer.id).emit('errorMsg', 'Teklif anında bakiye yetersiz kaldı!');
-            }
-        } else {
-            broadcastMonoLog(`❌ ${seller.name}, ${buyer.name}'in ${tile.name} için yaptığı ${trade.offerAmount}₺ teklifini reddetti.`);
-            io.to(buyer.id).emit('errorMsg', `${seller.name} teklifini kabul etmedi.`);
-            io.emit('monopolyStateUpdated', monoState);
-        }
-
-        monoState.activeTrade = null;
-    });
-
-    function postTileAction(isDouble) {
-        if (isDouble && !monoState.players[monoState.turnIndex].bankrupt && !monoState.players[monoState.turnIndex].inJail) {
-            broadcastMonoLog(`🎲 Çift attığın için tekrar zar atabilirsin!`);
-        } else {
-            finishTurn();
-        }
-        io.emit('monopolyStateUpdated', monoState);
-    }
-
-    function finishTurn() {
-        monoState.doubleRollCount = 0;
-        monoState.waitingForDecision = false;
-        monoState.waitingForDoblo = false;
-        nextMonopolyTurn();
-    }
-
-    function checkBankruptcy(player) {
-        if (player.money < 0) {
-            player.bankrupt = true;
-            broadcastMonoLog(`💀 ${player.name} İFLAS ETTİ ve elendi!`);
-            monoState.board.forEach(t => {
-                if (t.owner === player.id) {
-                    delete t.owner;
-                    delete t.ownerName;
-                }
-            });
-        }
-    }
-
-    function nextMonopolyTurn() {
-        let attempts = 0;
-        do {
-            monoState.turnIndex = (monoState.turnIndex + 1) % monoState.players.length;
-            attempts++;
-        } while (monoState.players[monoState.turnIndex].bankrupt && attempts < monoState.players.length);
-
-        const activePlayers = monoState.players.filter(p => !p.bankrupt);
-        if (activePlayers.length <= 1) {
-            monoState.active = false;
-            broadcastMonoLog(`👑 KAZANAN: ${activePlayers[0].name}!`);
-        }
-    }
-
-    // ==========================================
-    // TABU MOTORU
-    // ==========================================
-    socket.on('switchTabuTeam', (newTeam) => {
-        const player = players.find(p => p.id === socket.id);
-        if (player && (newTeam === 'red' || newTeam === 'blue')) {
-            player.team = newTeam;
-            player.ready = false;
-            io.emit('updateTabuLobby', { players, tabuState });
-        }
-    });
-
-    socket.on('startTabuGame', (selectedMaxRounds) => {
-        const redTeam = players.filter(p => p.team === 'red');
-        const blueTeam = players.filter(p => p.team === 'blue');
-        if (redTeam.length === 0 || blueTeam.length === 0) return socket.emit('errorMsg', 'Her takımda en az 1 oyuncu olmalı!');
-        if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan oyun başlamaz!');
-
-        currentTabuDeck = shuffleArray(rawTabuKartlari);
-        let r = parseInt(selectedMaxRounds) || 5;
-        tabuState.scores = { red: 0, blue: 0 };
-        tabuState.currentTeam = 'red';
-        tabuState.maxRounds = r;
-        tabuState.currentRound = 1;
-        tabuState.teamTurnCount = 0;
-
-        triggerTabuIntermission();
-    });
-
-    function triggerTabuIntermission() {
-        const teamPlayers = players.filter(p => p.team === tabuState.currentTeam);
-        const describer = teamPlayers[Math.floor(Math.random() * teamPlayers.length)];
-
-        tabuState.describerId = describer.id;
-        tabuState.roundActive = false;
-        tabuState.isIntermission = true;
-
-        let prepTime = 10;
-        io.emit('tabuIntermissionStart', {
-            team: tabuState.currentTeam,
-            describerName: describer.name,
-            describerId: describer.id,
-            prepTime: prepTime,
-            currentRound: tabuState.currentRound,
-            maxRounds: tabuState.maxRounds,
-            scores: tabuState.scores
-        });
-
-        if (tabuState.intermissionTimer) clearInterval(tabuState.intermissionTimer);
-        tabuState.intermissionTimer = setInterval(() => {
-            prepTime--;
-            io.emit('tabuIntermissionTick', prepTime);
-
-            if (prepTime <= 0) {
-                clearInterval(tabuState.intermissionTimer);
-                tabuState.isIntermission = false;
-                startTabuActualRound(describer);
-            }
-        }, 1000);
-    }
-
-    function startTabuActualRound(describer) {
-        if (currentTabuDeck.length === 0) currentTabuDeck = shuffleArray(rawTabuKartlari);
-        const card = currentTabuDeck.pop();
-
-        tabuState.currentCard = card;
-        tabuState.timeLeft = 60;
-        tabuState.passCount = 3;
-        tabuState.roundActive = true;
-
-        players.forEach(p => {
-            const isDescriber = p.id === describer.id;
-            const isPlayingTeam = p.team === tabuState.currentTeam;
-            io.to(p.id).emit('tabuTurnStarted', {
-                describerId: describer.id,
-                describerName: describer.name,
-                currentTeam: tabuState.currentTeam,
-                card: isDescriber ? card : null,
-                scores: tabuState.scores,
-                passCount: tabuState.passCount,
-                currentRound: tabuState.currentRound,
-                maxRounds: tabuState.maxRounds,
-                role: isDescriber ? 'describer' : (isPlayingTeam ? 'guesser' : 'opponent')
+            roundResults.push({
+                name: p.name,
+                guess: userGuess ? userGuess.value : 'Tahmin Yok',
+                scoreGained: score,
+                totalScore: guessState.totalScores[p.id] || 0
             });
         });
 
-        if (tabuState.timer) clearInterval(tabuState.timer);
-        tabuState.timer = setInterval(() => {
-            tabuState.timeLeft--;
-            io.emit('tabuTimer', tabuState.timeLeft);
-            if (tabuState.timeLeft <= 0) {
-                clearInterval(tabuState.timer);
-                endTabuTurn();
-            }
-        }, 1000);
-    }
+        roundResults.sort((a, b) => b.totalScore - a.totalScore);
 
-    function endTabuTurn() {
-        tabuState.roundActive = false;
-        tabuState.teamTurnCount++;
-        if (tabuState.teamTurnCount % 2 === 0) tabuState.currentRound++;
-
-        if (tabuState.currentRound > tabuState.maxRounds) {
-            let winnerTeam = 'BERABERE';
-            if (tabuState.scores.red > tabuState.scores.blue) winnerTeam = 'KIRMIZI';
-            else if (tabuState.scores.blue > tabuState.scores.red) winnerTeam = 'MAVİ';
-            io.emit('tabuMatchOver', { scores: tabuState.scores, winner: winnerTeam, maxRounds: tabuState.maxRounds });
-        } else {
-            tabuState.currentTeam = tabuState.currentTeam === 'red' ? 'blue' : 'red';
-            io.emit('tabuTurnEnded', {
-                scores: tabuState.scores,
-                nextTeam: tabuState.currentTeam,
-                currentRound: tabuState.currentRound,
-                maxRounds: tabuState.maxRounds
-            });
-        }
-    }
-
-    socket.on('tabuNextTurn', () => {
-        if (!tabuState.roundActive && !tabuState.isIntermission) {
-            triggerTabuIntermission();
-        }
-    });
-
-    socket.on('tabuAction', (action) => {
-        if (!tabuState.roundActive || socket.id !== tabuState.describerId) return;
-        if (action === 'correct') tabuState.scores[tabuState.currentTeam] += 1;
-        else if (action === 'taboo') tabuState.scores[tabuState.currentTeam] -= 1;
-        else if (action === 'pass') {
-            if (tabuState.passCount <= 0) return socket.emit('errorMsg', 'Pas kalmadı!');
-            tabuState.passCount -= 1;
-        }
-
-        if (currentTabuDeck.length === 0) currentTabuDeck = shuffleArray(rawTabuKartlari);
-        tabuState.currentCard = currentTabuDeck.pop();
-
-        io.emit('tabuScoreUpdated', { scores: tabuState.scores, passCount: tabuState.passCount });
-        io.to(tabuState.describerId).emit('tabuNewCardForDescriber', tabuState.currentCard);
-    });
-
-    // ==========================================
-    // İMPOSTER
-    // ==========================================
-    socket.on('startImposter', () => {
-        if (players.length < 3) return socket.emit('errorMsg', 'En az 3 oyuncu gerekir!');
-        if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan oyun başlamaz!');
-        if (imposterState.timer) clearInterval(imposterState.timer);
-
-        currentImposterDeck = shuffleArray(rawImposterKelimeler);
-        const secilen = currentImposterDeck[Math.floor(Math.random() * currentImposterDeck.length)];
-        const imposter = players[Math.floor(Math.random() * players.length)];
-
-        imposterState = {
-            word: secilen.kelime.trim().toUpperCase('tr-TR'),
-            imposterId: imposter.id,
-            imposterName: imposter.name,
-            votes: {},
-            timer: null
-        };
-
-        players.forEach(p => {
-            if (p.id === imposter.id) {
-                io.to(p.id).emit('imposterRole', { isImposter: true, info: `Sen IMPOSTER'sın! İpucun: "${secilen.ipucu}"` });
-            } else {
-                io.to(p.id).emit('imposterRole', { isImposter: false, info: `Gizli Kelime: "${secilen.kelime}"` });
-            }
+        io.emit('guessRoundEnded', {
+            actual: actual,
+            unit: guessState.mode === 'celebrity' ? 'Yaş' : 'TL',
+            results: roundResults
         });
 
-        let timeLeft = 30;
-        io.emit('imposterTimer', timeLeft);
-        imposterState.timer = setInterval(() => {
-            timeLeft--;
-            io.emit('imposterTimer', timeLeft);
-            if (timeLeft <= 0) {
-                clearInterval(imposterState.timer);
-                io.emit('imposterStartVoting', players);
-            }
-        }, 1000);
-    });
-
-    socket.on('imposterVote', (votedId) => {
-        imposterState.votes[socket.id] = votedId;
-        if (Object.keys(imposterState.votes).length === players.length) {
-            const counts = {};
-            Object.values(imposterState.votes).forEach(id => counts[id] = (counts[id] || 0) + 1);
-            let mostVoted = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-            const votedP = players.find(p => p.id === mostVoted);
-
-            if (mostVoted === imposterState.imposterId) {
-                io.to(imposterState.imposterId).emit('imposterLastChance');
-                players.forEach(p => {
-                    if (p.id !== imposterState.imposterId) io.to(p.id).emit('imposterWaitGuess', votedP ? votedP.name : '');
-                });
+        setTimeout(() => {
+            if (!guessState.active) return;
+            guessState.currentQuestionIndex++;
+            if (guessState.currentQuestionIndex < guessState.maxQuestions) {
+                startGuessRound();
             } else {
-                io.emit('imposterResult', {
-                    winner: 'IMPOSTER',
-                    msg: `Yanlış kişi (${votedP ? votedP.name : 'Kimse'}) seçildi!`,
-                    imposterName: imposterState.imposterName,
-                    word: imposterState.word
-                });
+                guessState.active = false;
+                io.emit('guessGameOver', { finalLeaderboard: roundResults });
             }
-        }
-    });
-
-    socket.on('imposterGuess', (guess) => {
-        const correct = guess.trim().toUpperCase('tr-TR') === imposterState.word;
-        io.emit('imposterResult', {
-            winner: correct ? 'IMPOSTER' : 'CIVILIANS',
-            msg: correct ? `İmposter bildi! ("${guess}")` : `İmposter bilemedi! ("${guess}")`,
-            imposterName: imposterState.imposterName,
-            word: imposterState.word
-        });
-    });
+        }, 6000);
+    }
 
     socket.on('disconnect', () => {
         players = players.filter(p => p.id !== socket.id);
-        delete raceState.cars[socket.id];
+        delete guessState.totalScores[socket.id];
+        delete guessState.guesses[socket.id];
         io.emit('updateLobby', { players, currentGame });
     });
 });
