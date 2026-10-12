@@ -88,3 +88,32 @@ button { background: #00adb5; color: white; font-weight: bold; cursor: pointer; 
 .c-orange { background: #FFA500; } .c-red { background: #FF0000; } .c-yellow { background: #FFFF00; }
 .c-green { background: #008000; } .c-dark_blue { background: #00008B; } .c-pitch { background: #27ae60; }
 .c-utility { background: #95a5a6; } .c-doblo { background: #e67e22; }
+
+/* ==========================================
+   AÇILIR PENCERELER (MODAL POPUP)
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    display: none; /* Başlangıçta kesinlikle gizli */
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+.modal-content {
+    background: #1a1d29;
+    border: 2px solid #00adb5;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 480px;
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+    text-align: left;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
