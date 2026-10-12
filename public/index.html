@@ -134,19 +134,19 @@
                         <button id="btnUseCard" style="width: auto; padding: 10px 16px; background: #27ae60; display: none;" onclick="socket.emit('monopolyUseJailCard')">Konferansa Kaç 🎟️</button>
                     </div>
 
-                    <div id="buyPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #f9d342;">
+                  <div id="buyPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #f9d342;">
                         <p id="buyPromptMsg" style="margin: 4px 0; font-size: 13px; font-weight: bold;"></p>
                         <div style="display: flex; gap: 8px; margin-top: 8px;">
-                            <button style="background: #2ecc71; padding: 8px;" onclick="socket.emit('monopolyBuyDecision', true)">Satın Al</button>
-                            <button style="background: #777; padding: 8px;" onclick="socket.emit('monopolyBuyDecision', false)">Pas Geç</button>
+                            <button style="background: #2ecc71; padding: 8px;" onclick="decideBuy(true)">Satın Al</button>
+                            <button style="background: #777; padding: 8px;" onclick="decideBuy(false)">Pas Geç</button>
                         </div>
                     </div>
 
                     <div id="buyoutPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #e74c3c;">
                         <p id="buyoutPromptMsg" style="margin: 4px 0; font-size: 13px; font-weight: bold; color: #ff7675;"></p>
                         <div style="display: flex; gap: 8px; margin-top: 8px;">
-                            <button style="background: #e74c3c; padding: 8px;" onclick="socket.emit('monopolyBuyoutDecision', true)">1.5x Bedelle Satın Al</button>
-                            <button style="background: #777; padding: 8px;" onclick="socket.emit('monopolyBuyoutDecision', false)">İstemiyorum</button>
+                            <button style="background: #e74c3c; padding: 8px;" onclick="decideBuyout(true)">1.5x Bedelle Satın Al</button>
+                            <button style="background: #777; padding: 8px;" onclick="decideBuyout(false)">İstemiyorum</button>
                         </div>
                     </div>
 
