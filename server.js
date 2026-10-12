@@ -20,7 +20,7 @@ function shuffleArray(array) {
 }
 
 // ==========================================
-// GENİŞLETİLMİŞ İŞKEMBEDEN SALLAMA SORU HAVUZU
+// 150+ DEV İŞKEMBEDEN SALLAMA SORU HAVUZU
 // ==========================================
 const iskembedenData = {
     // 1. MOD: Ünlü Yaşları (Türkiye & Dünya)
@@ -50,15 +50,31 @@ const iskembedenData = {
         { title: "Keanu Reeves", hint: "John Wick / Matrix", actual: 62, img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80" },
         { title: "Beyoncé", hint: "Dünya Pop Yıldızı", actual: 45, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" },
         { title: "Shakira", hint: "Latin Müziğin Kraliçesi", actual: 49, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" },
-        { title: "Eminem", hint: "Rap Tanrısı", actual: 54, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Eminem", hint: "Rap Müzik Efsanesi", actual: 54, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
         { title: "Dwayne Johnson (The Rock)", hint: "Aktör & Güreşçi", actual: 54, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
         { title: "Serenay Sarıkaya", hint: "Dizi ve Sinema Oyuncusu", actual: 34, img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80" },
         { title: "Hande Erçel", hint: "Oyuncu", actual: 32, img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80" },
         { title: "Çağatay Ulusoy", hint: "Oyuncu", actual: 36, img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80" },
         { title: "Murat Boz", hint: "Pop Şarkıcısı & Jüri", actual: 46, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
         { title: "İbrahim Tatlıses", hint: "İmparator", actual: 74, img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80" },
-        { title: "Fatih Terim", hint: "İmparator / Teknik Direktör", actual: 73, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
-        { title: "Zendaya", hint: "Genç Kuşak Hollywood Yıldızı", actual: 30, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" }
+        { title: "Fatih Terim", hint: "Teknik Direktör", actual: 73, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Zendaya", hint: "Genç Kuşak Hollywood Yıldızı", actual: 30, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" },
+        { title: "Yılmaz Erdoğan", hint: "Yönetmen, Yazar ve Aktör", actual: 58, img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Ata Demirer", hint: "Komedyen ve Oyuncu", actual: 54, img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Beyazıt Öztürk", hint: "Talk-Show Sunucusu", actual: 57, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Okan Bayülgen", hint: "Televizyon Programcısı", actual: 62, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Seda Sayan", hint: "Sunucu ve Şarkıcı", actual: 63, img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" },
+        { title: "Sibel Can", hint: "Sanat Müziği ve Fantezi Yorumcusu", actual: 56, img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80" },
+        { title: "Teoman", hint: "Rock Sanatçısı", actual: 58, img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Hayko Cepkin", hint: "Alternatif Metal Sanatçısı", actual: 48, img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80" },
+        { title: "Barış Arduç", hint: "Dizi Oyuncusu", actual: 39, img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=600&q=80" },
+        { title: "Cansu Dere", hint: "Dizi ve Film Oyuncusu", actual: 46, img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80" },
+        { title: "Demet Akalın", hint: "Pop Şarkıcısı", actual: 54, img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" },
+        { title: "Ali Koç", hint: "İş İnsanı & Kulüp Başkanı", actual: 59, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Nusret Gökçe (Salt Bae)", hint: "Restorancı & Şef", actual: 43, img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" },
+        { title: "CZN Burak", hint: "Sosyal Medya Şefi", actual: 32, img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80" },
+        { title: "İlber Ortaylı", hint: "Tarihçi & Yazar", actual: 79, img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Celal Şengör", hint: "Jeolog & Bilim İnsanı", actual: 71, img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80" }
     ],
 
     // 2. MOD: Pazar, Market, Ev Eşyası & Takı Fiyatları (TL)
@@ -66,6 +82,7 @@ const iskembedenData = {
         { title: "Çeyrek Altın (Yeni Tarihli)", hint: "Kuyumcu Satış Fiyatı (TL)", actual: 5400, img: "https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=600&q=80" },
         { title: "Gram Altın (24 Ayar)", hint: "Kapalıçarşı Güncel Gram Fiyatı (TL)", actual: 3300, img: "https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=600&q=80" },
         { title: "Cumhuriyet / Tam Altın", hint: "Kuyumcu Satış Fiyatı (TL)", actual: 21500, img: "https://images.unsplash.com/photo-1610375461246-83df859d849d?auto=format&fit=crop&w=600&q=80" },
+        { title: "22 Ayar Burma Bilezik (20 Gram)", hint: "Kuyumcu İşçilikli Bilezik (TL)", actual: 65000, img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=600&q=80" },
         { title: "Nutella Kakaolu Fındık Kreması 750g", hint: "Süpermarket Raf Fiyatı (TL)", actual: 195, img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80" },
         { title: "Dyson V15 Şarjlı Dikey Süpürge", hint: "Orijinal Satış Fiyatı (TL)", actual: 29999, img: "https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=600&q=80" },
         { title: "PlayStation 5 Slim 1TB", hint: "Konsol Satış Fiyatı (TL)", actual: 26500, img: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80" },
@@ -93,7 +110,25 @@ const iskembedenData = {
         { title: "Starbucks Grande White Chocolate Mocha", hint: "Kahve Zinciri Fiyatı (TL)", actual: 135, img: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80" },
         { title: "MacBook Air 13 inç M3 256GB", hint: "Apple Laptop Satış Fiyatı (TL)", actual: 48999, img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80" },
         { title: "Bosch Çamaşır Makinesi 9 kg", hint: "1200 Devir A Enerji (TL)", actual: 24500, img: "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=600&q=80" },
-        { title: "Hakiki Trabzon Yayla Tereyağı 1 kg", hint: "Köy Ürünü Kilogram Fiyatı (TL)", actual: 390, img: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=600&q=80" }
+        { title: "Hakiki Trabzon Yayla Tereyağı 1 kg", hint: "Köy Ürünü Kilogram Fiyatı (TL)", actual: 390, img: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Tadım Kavrulmuş Fındık İçi 180g", hint: "Paket Çerez Fiyatı (TL)", actual: 145, img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80" },
+        { title: "Sütaş Süzme Peynir 1 kg", hint: "Market Kahvaltılık Ürün (TL)", actual: 210, img: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?auto=format&fit=crop&w=600&q=80" },
+        { title: "Pınar Klasik Kangal Sucuk 450g", hint: "Dana Sucuk Paket Fiyatı (TL)", actual: 420, img: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&w=600&q=80" },
+        { title: "Roborock S8 Pro Ultra Robot Süpürge", hint: "İstasyonlu Akıllı Süpürge (TL)", actual: 44000, img: "https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=600&q=80" },
+        { title: "KitchenAid Artisan Stand Mikser 4.8L", hint: "Profesyonel Hamur Yoğurucu (TL)", actual: 28000, img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=600&q=80" },
+        { title: "Thermomix TM6 Akıllı Mutfak Robotu", hint: "Çok Fonksiyonlu Pişirici (TL)", actual: 58000, img: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&w=600&q=80" },
+        { title: "The North Face 1996 Retro Nuptse Mont", hint: "Kaz Tüyü İkonik Mont (TL)", actual: 16000, img: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=600&q=80" },
+        { title: "PlayStation VR2 Sanal Gerçeklik Gözlüğü", hint: "PS5 Uyumlu VR Başlık (TL)", actual: 24000, img: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80" },
+        { title: "Nintendo Switch OLED Konsol", hint: "Taşınabilir El Konsolu (TL)", actual: 16500, img: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=600&q=80" },
+        { title: "iPad Air M2 11 inç 128GB", hint: "Apple Tablet Liste Fiyatı (TL)", actual: 26500, img: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&q=80" },
+        { title: "Apple Watch Ultra 2 Titanyum Kasa", hint: "Akıllı Saat Resmi Fiyatı (TL)", actual: 42000, img: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80" },
+        { title: "Marshall Stanmore III Bluetooth Hoparlör", hint: "Retro Ev Tipi Hoparlör (TL)", actual: 18500, img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80" },
+        { title: "Pazar Fiyatı: 1 Kilo Salkım Domates", hint: "Semt Pazarı Kilogram Fiyatı (TL)", actual: 45, img: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80" },
+        { title: "Pazar Fiyatı: 1 Kilo Sivri Biber", hint: "Semt Pazarı Kilogram Fiyatı (TL)", actual: 70, img: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80" },
+        { title: "Pazar Fiyatı: 1 Kilo Taze Fasulye", hint: "Semt Pazarı Kilogram Fiyatı (TL)", actual: 90, img: "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=600&q=80" },
+        { title: "1 Porsiyon İskender Kebap", hint: "Kebap Restoranı Menü Fiyatı (TL)", actual: 380, img: "https://images.unsplash.com/photo-1598214886806-c87b84b7078b?auto=format&fit=crop&w=600&q=80" },
+        { title: "Büyük Boy Karışık Pizza Menü", hint: "Popüler Pizza Zinciri (TL)", actual: 340, img: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80" },
+        { title: "1 Kilo Etsiz Çiğ Köfte Paketi", hint: "Lavaş ve Garnitürlü Set (TL)", actual: 320, img: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&w=600&q=80" }
     ],
 
     // 3. MOD: Türkiye 2. El Araba Piyasası (Ortalama Piyasa Değeri TL)
@@ -127,7 +162,27 @@ const iskembedenData = {
         { title: "2021 Cupra Formentor 1.5 TSI VZ-Line (45.000 KM)", hint: "Sportif Crossover (TL)", actual: 1780000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
         { title: "2017 BMW 520i 1.6 Executive M Sport (120.000 KM)", hint: "Makam Arabası G30 Kasa (TL)", actual: 2450000, img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=80" },
         { title: "2016 Range Rover Evoque 2.0 TD4 HSE (140.000 KM)", hint: "Premium Şık SUV (TL)", actual: 1850000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
-        { title: "2010 Ford Fiesta 1.4 TDCi Titanium (230.000 KM)", hint: "Dizel Ekonomik Hatchback (TL)", actual: 390000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" }
+        { title: "2010 Ford Fiesta 1.4 TDCi Titanium (230.000 KM)", hint: "Dizel Ekonomik Hatchback (TL)", actual: 390000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2021 Togg T10X V2 Uzun Menzil (30.000 KM)", hint: "Yerli Elektrikli C-SUV (TL)", actual: 1550000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2016 VW Tiguan 2.0 TDI Highline 4Motion (150.000 KM)", hint: "4 Çeker Dolu Paket SUV (TL)", actual: 1480000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2020 BMW 118i M Sport (60.000 KM)", hint: "Ön Çeker Yeni Kasa 1 Serisi (TL)", actual: 1650000, img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=80" },
+        { title: "2015 Mercedes E180 Exclusive (140.000 KM)", hint: "W212 Makyajlı Efsane Kasa (TL)", actual: 1850000, img: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=600&q=80" },
+        { title: "2017 Audi A4 2.0 TDI Design (130.000 KM)", hint: "S-Tronic Lüks Aile Sedanı (TL)", actual: 1750000, img: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=600&q=80" },
+        { title: "2011 VW Caddy 1.6 TDI Maxi (240.000 KM)", hint: "Uzun Şasi Aile & Ticari (TL)", actual: 520000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2015 Ford Tourneo Courier 1.6 TDCi Titanium (190.000 KM)", hint: "Titanium Dolu Paket Ticari (TL)", actual: 540000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2022 Hyundai Tucson 1.6 T-GDI Prime Plus (45.000 KM)", hint: "Yeni Tasarım Benzinli SUV (TL)", actual: 1580000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2018 Renault Megane 1.5 dCi Icon EDC (120.000 KM)", hint: "Otomatik Dizel C Segment (TL)", actual: 920000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2013 Opel Corsa 1.3 CDTI Essentia (190.000 KM)", hint: "Az Yakan Şehir Arabası (TL)", actual: 430000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2006 Ford Mondeo 2.0 TDCi Ghia (280.000 KM)", hint: "Geniş D Segment Konfor (TL)", actual: 340000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+        { title: "1993 Tofaş Kartal SLX 1.6 (LPG)", hint: "Geniş Bagaj Klasik Yerli (TL)", actual: 195000, img: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=600&q=80" },
+        { title: "2001 VW Transporter T4 2.5 TDI (340.000 KM)", hint: "5 Silindir Efsane Motor Minibüs (TL)", actual: 420000, img: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2023 Tesla Model Y RWD Standart Menzil (25.000 KM)", hint: "Elektrikli Cam Tavan SUV (TL)", actual: 1790000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2019 Toyota C-HR 1.8 Hybrid Dynamic (80.000 KM)", hint: "Fütüristik Hibrit Crossover (TL)", actual: 1180000, img: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=600&q=80" },
+        { title: "2016 Skoda Superb 1.6 TDI Prestige (160.000 KM)", hint: "Makam Konforu Sedan (TL)", actual: 1280000, img: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=600&q=80" },
+        { title: "2014 Mini Cooper 1.5 136 HP (110.000 KM)", hint: "TwinPower Turbo İkonik Hatchback (TL)", actual: 880000, img: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=600&q=80" },
+        { title: "2022 Dacia Sandero Stepway 1.0 TCe Prestige (35.000 KM)", hint: "Yüksek Şasi Ekonomik B-SUV (TL)", actual: 810000, img: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=600&q=80" },
+        { title: "2012 Chevrolet Cruze 1.6 LT Otomatik (170.000 KM)", hint: "Amerikan Tasarım Aile Sedanı (TL)", actual: 460000, img: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=600&q=80" },
+        { title: "2005 BMW 320d E90 (310.000 KM)", hint: "Dizel Manuel Arkadan İtiş (TL)", actual: 620000, img: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=600&q=80" }
     ]
 };
 
@@ -199,7 +254,7 @@ io.on('connection', (socket) => {
             active: true,
             mode: subMode,
             currentQuestionIndex: 0,
-            questions: shuffleArray(pool).slice(0, 5), // Devasa havuzdan rastgele 5 soru
+            questions: shuffleArray(pool).slice(0, 5), // Havuzdan rastgele 5 soru
             timer: null,
             timeLeft: 15,
             guesses: {},
@@ -273,10 +328,10 @@ io.on('connection', (socket) => {
                 let accuracyScore = 0;
 
                 if (guessState.mode === 'celebrity') {
-                    // Yaş Modu: Fark 120 puan düşürür
+                    // Yaş Modu: Mutlak fark üzerinden hesaplama
                     accuracyScore = Math.max(0, 1000 - (diff * 120));
                 } else {
-                    // Fiyat ve Araba Modu: Yüzdelik Sapma
+                    // Fiyat ve Araba Modu: Yüzdelik sapma hesabı
                     const ratio = diff / actual;
                     accuracyScore = ratio > 1 ? 0 : Math.round(1000 * (1 - ratio));
                 }
