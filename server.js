@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-// 1. MODÜLER VERİLERİ 'data/' KLASÖRÜNDEN GÜVENLİ ŞEKİLDE ÇEKİYORUZ
+// 1. MODÜLER VERİLERİ 'data/' KLASÖRÜNDEN ÇEKİYORUZ
 const iskembedenData = require('./data/iskembedenData');
 const monoData = require('./data/monopolyData');
 const monopolyBoard = (monoData && monoData.monopolyBoard) ? monoData.monopolyBoard : (Array.isArray(monoData) ? monoData : []);
@@ -16,14 +16,13 @@ const kamuFonuKartlari = (monoData && monoData.kamuFonuKartlari) ? monoData.kamu
 const rawTabuKartlari = require('./data/tabuData');
 const rawImposterKelimeler = require('./data/imposterData');
 
-// 2. STATİK DOSYALARI (public klasörünü) DIŞARIYA AÇIYORUZ
+// 2. STATİK DOSYALARI DIŞARIYA AÇIYORUZ
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Dizileri rastgele karıştırma fonksiyonu
 function shuffleArray(array) {
     const arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -46,41 +45,22 @@ function broadcastMonoLog(msg) {
 }
 
 // ==========================================
-// 1. İŞKEMBEDEN SALLAMA DURUMU & HAFIZASI
+// 1. İŞKEMBEDEN SALLAMA STATE
 // ==========================================
-const usedQuestionMemory = {
-    celebrity: new Set(),
-    market: new Set(),
-    car: new Set()
-};
-
+const usedQuestionMemory = { celebrity: new Set(), market: new Set(), car: new Set() };
 let guessState = {
-    active: false,
-    mode: 'celebrity',
-    currentQuestionIndex: 0,
-    questions: [],
-    timer: null,
-    timeLeft: 15,
-    guesses: {},
-    totalScores: {},
-    readyForNextRound: {},
-    maxQuestions: 5
+    active: false, mode: 'celebrity', currentQuestionIndex: 0, questions: [],
+    timer: null, timeLeft: 15, guesses: {}, totalScores: {}, readyForNextRound: {}, maxQuestions: 5
 };
 
 // ==========================================
-// 2. MONOPOLY (KTÜ EDITION) DURUMU VE YARDIMCILARI
+// 2. MONOPOLY (KTÜ EDITION) STATE
 // ==========================================
 let monoState = {
     active: false,
     board: monopolyBoard.length ? JSON.parse(JSON.stringify(monopolyBoard)) : [],
-    players: [],
-    turnIndex: 0,
-    dice: [1, 1],
-    doubleRollCount: 0,
-    waitingForDecision: false,
-    waitingForDoblo: false,
-    activeTrade: null,
-    log: []
+    players: [], turnIndex: 0, dice: [1, 1], doubleRollCount: 0,
+    waitingForDecision: false, waitingForDoblo: false, activeTrade: null, log: []
 };
 
 function getRentDetails(tile, diceSum) {
@@ -89,11 +69,7 @@ function getRentDetails(tile, diceSum) {
         const ownedInGroup = groupTiles.filter(t => t.owner === tile.owner);
         const isMonopoly = groupTiles.length === ownedInGroup.length;
         const finalRent = isMonopoly ? (tile.baseRent * 2) : tile.baseRent;
-        return {
-            rent: finalRent,
-            isMonopoly: isMonopoly,
-            note: isMonopoly ? '🔥 TEKEL ZAMMI (x2 Kat Kira)' : 'Standart Kira'
-        };
+        return { rent: finalRent, isMonopoly, note: isMonopoly ? '🔥 TEKEL ZAMMI (x2 Kat Kira)' : 'Standart Kira' };
     }
     if (tile.type === 'pitch') {
         const ownedPitches = monoState.board.filter(t => t.type === 'pitch' && t.owner === tile.owner).length;
@@ -101,20 +77,12 @@ function getRentDetails(tile, diceSum) {
         if (ownedPitches === 2) r = 50;
         if (ownedPitches === 3) r = 100;
         if (ownedPitches === 4) r = 200;
-        return {
-            rent: r,
-            isMonopoly: ownedPitches === 4,
-            note: `⚽ ${ownedPitches} Halısaha Sahibi`
-        };
+        return { rent: r, isMonopoly: ownedPitches === 4, note: `⚽ ${ownedPitches} Halısaha Sahibi` };
     }
     if (tile.type === 'utility') {
         const ownedUtils = monoState.board.filter(t => t.type === 'utility' && t.owner === tile.owner).length;
         const multiplier = ownedUtils === 2 ? 10 : 4;
-        return {
-            rent: diceSum * multiplier,
-            isMonopoly: ownedUtils === 2,
-            note: `💡 ${ownedUtils} Kamu Binası (Zar x ${multiplier})`
-        };
+        return { rent: diceSum * multiplier, isMonopoly: ownedUtils === 2, note: `💡 ${ownedUtils} Kamu Binası (Zar x ${multiplier})` };
     }
     return { rent: 0, isMonopoly: false, note: '' };
 }
@@ -144,12 +112,10 @@ function checkBankruptcy(player) {
 }
 
 // ==========================================
-// 3. 2D ARABA YARIŞI (1200x750 & DRİFT MOTORU)
+// 3. 2D ARABA YARIŞI STATE
 // ==========================================
 let raceState = {
-    active: false,
-    cars: {},
-    items: [],
+    active: false, cars: {}, items: [],
     itemBoxes: [
         { id: 1, x: 380, y: 640, active: true, respawnTimer: 0 },
         { id: 2, x: 1060, y: 380, active: true, respawnTimer: 0 },
@@ -157,9 +123,7 @@ let raceState = {
         { id: 4, x: 160, y: 340, active: true, respawnTimer: 0 },
         { id: 5, x: 580, y: 320, active: true, respawnTimer: 0 }
     ],
-    loopInterval: null,
-    totalLaps: 3,
-    winner: null
+    loopInterval: null, totalLaps: 3, winner: null
 };
 
 const trackWaypoints = [
@@ -187,7 +151,35 @@ function isCarOnTrack(x, y) {
 }
 
 // ==========================================
-// 4. TABU & İMPOSTER DURUMLARI
+// 4. STICK RUN (ÇÖP ADAM PARKUR) STATE
+// ==========================================
+let stickState = {
+    active: false, runners: {}, obstacles: [], boxes: [],
+    finishLine: 6000, loopInterval: null, winner: null
+};
+
+function generateStickParkour() {
+    const obstacles = [];
+    const boxes = [];
+    for (let x = 650; x < 5600; x += 340) {
+        const type = Math.random() < 0.55 ? 'low' : 'high';
+        obstacles.push({ x: x + Math.floor(Math.random() * 80), w: 36, type });
+
+        if (Math.random() < 0.65) {
+            boxes.push({
+                id: x,
+                x: x + 180,
+                y: Math.random() < 0.5 ? 310 : 220,
+                active: true,
+                respawnTimer: 0
+            });
+        }
+    }
+    return { obstacles, boxes };
+}
+
+// ==========================================
+// 5. TABU & İMPOSTER STATE
 // ==========================================
 let currentTabuDeck = [];
 let tabuState = {
@@ -201,16 +193,13 @@ let currentImposterDeck = [];
 let imposterState = { word: '', imposterId: '', imposterName: '', votes: {}, timer: null };
 
 // ==========================================
-// 5. MERKEZİ SOKET DİNLEYİCİLERİ
+// SOKET BAĞLANTILARI
 // ==========================================
 io.on('connection', (socket) => {
     socket.on('joinLobby', (name) => {
         if (players.length >= 10) return socket.emit('errorMsg', 'Lobi dolu! (Maks 10 kişi)');
         players.push({
-            id: socket.id,
-            name: name,
-            team: 'red',
-            ready: false,
+            id: socket.id, name, team: 'red', ready: false,
             color: playerColors[players.length % playerColors.length]
         });
         io.emit('updateLobby', { players, currentGame });
@@ -239,10 +228,12 @@ io.on('connection', (socket) => {
         if (tabuState.timer) clearInterval(tabuState.timer);
         if (tabuState.intermissionTimer) clearInterval(tabuState.intermissionTimer);
         if (raceState.loopInterval) clearInterval(raceState.loopInterval);
+        if (stickState.loopInterval) clearInterval(stickState.loopInterval);
         if (imposterState.timer) clearInterval(imposterState.timer);
 
         guessState.active = false;
         raceState.active = false;
+        stickState.active = false;
         tabuState.roundActive = false;
         tabuState.isIntermission = false;
         players.forEach(p => p.ready = false);
@@ -251,9 +242,7 @@ io.on('connection', (socket) => {
         io.emit('updateLobby', { players, currentGame });
     });
 
-    // ==========================================
-    // 1. İŞKEMBEDEN SALLAMA MOTORU
-    // ==========================================
+    // 1. İŞKEMBEDEN SALLAMA
     socket.on('startGuessGame', (data) => {
         if (players.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
         if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan oyun başlamaz!');
@@ -279,16 +268,9 @@ io.on('connection', (socket) => {
         chosenQuestions.forEach(q => usedQuestionMemory[subMode].add(q.title));
 
         guessState = {
-            active: true,
-            mode: subMode,
-            currentQuestionIndex: 0,
-            questions: chosenQuestions,
-            timer: null,
-            timeLeft: 15,
-            guesses: {},
-            totalScores: {},
-            readyForNextRound: {},
-            maxQuestions: requestedRounds
+            active: true, mode: subMode, currentQuestionIndex: 0,
+            questions: chosenQuestions, timer: null, timeLeft: 15,
+            guesses: {}, totalScores: {}, readyForNextRound: {}, maxQuestions: requestedRounds
         };
 
         players.forEach(p => { guessState.totalScores[p.id] = 0; });
@@ -305,13 +287,7 @@ io.on('connection', (socket) => {
             mode: guessState.mode,
             questionIndex: guessState.currentQuestionIndex + 1,
             maxQuestions: guessState.maxQuestions,
-            question: {
-                title: q.title,
-                hint: q.hint,
-                img: q.img,
-                wiki: q.wiki,
-                wikiLang: q.wikiLang
-            },
+            question: { title: q.title, hint: q.hint, img: q.img, wiki: q.wiki, wikiLang: q.wikiLang },
             timeLeft: guessState.timeLeft
         });
 
@@ -330,10 +306,8 @@ io.on('connection', (socket) => {
         if (!guessState.active || guessState.guesses[socket.id]) return;
         const num = parseFloat(val);
         if (isNaN(num)) return;
-
         guessState.guesses[socket.id] = { value: num, timeLeft: guessState.timeLeft, scoreGained: 0 };
         socket.emit('guessLockedNotice');
-
         if (Object.keys(guessState.guesses).length === players.length) {
             clearInterval(guessState.timer);
             endGuessRound();
@@ -348,31 +322,24 @@ io.on('connection', (socket) => {
         players.forEach(p => {
             const userGuess = guessState.guesses[p.id];
             let score = 0;
-
             if (userGuess) {
                 const diff = Math.abs(userGuess.value - actual);
                 let accuracyScore = 0;
-
                 if (guessState.mode === 'celebrity') {
                     accuracyScore = Math.max(0, 1000 - (diff * 120));
                 } else {
                     const ratio = diff / actual;
                     accuracyScore = ratio > 1 ? 0 : Math.round(1000 * (1 - ratio));
                 }
-
                 const speedMult = 0.5 + (0.5 * (userGuess.timeLeft / 15));
                 score = Math.round(accuracyScore * speedMult);
-
                 userGuess.scoreGained = score;
                 guessState.totalScores[p.id] = (guessState.totalScores[p.id] || 0) + score;
             }
-
             roundResults.push({
-                id: p.id,
-                name: p.name,
+                id: p.id, name: p.name,
                 guess: userGuess ? userGuess.value : 'Tahmin Yok',
-                scoreGained: score,
-                totalScore: guessState.totalScores[p.id] || 0
+                scoreGained: score, totalScore: guessState.totalScores[p.id] || 0
             });
         });
 
@@ -380,8 +347,7 @@ io.on('connection', (socket) => {
         guessState.readyForNextRound = {};
 
         io.emit('guessRoundEnded', {
-            actual: actual,
-            unit: guessState.mode === 'celebrity' ? 'Yaş' : 'TL',
+            actual, unit: guessState.mode === 'celebrity' ? 'Yaş' : 'TL',
             results: roundResults,
             isLastQuestion: (guessState.currentQuestionIndex + 1 >= guessState.maxQuestions),
             readyStatus: players.map(p => ({ id: p.id, name: p.name, ready: false }))
@@ -391,13 +357,7 @@ io.on('connection', (socket) => {
     socket.on('guessNextRoundReadyToggle', () => {
         if (!guessState.active) return;
         guessState.readyForNextRound[socket.id] = true;
-
-        const readyList = players.map(p => ({
-            id: p.id,
-            name: p.name,
-            ready: !!guessState.readyForNextRound[p.id]
-        }));
-
+        const readyList = players.map(p => ({ id: p.id, name: p.name, ready: !!guessState.readyForNextRound[p.id] }));
         io.emit('guessNextRoundReadyUpdate', readyList);
 
         if (players.every(p => guessState.readyForNextRound[p.id])) {
@@ -409,15 +369,12 @@ io.on('connection', (socket) => {
                 const finalLeaderboard = players.map(p => ({
                     name: p.name, totalScore: guessState.totalScores[p.id] || 0
                 })).sort((a, b) => b.totalScore - a.totalScore);
-
                 io.emit('guessGameOver', { finalLeaderboard });
             }
         }
     });
 
-    // ==========================================
-    // 2. ARABA YARIŞI MOTORU
-    // ==========================================
+    // 2. ARABA YARIŞI
     socket.on('startRaceGame', () => {
         if (players.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
         if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan yarış başlamaz!');
@@ -586,9 +543,153 @@ io.on('connection', (socket) => {
         car.heldItem = null;
     });
 
-    // ==========================================
-    // 3. MONOPOLY (KTÜ EDITION) MOTORU
-    // ==========================================
+    // 3. STICK RUN (ÇÖP ADAM PARKUR) MOTORU
+    socket.on('startStickGame', () => {
+        if (players.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
+        if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan koşu başlamaz!');
+        if (stickState.loopInterval) clearInterval(stickState.loopInterval);
+
+        const parkour = generateStickParkour();
+        stickState.active = true;
+        stickState.winner = null;
+        stickState.obstacles = parkour.obstacles;
+        stickState.boxes = parkour.boxes;
+        stickState.runners = {};
+
+        players.forEach((p, idx) => {
+            stickState.runners[p.id] = {
+                id: p.id, name: p.name, color: p.color,
+                x: 80 - (idx * 20), y: 340, vy: 0,
+                speed: 5.5, onGround: true, ducking: false,
+                heldItem: null, boostTimer: 0, shieldTimer: 0, stunTimer: 0,
+                hitCooldown: 0
+            };
+        });
+
+        io.emit('stickStarted', {
+            obstacles: stickState.obstacles,
+            boxes: stickState.boxes,
+            finishLine: stickState.finishLine
+        });
+
+        stickState.loopInterval = setInterval(() => {
+            if (!stickState.active) return;
+
+            stickState.boxes.forEach(b => {
+                if (!b.active) {
+                    b.respawnTimer--;
+                    if (b.respawnTimer <= 0) b.active = true;
+                }
+            });
+
+            for (let id in stickState.runners) {
+                const r = stickState.runners[id];
+
+                if (r.boostTimer > 0) r.boostTimer--;
+                if (r.shieldTimer > 0) r.shieldTimer--;
+                if (r.stunTimer > 0) r.stunTimer--;
+                if (r.hitCooldown > 0) r.hitCooldown--;
+
+                if (r.stunTimer > 0) {
+                    r.speed = 0.5;
+                } else if (r.boostTimer > 0) {
+                    r.speed = 10.5;
+                } else {
+                    r.speed = r.ducking && r.onGround ? 4.4 : 6.0;
+                }
+
+                r.x += r.speed;
+
+                if (!r.onGround) {
+                    r.y += r.vy;
+                    r.vy += 0.8;
+                    if (r.y >= 340) {
+                        r.y = 340;
+                        r.vy = 0;
+                        r.onGround = true;
+                    }
+                }
+
+                const centerY = r.y - (r.ducking ? 16 : 30);
+                stickState.boxes.forEach(box => {
+                    if (box.active && Math.abs(r.x - box.x) < 28 && Math.abs(centerY - box.y) < 35) {
+                        box.active = false;
+                        box.respawnTimer = 120;
+                        if (!r.heldItem) {
+                            const pool = ['boost', 'lightning', 'shield'];
+                            r.heldItem = pool[Math.floor(Math.random() * pool.length)];
+                        }
+                    }
+                });
+
+                if (r.shieldTimer <= 0 && r.hitCooldown <= 0) {
+                    stickState.obstacles.forEach(obs => {
+                        if (r.x + 12 > obs.x && r.x - 12 < obs.x + obs.w) {
+                            if (obs.type === 'low' && r.y > 292) {
+                                r.stunTimer = 22;
+                                r.hitCooldown = 35;
+                                r.x -= 30;
+                            } else if (obs.type === 'high' && !r.ducking) {
+                                r.stunTimer = 22;
+                                r.hitCooldown = 35;
+                                r.x -= 30;
+                            }
+                        }
+                    });
+                }
+
+                if (r.x >= stickState.finishLine && !stickState.winner) {
+                    stickState.winner = r.name;
+                    stickState.active = false;
+                    clearInterval(stickState.loopInterval);
+                    io.emit('stickFinished', { winner: r.name });
+                    io.emit('monoGlobalAlert', `🏆 ${r.name} Stick Run parkurunu 1. tamamladı!`);
+                    break;
+                }
+            }
+
+            io.emit('stickUpdate', {
+                runners: stickState.runners,
+                boxes: stickState.boxes
+            });
+        }, 1000 / 30);
+    });
+
+    socket.on('stickInput', (data) => {
+        const r = stickState.runners[socket.id];
+        if (!stickState.active || !r) return;
+
+        if (data.action === 'jump' && r.onGround && r.stunTimer <= 0) {
+            r.vy = -13.5;
+            r.onGround = false;
+            r.ducking = false;
+        } else if (data.action === 'duck') {
+            r.ducking = !!data.state;
+        } else if (data.action === 'item' && r.heldItem) {
+            const item = r.heldItem;
+            r.heldItem = null;
+
+            if (item === 'boost') {
+                r.boostTimer = 65;
+                io.emit('monoGlobalAlert', `🚀 ${r.name} Turbo Hız bastı!`);
+            } else if (item === 'shield') {
+                r.shieldTimer = 130;
+                io.emit('monoGlobalAlert', `🛡️ ${r.name} Koruma Kalkanı açtı!`);
+            } else if (item === 'lightning') {
+                let hitCount = 0;
+                for (let otherId in stickState.runners) {
+                    const target = stickState.runners[otherId];
+                    if (otherId !== socket.id && target.x > r.x && target.shieldTimer <= 0) {
+                        target.stunTimer = 45;
+                        hitCount++;
+                    }
+                }
+                io.emit('monoGlobalAlert', `⚡ ${r.name} Yıldırım çaktı ve öndeki ${hitCount} kişiyi çarptı!`);
+            }
+        }
+    });
+
+    // 4. MONOPOLY (KTÜ EDITION) MOTORU
     socket.on('startMonopolyGame', () => {
         if (players.length < 2) return socket.emit('errorMsg', 'En az 2 oyuncu olmalı!');
         if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan oyun başlamaz!');
@@ -903,9 +1004,7 @@ io.on('connection', (socket) => {
         }
     }
 
-    // ==========================================
-    // 4. TABU MOTORU
-    // ==========================================
+    // 5. TABU MOTORU
     socket.on('switchTabuTeam', (newTeam) => {
         const p = players.find(x => x.id === socket.id);
         if (p && (newTeam === 'red' || newTeam === 'blue')) {
@@ -1023,9 +1122,7 @@ io.on('connection', (socket) => {
         io.to(tabuState.describerId).emit('tabuNewCardForDescriber', tabuState.currentCard);
     });
 
-    // ==========================================
-    // 5. İMPOSTER MOTORU
-    // ==========================================
+    // 6. İMPOSTER MOTORU
     socket.on('startImposter', () => {
         if (players.length < 3) return socket.emit('errorMsg', 'İmposter için en az 3 oyuncu gerekir!');
         if (!players.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan oyun başlamaz!');
@@ -1092,6 +1189,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         players = players.filter(p => p.id !== socket.id);
         delete raceState.cars[socket.id];
+        delete stickState.runners[socket.id];
         delete guessState.totalScores[socket.id];
         delete guessState.guesses[socket.id];
         io.emit('updateLobby', { players, currentGame });

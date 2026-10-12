@@ -30,6 +30,7 @@
         <button class="btn-menu" style="border-color:#9b59b6;" onclick="selectGame('guess')">🎯 İşkembeden Sallama</button>
         <button class="btn-menu" onclick="selectGame('monopoly')">🎩 Monopoly (KTÜ)</button>
         <button class="btn-menu" onclick="selectGame('race')">🏎️ Araba Yarışı (Grand Prix)</button>
+        <button class="btn-menu" style="border-color:#e67e22;" onclick="selectGame('stickrun')">🏃‍♂️ Stick Run (Çöp Adam Parkur)</button>
         <button class="btn-menu" onclick="selectGame('tabu')">🚫 Tabu</button>
         <button class="btn-menu" onclick="selectGame('imposter')">🕵️ İmposter</button>
     </div>
@@ -134,7 +135,7 @@
                         <button id="btnUseCard" style="width: auto; padding: 10px 16px; background: #27ae60; display: none;" onclick="socket.emit('monopolyUseJailCard')">Konferansa Kaç 🎟️</button>
                     </div>
 
-                  <div id="buyPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #f9d342;">
+                    <div id="buyPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #f9d342;">
                         <p id="buyPromptMsg" style="margin: 4px 0; font-size: 13px; font-weight: bold;"></p>
                         <div style="display: flex; gap: 8px; margin-top: 8px;">
                             <button style="background: #2ecc71; padding: 8px;" onclick="decideBuy(true)">Satın Al</button>
@@ -161,7 +162,7 @@
         </div>
 
         <!-- Tapularım / Varlıklarım Modalı -->
-        <div id="assetsModal" class="modal-overlay">
+        <div id="assetsModal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <h3 style="margin-top:0; color:#00adb5;">🏢 Sahip Olduğun Varlıklar & Kiralar</h3>
                 <div id="jailCardDisplay" style="color: #f1c40f; margin-bottom: 10px; font-weight: bold;"></div>
@@ -171,7 +172,7 @@
         </div>
 
         <!-- Pazarlık Teklifi Modalı -->
-        <div id="tradeOfferModal" class="modal-overlay">
+        <div id="tradeOfferModal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <h3 style="margin-top:0; color:#f39c12;">🤝 Tapu İçin Pazarlık Teklifi Ver</h3>
                 <p id="tradeTargetInfo" style="font-size:14px; color:#aaa;"></p>
@@ -184,7 +185,7 @@
         </div>
 
         <!-- Gelen Pazarlık Modalı -->
-        <div id="incomingTradeModal" class="modal-overlay">
+        <div id="incomingTradeModal" class="modal-overlay" style="display: none;">
             <div class="modal-content" style="border-color: #f1c40f;">
                 <h3 style="margin-top:0; color:#f1c40f;">📬 Sana Pazarlık Teklifi Geldi!</h3>
                 <p id="incomingTradeMsg" style="font-size: 15px; margin: 15px 0;"></p>
@@ -342,9 +343,43 @@
 
         <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
     </div>
+
+    <!-- 8. STICK RUN (ÇÖP ADAM PARKUR) -->
+    <div id="view-stickrun" style="display: none;">
+        <h2>🏃‍♂️ Stick Run (Çöp Adam Parkur)</h2>
+        <div id="stickLobbyControls">
+            <p style="color:#aaa; font-size:14px;">Kontroller: <strong>W / ▲</strong> Zıpla | <strong>S / ▼</strong> Eğil | <strong>Space</strong> Özel Güç Kullan</p>
+            <div class="ready-panel">
+                <div style="margin-bottom: 8px; color: #aaa;">Koşucu Hazır Durumu:</div>
+                <div id="stickReadyList"></div>
+            </div>
+            <button id="btnStickReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
+            <button style="background: #2ecc71;" onclick="socket.emit('startStickGame')">Koşuyu Başlat 🏁</button>
+        </div>
+
+        <div id="stickGameArea" class="race-container" style="display: none;">
+            <div style="display: flex; gap: 15px; align-items: center; justify-content: center; width: 100%; margin-bottom: 6px;">
+                <div style="font-size: 18px; font-weight: bold; color: #00adb5;" id="stickProgressHud">İlerleme: %0</div>
+                <div class="item-slot-hud" id="stickItemHud">Güç: <span>Yok</span></div>
+            </div>
+
+            <canvas id="stickCanvas" width="1000" height="420" style="background:#141824; border:3px solid #00adb5; border-radius:10px; width:100%; max-width:900px; height:auto;"></canvas>
+
+            <div class="mobile-controls" style="max-width: 500px;">
+                <button class="touch-btn" style="background:#e67e22; width:90px; border-radius:12px; font-size:15px;" id="btnStickDuck">Eğil ▼</button>
+                <button class="touch-btn" style="background:#9b59b6; width:90px; border-radius:12px; font-size:15px;" id="btnStickItem">Güç ⚡</button>
+                <button class="touch-btn" style="background:#2ecc71; width:90px; border-radius:12px; font-size:15px;" id="btnStickJump">Zıpla ▲</button>
+            </div>
+
+            <div id="stickWinnerBox" style="display: none; background: #262a3b; padding: 15px; border-radius: 8px; margin-top: 10px; border: 2px solid #f1c40f;">
+                <h3 id="stickWinnerTitle" style="color: #f1c40f; margin: 0;"></h3>
+            </div>
+        </div>
+        <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
+    </div>
 </div>
 
-<!-- SOKET VE 6 PARÇALI OYUN MODÜLLERİ -->
+<!-- SOKET VE OYUN MODÜLLERİ -->
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/main.js"></script>
 <script src="/js/guess.js"></script>
@@ -352,7 +387,6 @@
 <script src="/js/race.js"></script>
 <script src="/js/tabu.js"></script>
 <script src="/js/imposter.js"></script>
-</body>
-</html>
+<script src="/js/stickrun.js"></script>
 </body>
 </html>
