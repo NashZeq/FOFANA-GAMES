@@ -196,11 +196,20 @@
                 <div class="item-slot-hud" id="raceItemHud">Eşya: <span>Yok</span></div>
             </div>
             <canvas id="raceCanvas" width="1200" height="750"></canvas>
+            
+            <!-- YENİ GAMEPAD YARIŞ KONTROLLERİ -->
             <div class="mobile-controls">
-                <div><button class="touch-btn" id="btnLeft">◀</button><button class="touch-btn" id="btnRight">▶</button></div>
-                <button class="touch-btn" style="background:#f39c12; width:70px; border-radius:12px;" onclick="socket.emit('raceUseItem')">Eşya 🚀</button>
-                <div><button class="touch-btn" style="background:#2ecc71;" id="btnGas">▲</button><button class="touch-btn" style="background:#e74c3c;" id="btnBrake">▼</button></div>
+                <div class="control-cluster">
+                    <button class="touch-btn" id="btnLeft">◀</button>
+                    <button class="touch-btn" id="btnRight">▶</button>
+                </div>
+                <button class="touch-btn touch-btn-action" style="background:#f39c12;" onclick="socket.emit('raceUseItem')">🚀</button>
+                <div class="control-cluster">
+                    <button class="touch-btn" style="background:#e74c3c;" id="btnBrake">▼</button>
+                    <button class="touch-btn" style="background:#2ecc71;" id="btnGas">▲</button>
+                </div>
             </div>
+
             <div id="raceWinnerBox" style="display: none; background: #262a3b; padding: 15px; border-radius: 8px; margin-top: 10px; border: 2px solid #f1c40f;">
                 <h3 id="raceWinnerTitle" style="color: #f1c40f; margin: 0;"></h3>
             </div>
@@ -285,11 +294,18 @@
                 <div class="item-slot-hud" id="stickItemHud">Güç: <span>Yok</span></div>
             </div>
             <canvas id="stickCanvas" width="1000" height="420"></canvas>
-            <div class="mobile-controls" style="max-width: 500px;">
-                <button class="touch-btn" style="background:#e67e22; width:90px;" id="btnStickDuck">Eğil ▼</button>
-                <button class="touch-btn" style="background:#9b59b6; width:90px;" id="btnStickItem">Güç ⚡</button>
-                <button class="touch-btn" style="background:#2ecc71; width:90px;" id="btnStickJump">Zıpla ▲</button>
+            
+            <!-- YENİ GAMEPAD STICK RUN KONTROLLERİ -->
+            <div class="mobile-controls">
+                <div class="control-cluster">
+                    <button class="touch-btn" style="background:#e67e22;" id="btnStickDuck">▼ Eğil</button>
+                </div>
+                <button class="touch-btn touch-btn-action" style="background:#9b59b6;" id="btnStickItem">⚡</button>
+                <div class="control-cluster">
+                    <button class="touch-btn" style="background:#2ecc71;" id="btnStickJump">▲ Zıpla</button>
+                </div>
             </div>
+
             <div id="stickWinnerBox" style="display: none; background: #262a3b; padding: 15px; border-radius: 8px; margin-top: 10px; border: 2px solid #f1c40f;">
                 <h3 id="stickWinnerTitle" style="color: #f1c40f; margin: 0;"></h3>
             </div>
@@ -297,7 +313,7 @@
         <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
     </div>
 
-    <!-- 9. YENİ: WORMS OYUNU -->
+    <!-- 9. WORMS OYUNU -->
     <div id="view-worms" style="display: none;">
         <h2>🐛 Topçu Solucanlar (Worms)</h2>
         <div id="wormsLobbyControls">
@@ -315,7 +331,16 @@
                 <div class="item-slot-hud" id="wormsPowerHud" style="border-color:#e74c3c;">💥 Güç: %0</div>
             </div>
 
-            <canvas id="wormsCanvas" width="1000" height="600" style="background:#141824; border:3px solid #00adb5; border-radius:10px; width:100%; max-width:900px; height:auto;"></canvas>
+            <canvas id="wormsCanvas" width="1000" height="600"></canvas>
+
+            <!-- YENİ GAMEPAD WORMS KONTROLLERİ -->
+            <div class="mobile-controls">
+                <div class="control-cluster" style="flex-direction: column; gap:8px;">
+                    <div style="display:flex; justify-content:center;"><button class="touch-btn" style="padding:15px;" id="btnWormUp">▲</button></div>
+                    <div style="display:flex; gap:8px;"><button class="touch-btn" style="padding:15px;" id="btnWormLeft">◀</button><button class="touch-btn" style="padding:15px;" id="btnWormDown">▼</button><button class="touch-btn" style="padding:15px;" id="btnWormRight">▶</button></div>
+                </div>
+                <button class="touch-btn touch-btn-action" style="background:#e74c3c;" id="btnWormFire">💥</button>
+            </div>
 
             <div id="wormsWinnerBox" style="display: none; background: #262a3b; padding: 15px; border-radius: 8px; margin-top: 10px; border: 2px solid #f1c40f;">
                 <h3 id="wormsWinnerTitle" style="color: #f1c40f; margin: 0;"></h3>

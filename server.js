@@ -7,6 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// MODÜLER VERİLER
 const iskembedenData = require('./data/iskembedenData');
 const monoData = require('./data/monopolyData');
 const monopolyBoard = (monoData && monoData.monopolyBoard) ? monoData.monopolyBoard : [];
@@ -36,7 +37,7 @@ let tabuState = { scores: { red: 0, blue: 0 }, currentCard: null, describerId: n
 let currentImposterDeck = [];
 let imposterState = { word: '', imposterId: '', imposterName: '', votes: {}, timer: null };
 
-// YENİ: WORMS STATE
+// WORMS STATE
 let wormsState = { active: false, worms: {}, turnId: null, turnOrder: [], wind: 0, activeProjectile: null, terrainHeights: Array(1000).fill(600), loopInterval: null, winner: null, projectileFired: false };
 
 function checkAndResetEmptyRooms() {
@@ -65,17 +66,26 @@ function generateStickParkour() {
     } return { obstacles, platforms, pads, boxes };
 }
 
-// WORMS HARİTA OLUŞTURUCU (Tepelik arazi)
+// YENİ HARİTA MOTORU: WORMS KAOS DAĞLARI VE KRATERLERİ
 function generateWormsTerrain() {
     let terrain = new Array(1000).fill(0);
-    let h = 350;
-    for(let i=0; i<1000; i++) {
-        h += (Math.random() - 0.5) * 6;
-        if(h < 200) h = 200; if(h > 550) h = 550;
-        terrain[i] = h;
+    let seed1 = Math.random() * 100; let seed2 = Math.random() * 100; let seed3 = Math.random() * 100;
+    
+    for(let x=0; x<1000; x++) {
+        let h = 400; 
+        h += Math.sin(x / 150 + seed1) * 120; // Büyük dağlar/vadiler
+        h += Math.sin(x / 50 + seed2) * 60;   // Orta tepeler
+        h += Math.sin(x / 15 + seed3) * 20;   // Küçük çıkıntılar
+        h += (Math.random() - 0.5) * 15;      // Tırtıklı toprak dokusu
+        
+        if(h < 150) h = 150; if(h > 580) h = 580;
+        terrain[x] = h;
     }
-    // Kenarları yumuşat
-    for(let i=1; i<999; i++) { terrain[i] = (terrain[i-1] + terrain[i] + terrain[i+1]) / 3; }
+    // Toprağı yürünek için hafifçe pürüzsüzleştir
+    for(let passes = 0; passes < 3; passes++) {
+        let temp = [...terrain];
+        for(let i=1; i<999; i++) terrain[i] = (temp[i-1] + temp[i] + temp[i+1]) / 3;
+    }
     return terrain;
 }
 
@@ -557,14 +567,12 @@ io.on('connection', (socket) => {
 
     socket.on('monopolyPayJailBail', () => {
         const cp = monoState.players[monoState.turnIndex]; if (!cp || socket.id !== cp.id || !cp.inJail || cp.money < 100) return;
-        cp.money -= 100; cp.inJail = false; cp.jailTurns = 0;
-        broadcastMonoLog(`🔓 ${cp.name} 100₺ kefalet ödedi ve serbest kaldı! Artık zar atabilir.`); io.emit('monopolyStateUpdated', monoState); 
+        cp.money -= 100; cp.inJail = false; cp.jailTurns = 0; broadcastMonoLog(`🔓 ${cp.name} 100₺ kefalet ödedi ve serbest kaldı! Artık zar atabilir.`); io.emit('monopolyStateUpdated', monoState); 
     });
 
     socket.on('monopolyUseJailCard', () => {
         const cp = monoState.players[monoState.turnIndex]; if (!cp || socket.id !== cp.id || !cp.inJail || cp.jailCardCount <= 0) return;
-        cp.jailCardCount--; cp.inJail = false; cp.jailTurns = 0;
-        broadcastMonoLog(`🎟️ ${cp.name} Konferans Kartını kullandı ve serbest kaldı! Artık zar atabilir.`); io.emit('monopolyStateUpdated', monoState); 
+        cp.jailCardCount--; cp.inJail = false; cp.jailTurns = 0; broadcastMonoLog(`🎟️ ${cp.name} Konferans Kartını kullandı ve serbest kaldı! Artık zar atabilir.`); io.emit('monopolyStateUpdated', monoState); 
     });
 
     socket.on('monopolySellProperty', (tileId) => {
@@ -599,9 +607,7 @@ io.on('connection', (socket) => {
     // ---------------- 5. TABU ----------------
     socket.on('switchTabuTeam', (newTeam) => {
         const p = players.find(x => x.id === socket.id);
-        if (p && (newTeam === 'red' || newTeam === 'blue')) {
-            p.team = newTeam; p.ready = false; const gamePlayers = players.filter(pl => pl.lobby === 'tabu'); io.emit('updateTabuLobby', { players: gamePlayers, tabuState });
-        }
+        if (p && (newTeam === 'red' || newTeam === 'blue')) { p.team = newTeam; p.ready = false; const gamePlayers = players.filter(pl => pl.lobby === 'tabu'); io.emit('updateTabuLobby', { players: gamePlayers, tabuState }); }
     });
 
     socket.on('startTabuGame', (selectedMaxRounds) => {
@@ -720,7 +726,7 @@ io.on('connection', (socket) => {
         const terrainHeights = generateWormsTerrain();
         wormsState.active = true; wormsState.winner = null; wormsState.terrainHeights = terrainHeights;
         wormsState.worms = {}; wormsState.turnOrder = []; wormsState.activeProjectile = null; wormsState.projectileFired = false;
-        wormsState.wind = (Math.random() - 0.5) * 8; // Rastgele rüzgar
+        wormsState.wind = (Math.random() - 0.5) * 8; 
 
         gamePlayers.forEach((p, idx) => {
             const startX = 100 + (idx * (800 / (gamePlayers.length - 1 || 1)));
@@ -736,19 +742,16 @@ io.on('connection', (socket) => {
         wormsState.loopInterval = setInterval(() => {
             if (!wormsState.active) return;
 
-            // Mermi Fiziği: Rüzgar ve Yerçekimi Hesaplaması
             if (wormsState.activeProjectile) {
                 let p = wormsState.activeProjectile;
                 p.x += p.vx; p.y += p.vy;
-                p.vy += 0.18; // Yerçekimi
-                p.vx += wormsState.wind * 0.012; // Rüzgar itmesi
+                p.vy += 0.18; 
+                p.vx += wormsState.wind * 0.012; 
 
                 let ix = Math.floor(p.x); let iy = Math.floor(p.y);
-                // Toprakla çarpışma kontrolü
                 if (ix >= 0 && ix < 1000 && iy >= wormsState.terrainHeights[ix]) {
                      explodeWormProjectile(ix, iy, p.ownerId);
                 } 
-                // Ekran dışına çıkma kontrolü
                 else if (p.y > 650 || p.x < -100 || p.x > 1100) {
                      wormsState.activeProjectile = null;
                      setTimeout(nextWormsTurn, 1000);
@@ -761,27 +764,24 @@ io.on('connection', (socket) => {
     function explodeWormProjectile(ex, ey, ownerId) {
         io.emit('wormsExplosionSync', { x: ex, y: ey, radius: 45 });
         
-        // Araziyi oymak (Çukur açmak)
         for (let x = Math.max(0, ex - 45); x < Math.min(1000, ex + 45); x++) {
             let dx = x - ex; let dy = Math.sqrt(45 * 45 - dx * dx);
             if (ey - dy < wormsState.terrainHeights[x]) { wormsState.terrainHeights[x] = ey + dy; }
         }
 
-        // Oyunculara hasar vermek ve kraterin içine düşürmek
         for (let id in wormsState.worms) {
             let w = wormsState.worms[id];
             if (w.hp > 0) {
                 let dist = Math.hypot(w.x - ex, w.y - ey);
                 if (dist < 60) {
-                    w.hp -= Math.floor(45 * (1 - dist / 60)); // Merkeze yaklaştıkça hasar artar
+                    w.hp -= Math.floor(45 * (1 - dist / 60)); 
                     if(w.hp <= 0) { w.hp = 0; broadcastMonoLog(`💀 ${w.name} havaya uçtu!`); }
                 }
-                // Altındaki toprak çöktüyse aşağı düşür
                 w.y = wormsState.terrainHeights[Math.floor(w.x)] - 5;
             }
         }
         wormsState.activeProjectile = null;
-        setTimeout(nextWormsTurn, 1500); // Patlama animasyonunun bitmesini bekle
+        setTimeout(nextWormsTurn, 1500); 
     }
 
     function nextWormsTurn() {
@@ -794,7 +794,7 @@ io.on('connection', (socket) => {
         do { currIdx = (currIdx + 1) % wormsState.turnOrder.length; wormsState.turnId = wormsState.turnOrder[currIdx]; } 
         while (wormsState.worms[wormsState.turnId].hp <= 0);
 
-        wormsState.wind = (Math.random() - 0.5) * 8; // Rüzgar değişir
+        wormsState.wind = (Math.random() - 0.5) * 8; 
         wormsState.projectileFired = false;
     }
 
@@ -807,7 +807,7 @@ io.on('connection', (socket) => {
         if (inputs.down) { w.aimAngle += 0.05; }
 
         w.x = Math.max(10, Math.min(990, w.x));
-        w.y = wormsState.terrainHeights[Math.floor(w.x)] - 5; // Toprağın üstünde tut
+        w.y = wormsState.terrainHeights[Math.floor(w.x)] - 5; 
     });
 
     socket.on('wormsFire', (data) => {
@@ -815,11 +815,10 @@ io.on('connection', (socket) => {
         let w = wormsState.worms[socket.id];
         wormsState.projectileFired = true;
         
-        // Mermiyi namlunun ucundan fırlat
         wormsState.activeProjectile = {
             x: w.x + Math.cos(w.aimAngle) * 15, 
             y: w.y + Math.sin(w.aimAngle) * 15,
-            vx: Math.cos(w.aimAngle) * (data.power * 0.45), // Açı ve güce göre hız
+            vx: Math.cos(w.aimAngle) * (data.power * 0.45), 
             vy: Math.sin(w.aimAngle) * (data.power * 0.45),
             ownerId: socket.id
         };
