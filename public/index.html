@@ -24,7 +24,7 @@
     <!-- 2. ANA MENÜ -->
     <div id="view-lobby" style="display: none;">
         <h2>Ana Menü</h2>
-        <p style="color:#aaa;">Odaki Oyuncular: <span id="lobbyPlayers"></span></p>
+        <p style="color:#aaa;">Odadaki Oyuncular: <span id="lobbyPlayers"></span></p>
         <hr style="border:0.5px solid #333; margin: 15px 0;">
         <h3>Oyun Seçin</h3>
         <button class="btn-menu" style="border-color:#9b59b6;" onclick="selectGame('guess')">🎯 İşkembeden Sallama</button>
@@ -33,6 +33,7 @@
         <button class="btn-menu" style="border-color:#e67e22;" onclick="selectGame('stickrun')">🏃‍♂️ Stick Run (Çöp Adam Parkur)</button>
         <button class="btn-menu" onclick="selectGame('tabu')">🚫 Tabu</button>
         <button class="btn-menu" onclick="selectGame('imposter')">🕵️ İmposter</button>
+        <button class="btn-menu" style="border-color:#27ae60;" onclick="selectGame('worms')">🐛 Topçu Solucanlar (Worms)</button>
     </div>
 
     <!-- 3. İŞKEMBEDEN SALLAMA -->
@@ -43,8 +44,8 @@
                 <div style="flex: 2; min-width: 220px;">
                     <label style="font-size: 14px; color: #aaa;">Oyun Modu:</label>
                     <select id="guessSubModeSelect">
-                        <option value="celebrity">1. Mod: Ünlülerin Yaşları (Gerçek Fotoğraflı)</option>
-                        <option value="market">2. Mod: Pazar / Market / Takı / Eşya Fiyatları</option>
+                        <option value="celebrity">1. Mod: Ünlülerin Yaşları</option>
+                        <option value="market">2. Mod: Pazar / Market / Fiyatlar</option>
                         <option value="car">3. Mod: Türkiye 2. El Araba Piyasası</option>
                     </select>
                 </div>
@@ -54,7 +55,6 @@
                         <option value="5">5 Tur</option>
                         <option value="10" selected>10 Tur</option>
                         <option value="15">15 Tur</option>
-                        <option value="20">20 Tur</option>
                     </select>
                 </div>
             </div>
@@ -80,20 +80,15 @@
                     <input type="number" id="userGuessInput" placeholder="Tahmininizi girin...">
                     <button style="background: #9b59b6;" id="btnSubmitGuess" onclick="submitGuess()">Tahmini Kilitle 🔒</button>
                 </div>
-                <div id="guessSubmittedNotice" style="display: none; color: #2ecc71; font-weight: bold; margin-top: 10px;">
-                    ✓ Tahmininiz kilitlendi! Diğerleri bekleniyor...
-                </div>
+                <div id="guessSubmittedNotice" style="display: none; color: #2ecc71; font-weight: bold; margin-top: 10px;">✓ Kilitlendi!</div>
             </div>
         </div>
 
         <div id="guessRevealPanel" style="display: none; background: #202433; padding: 20px; border-radius: 12px; margin-top: 15px; border: 2px solid #00adb5;">
             <h3 style="color:#aaa; margin:0;">GERÇEK DEĞER:</h3>
             <div id="guessActualValue" style="font-size: 32px; font-weight: 900; color: #2ecc71; margin: 8px 0;">---</div>
-            <hr style="border: 0.5px solid #3d435e; margin: 15px 0;">
-            <h4>Bu Turun Puanları:</h4>
             <div id="guessRoundScoresList"></div>
             <div id="nextRoundReadyArea" style="margin-top: 20px; border-top: 1px dashed #3d435e; padding-top: 15px;">
-                <div style="font-size: 13px; color: #aaa; margin-bottom: 8px;">Sıradaki Soru İçin Hazır Olanlar:</div>
                 <div id="nextRoundReadyBadges" style="margin-bottom: 12px;"></div>
                 <button id="btnNextRoundReady" style="background: #f39c12; font-size: 18px;" onclick="toggleNextRoundReady()">Sıradaki Soruya Hazırım ⏳</button>
             </div>
@@ -112,7 +107,6 @@
         <h2>🎩 Monopoly (KTÜ Edition)</h2>
         <div id="monoLobbyControls">
             <div class="ready-panel">
-                <div style="margin-bottom: 8px; color: #aaa;">Oyuncu Hazır Durumu:</div>
                 <div id="monoReadyList"></div>
             </div>
             <button id="btnMonoReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
@@ -146,71 +140,56 @@
                     <div id="buyoutPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #e74c3c;">
                         <p id="buyoutPromptMsg" style="margin: 4px 0; font-size: 13px; font-weight: bold; color: #ff7675;"></p>
                         <div style="display: flex; gap: 8px; margin-top: 8px;">
-                            <button style="background: #e74c3c; padding: 8px;" onclick="decideBuyout(true)">1.5x Bedelle Satın Al</button>
+                            <button style="background: #e74c3c; padding: 8px;" onclick="decideBuyout(true)">Zorla Satın Al</button>
                             <button style="background: #777; padding: 8px;" onclick="decideBuyout(false)">İstemiyorum</button>
                         </div>
                     </div>
 
                     <div id="dobloPromptBox" style="display: none; background: #262a3b; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #e67e22;">
-                        <p style="margin: 4px 0; font-size: 13px; font-weight: bold; color: #f39c12;">🚐 Doblo nereye sürsün dostum? Seç ve gazla:</p>
                         <select id="dobloTargetSelect" style="margin: 6px 0;"></select>
-                        <button style="background: #e67e22; padding: 8px;" onclick="submitDobloDrive()">Doblo'yu Oraya Sür 💨</button>
+                        <button style="background: #e67e22; padding: 8px;" onclick="submitDobloDrive()">Oraya Sür 💨</button>
                     </div>
                 </div>
             </div>
             <div class="mono-log" id="monoLogBox"></div>
         </div>
 
-        <!-- Tapularım / Varlıklarım Modalı -->
         <div id="assetsModal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
-                <h3 style="margin-top:0; color:#00adb5;">🏢 Sahip Olduğun Varlıklar & Kiralar</h3>
+                <h3 style="margin-top:0; color:#00adb5;">🏢 Sahip Olduğun Varlıklar</h3>
                 <div id="jailCardDisplay" style="color: #f1c40f; margin-bottom: 10px; font-weight: bold;"></div>
                 <div id="assetsList"></div>
                 <button style="background: #e74c3c; margin-top: 15px;" onclick="closeAssetsModal()">Kapat</button>
             </div>
         </div>
 
-        <!-- Pazarlık Teklifi Modalı -->
         <div id="tradeOfferModal" class="modal-overlay" style="display: none;">
             <div class="modal-content">
-                <h3 style="margin-top:0; color:#f39c12;">🤝 Tapu İçin Pazarlık Teklifi Ver</h3>
+                <h3 style="margin-top:0; color:#f39c12;">🤝 Pazarlık Teklifi Ver</h3>
                 <p id="tradeTargetInfo" style="font-size:14px; color:#aaa;"></p>
                 <input type="number" id="tradeOfferInput" placeholder="Teklif tutarı (₺)...">
-                <div style="display: flex; gap: 8px;">
-                    <button style="background: #2ecc71;" onclick="sendTradeOffer()">Teklifi Gönder</button>
-                    <button style="background: #777;" onclick="closeTradeModal()">İptal</button>
-                </div>
+                <div style="display: flex; gap: 8px;"><button style="background: #2ecc71;" onclick="sendTradeOffer()">Gönder</button><button style="background: #777;" onclick="closeTradeModal()">İptal</button></div>
             </div>
         </div>
 
-        <!-- Gelen Pazarlık Modalı -->
         <div id="incomingTradeModal" class="modal-overlay" style="display: none;">
             <div class="modal-content" style="border-color: #f1c40f;">
-                <h3 style="margin-top:0; color:#f1c40f;">📬 Sana Pazarlık Teklifi Geldi!</h3>
+                <h3 style="margin-top:0; color:#f1c40f;">📬 Pazarlık Teklifi Geldi!</h3>
                 <p id="incomingTradeMsg" style="font-size: 15px; margin: 15px 0;"></p>
-                <div style="display: flex; gap: 8px;">
-                    <button style="background: #2ecc71;" onclick="respondTrade(true)">Kabul Et (Sat)</button>
-                    <button style="background: #e74c3c;" onclick="respondTrade(false)">Reddet</button>
-                </div>
+                <div style="display: flex; gap: 8px;"><button style="background: #2ecc71;" onclick="respondTrade(true)">Kabul Et</button><button style="background: #e74c3c;" onclick="respondTrade(false)">Reddet</button></div>
             </div>
         </div>
-
         <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
     </div>
 
     <!-- 5. ARABA YARIŞI -->
     <div id="view-race" style="display: none;">
-        <h2>🏎️ KTÜ Grand Prix (Genişletilmiş Pist)</h2>
+        <h2>🏎️ KTÜ Grand Prix</h2>
         <div id="raceLobbyControls">
-            <div class="ready-panel">
-                <div style="margin-bottom: 8px; color: #aaa;">Yarışçı Hazır Durumu:</div>
-                <div id="raceReadyList"></div>
-            </div>
+            <div class="ready-panel"><div id="raceReadyList"></div></div>
             <button id="btnRaceReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
             <button style="background: #2ecc71;" onclick="socket.emit('startRaceGame')">Yarışı Başlat 🏁</button>
         </div>
-
         <div id="raceGameArea" class="race-container" style="display: none;">
             <div style="display: flex; gap: 15px; align-items: center; justify-content: center; width: 100%;">
                 <div style="font-size: 18px; font-weight: bold; color: #f1c40f;" id="raceHud">Tur: 1 / 3</div>
@@ -218,15 +197,9 @@
             </div>
             <canvas id="raceCanvas" width="1200" height="750"></canvas>
             <div class="mobile-controls">
-                <div>
-                    <button class="touch-btn" id="btnLeft">◀</button>
-                    <button class="touch-btn" id="btnRight">▶</button>
-                </div>
+                <div><button class="touch-btn" id="btnLeft">◀</button><button class="touch-btn" id="btnRight">▶</button></div>
                 <button class="touch-btn" style="background:#f39c12; width:70px; border-radius:12px;" onclick="socket.emit('raceUseItem')">Eşya 🚀</button>
-                <div>
-                    <button class="touch-btn" style="background:#2ecc71;" id="btnGas">▲</button>
-                    <button class="touch-btn" style="background:#e74c3c;" id="btnBrake">▼</button>
-                </div>
+                <div><button class="touch-btn" style="background:#2ecc71;" id="btnGas">▲</button><button class="touch-btn" style="background:#e74c3c;" id="btnBrake">▼</button></div>
             </div>
             <div id="raceWinnerBox" style="display: none; background: #262a3b; padding: 15px; border-radius: 8px; margin-top: 10px; border: 2px solid #f1c40f;">
                 <h3 id="raceWinnerTitle" style="color: #f1c40f; margin: 0;"></h3>
@@ -240,77 +213,43 @@
         <h2>🚫 Tabu</h2>
         <div id="tabuLobbyPanel">
             <div style="text-align: left; margin: 10px 0;">
-                <label style="font-size: 14px; color: #aaa;">Toplam Tur Sayısı:</label>
-                <select id="tabuRoundSelect">
-                    <option value="1">1 Tur</option>
-                    <option value="3">3 Tur</option>
-                    <option value="5" selected>5 Tur</option>
-                    <option value="10">10 Tur</option>
-                </select>
+                <select id="tabuRoundSelect"><option value="1">1 Tur</option><option value="3">3 Tur</option><option value="5" selected>5 Tur</option></select>
             </div>
             <div class="teams-grid">
-                <div class="team-col team-red">
-                    <div style="color: #ff6b6b; font-weight: bold;">🔴 Kırmızı Takım</div>
-                    <div id="redTeamList"></div>
-                    <button style="background: #e94560; padding: 6px; font-size: 13px;" onclick="switchTeam('red')">Geç</button>
-                </div>
-                <div class="team-col team-blue">
-                    <div style="color: #4dabf7; font-weight: bold;">🔵 Mavi Takım</div>
-                    <div id="blueTeamList"></div>
-                    <button style="background: #0f3460; padding: 6px; font-size: 13px;" onclick="switchTeam('blue')">Geç</button>
-                </div>
+                <div class="team-col team-red"><div style="color: #ff6b6b; font-weight: bold;">🔴 Kırmızı Takım</div><div id="redTeamList"></div><button style="background: #e94560;" onclick="switchTeam('red')">Geç</button></div>
+                <div class="team-col team-blue"><div style="color: #4dabf7; font-weight: bold;">🔵 Mavi Takım</div><div id="blueTeamList"></div><button style="background: #0f3460;" onclick="switchTeam('blue')">Geç</button></div>
             </div>
             <button id="btnTabuReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
             <button style="background: #2ecc71;" onclick="startTabuGame()">Oyunu Başlat 🚀</button>
         </div>
-
         <div id="tabuIntermissionPanel" class="tabu-intermission-box" style="display: none;">
             <h2 style="color: #f39c12; margin-top: 0;">📣 SIRADAKİ TUR BAŞLIYOR!</h2>
             <h3 id="intermissionTeamTitle" style="margin: 8px 0;">---</h3>
             <p id="intermissionDescriberText" style="font-size: 18px; margin: 12px 0;">---</p>
             <div style="font-size: 40px; font-weight: 900; color: #00adb5;" id="intermissionCountdown">10</div>
-            <p style="color: #aaa; font-size: 13px; margin-bottom: 0;">Anlatıcı hazırlansın, süre bitince kart açılacak!</p>
         </div>
-
         <div id="tabuGamePanel" style="display: none;">
             <div id="tabuRoundDisplay" style="color: #f9d342; font-weight: bold;">Tur: 1 / 5</div>
-            <div class="tabu-score">
-                <span style="color:#ff6b6b;">Kırmızı: <span id="scoreRed">0</span></span>
-                <span style="color:#4dabf7;">Mavi: <span id="scoreBlue">0</span></span>
-            </div>
+            <div class="tabu-score"><span style="color:#ff6b6b;">Kırmızı: <span id="scoreRed">0</span></span><span style="color:#4dabf7;">Mavi: <span id="scoreBlue">0</span></span></div>
             <div id="tabuTimer" style="font-size: 26px; color: #f9d342; font-weight: bold;">60s</div>
             <div id="tabuTurnMsg" style="font-size: 15px;"></div>
-
             <div id="describerView" style="display: none;">
-                <div class="tabu-card">
-                    <div class="tabu-main" id="tMainWord">---</div>
-                    <div id="tForbiddens"></div>
-                </div>
+                <div class="tabu-card"><div class="tabu-main" id="tMainWord">---</div><div id="tForbiddens"></div></div>
                 <div id="passCountDisplay" style="color:#aaa; font-size: 14px;">Kalan Pas: 3</div>
-                <div class="action-row">
-                    <button class="btn-correct" onclick="sendTabuAction('correct')">Doğru (+1)</button>
-                    <button class="btn-pass" id="btnPass" onclick="sendTabuAction('pass')">Pas</button>
-                    <button class="btn-taboo" onclick="sendTabuAction('taboo')">Tabu (-1)</button>
-                </div>
+                <div class="action-row"><button class="btn-correct" onclick="sendTabuAction('correct')">Doğru (+1)</button><button class="btn-pass" id="btnPass" onclick="sendTabuAction('pass')">Pas</button><button class="btn-taboo" onclick="sendTabuAction('taboo')">Tabu (-1)</button></div>
             </div>
-
             <div id="guesserView" style="display: none; padding: 30px 10px; background: #262a3b; border-radius: 8px; margin: 15px 0;">
-                <div style="font-size: 22px; font-weight: bold; color: #00adb5;">👂 Anlatıcıyı dinleyin ve tahmin edin!</div>
+                <div style="font-size: 22px; font-weight: bold; color: #00adb5;">👂 Anlatıcıyı dinleyin!</div>
             </div>
-
             <div id="opponentView" style="display: none; padding: 30px 10px; background: #262a3b; border-radius: 8px; margin: 15px 0;">
-                <div style="font-size: 20px; font-weight: bold; color: #aaa;">⏳ Rakip takımın sırası, bekleyin...</div>
+                <div style="font-size: 20px; font-weight: bold; color: #aaa;">⏳ Rakip takımın sırası...</div>
             </div>
-
             <button id="btnNextTurn" style="background: #00adb5; display: none; margin-top: 15px;" onclick="nextTabuTurn()">Sıradaki Tur ➡️</button>
         </div>
-
         <div id="tabuGameOverPanel" style="display: none; padding: 20px; background: #262a3b; border-radius: 8px;">
             <h2 id="tabuWinnerTitle" style="color:#f9d342;">---</h2>
-            <p id="tabuFinalScoreMsg"></p>
             <button style="background: #2ecc71;" onclick="resetTabuViews()">Yeni Maç</button>
         </div>
-
         <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
     </div>
 
@@ -318,68 +257,74 @@
     <div id="view-imposter" style="display: none;">
         <h2>🕵️ İmposter</h2>
         <div id="impLobbyControls">
-            <div class="ready-panel">
-                <div style="margin-bottom: 8px; color: #aaa;">Ajan Hazır Durumu:</div>
-                <div id="impReadyList"></div>
-            </div>
+            <div class="ready-panel"><div id="impReadyList"></div></div>
             <button id="btnImpReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
             <button onclick="socket.emit('startImposter')">Oyunu Başlat</button>
         </div>
-
         <div id="impGameArea" style="display: none;">
             <div id="imp-role" style="font-size: 18px; margin: 15px 0; font-weight: bold;"></div>
             <div id="imp-timer" style="font-size: 26px; color: #f9d342;"></div>
-            <div id="imp-voting" style="display: none; margin-top: 15px;">
-                <p>Kime Oy Veriyorsun?</p>
-                <div id="imp-vote-btns"></div>
-            </div>
-            <div id="imp-guess-box" style="display: none; margin-top: 15px;">
-                <p style="color: #f9d342;">Kelimeyi Tahmin Et:</p>
-                <input type="text" id="impFinalGuess">
-                <button onclick="sendImpGuess()">Gönder</button>
-            </div>
+            <div id="imp-voting" style="display: none; margin-top: 15px;"><p>Kime Oy Veriyorsun?</p><div id="imp-vote-btns"></div></div>
+            <div id="imp-guess-box" style="display: none; margin-top: 15px;"><p style="color: #f9d342;">Kelimeyi Tahmin Et:</p><input type="text" id="impFinalGuess"><button onclick="sendImpGuess()">Gönder</button></div>
             <div id="imp-result" style="margin-top: 15px; font-weight: bold;"></div>
         </div>
-
         <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
     </div>
 
-    <!-- 8. STICK RUN (ÇÖP ADAM PARKUR) -->
+    <!-- 8. STICK RUN -->
     <div id="view-stickrun" style="display: none;">
-        <h2>🏃‍♂️ Stick Run (Çöp Adam Parkur)</h2>
+        <h2>🏃‍♂️ Stick Run</h2>
         <div id="stickLobbyControls">
-            <p style="color:#aaa; font-size:14px;">Kontroller: <strong>W / ▲</strong> Zıpla | <strong>S / ▼</strong> Eğil | <strong>Space</strong> Özel Güç Kullan</p>
-            <div class="ready-panel">
-                <div style="margin-bottom: 8px; color: #aaa;">Koşucu Hazır Durumu:</div>
-                <div id="stickReadyList"></div>
-            </div>
+            <div class="ready-panel"><div id="stickReadyList"></div></div>
             <button id="btnStickReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
             <button style="background: #2ecc71;" onclick="socket.emit('startStickGame')">Koşuyu Başlat 🏁</button>
         </div>
-
         <div id="stickGameArea" class="race-container" style="display: none;">
             <div style="display: flex; gap: 15px; align-items: center; justify-content: center; width: 100%; margin-bottom: 6px;">
                 <div style="font-size: 18px; font-weight: bold; color: #00adb5;" id="stickProgressHud">İlerleme: %0</div>
                 <div class="item-slot-hud" id="stickItemHud">Güç: <span>Yok</span></div>
             </div>
-
-            <canvas id="stickCanvas" width="1000" height="420" style="background:#141824; border:3px solid #00adb5; border-radius:10px; width:100%; max-width:900px; height:auto;"></canvas>
-
+            <canvas id="stickCanvas" width="1000" height="420"></canvas>
             <div class="mobile-controls" style="max-width: 500px;">
-                <button class="touch-btn" style="background:#e67e22; width:90px; border-radius:12px; font-size:15px;" id="btnStickDuck">Eğil ▼</button>
-                <button class="touch-btn" style="background:#9b59b6; width:90px; border-radius:12px; font-size:15px;" id="btnStickItem">Güç ⚡</button>
-                <button class="touch-btn" style="background:#2ecc71; width:90px; border-radius:12px; font-size:15px;" id="btnStickJump">Zıpla ▲</button>
+                <button class="touch-btn" style="background:#e67e22; width:90px;" id="btnStickDuck">Eğil ▼</button>
+                <button class="touch-btn" style="background:#9b59b6; width:90px;" id="btnStickItem">Güç ⚡</button>
+                <button class="touch-btn" style="background:#2ecc71; width:90px;" id="btnStickJump">Zıpla ▲</button>
             </div>
-
             <div id="stickWinnerBox" style="display: none; background: #262a3b; padding: 15px; border-radius: 8px; margin-top: 10px; border: 2px solid #f1c40f;">
                 <h3 id="stickWinnerTitle" style="color: #f1c40f; margin: 0;"></h3>
             </div>
         </div>
         <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
     </div>
+
+    <!-- 9. YENİ: WORMS OYUNU -->
+    <div id="view-worms" style="display: none;">
+        <h2>🐛 Topçu Solucanlar (Worms)</h2>
+        <div id="wormsLobbyControls">
+            <p style="color:#aaa; font-size:14px;">Kontroller: <strong>A / D</strong> Yürü | <strong>W / S</strong> Namlu Açısı | <strong>SPACE</strong> Basılı Tut ve Bırak (Ateş)</p>
+            <div class="ready-panel">
+                <div id="wormsReadyList"></div>
+            </div>
+            <button id="btnWormsReady" style="background: #f39c12;" onclick="toggleGeneralReady()">Hazır Ol ⏳</button>
+            <button style="background: #2ecc71;" onclick="socket.emit('startWormsGame')">Savaşı Başlat 💣</button>
+        </div>
+
+        <div id="wormsGameArea" class="race-container" style="display: none;">
+            <div style="display: flex; gap: 15px; align-items: center; justify-content: center; width: 100%; margin-bottom: 6px;">
+                <div style="font-size: 18px; font-weight: bold; color: #3498db;" id="wormsWindHud">🌬️ Rüzgar: 0</div>
+                <div class="item-slot-hud" id="wormsPowerHud" style="border-color:#e74c3c;">💥 Güç: %0</div>
+            </div>
+
+            <canvas id="wormsCanvas" width="1000" height="600" style="background:#141824; border:3px solid #00adb5; border-radius:10px; width:100%; max-width:900px; height:auto;"></canvas>
+
+            <div id="wormsWinnerBox" style="display: none; background: #262a3b; padding: 15px; border-radius: 8px; margin-top: 10px; border: 2px solid #f1c40f;">
+                <h3 id="wormsWinnerTitle" style="color: #f1c40f; margin: 0;"></h3>
+            </div>
+        </div>
+        <button class="btn-back" onclick="backToLobby()">Ana Menüye Dön</button>
+    </div>
 </div>
 
-<!-- SOKET VE OYUN MODÜLLERİ -->
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/main.js"></script>
 <script src="/js/guess.js"></script>
@@ -388,5 +333,6 @@
 <script src="/js/tabu.js"></script>
 <script src="/js/imposter.js"></script>
 <script src="/js/stickrun.js"></script>
+<script src="/js/worms.js"></script>
 </body>
 </html>

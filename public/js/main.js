@@ -12,7 +12,7 @@ socket.on('disconnect', () => {
 });
 
 function showView(viewId) {
-    ['view-login', 'view-lobby', 'view-guess', 'view-monopoly', 'view-race', 'view-tabu', 'view-imposter', 'view-stickrun'].forEach(id => {
+    ['view-login', 'view-lobby', 'view-guess', 'view-monopoly', 'view-race', 'view-tabu', 'view-imposter', 'view-stickrun', 'view-worms'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = id === viewId ? 'block' : 'none';
     });
@@ -35,7 +35,6 @@ socket.on('updateLobby', (data) => {
     document.getElementById('lobbyPlayers').innerText = data.players.map(p => p.name).join(', ');
 });
 
-// YENİ: Sadece menü tuşuna basan kişinin KENDİ ekranı değişecek
 socket.on('gameSelected', (game) => {
     if (game === 'guess') {
         showView('view-guess');
@@ -59,6 +58,10 @@ socket.on('gameSelected', (game) => {
         showView('view-stickrun');
         document.getElementById('stickLobbyControls').style.display = 'block';
         document.getElementById('stickGameArea').style.display = 'none';
+    } else if (game === 'worms') {
+        showView('view-worms');
+        document.getElementById('wormsLobbyControls').style.display = 'block';
+        document.getElementById('wormsGameArea').style.display = 'none';
     } else {
         showView('view-lobby');
     }
@@ -71,7 +74,6 @@ function toggleGeneralReady() {
     setTimeout(() => { readyCooldown = false; }, 500);
 }
 
-// YENİ: Sadece aynı lobide (aynı oyunda) olanların hazır durumu görünecek
 socket.on('updateLobbyStatuses', (data) => {
     const pList = data.players;
     const myP = pList.find(x => x.id === socket.id);
@@ -82,7 +84,7 @@ socket.on('updateLobbyStatuses', (data) => {
         const text = isReady ? 'Hazır Vazgeç ❌' : 'Hazır Ol ✓';
         const bg = isReady ? '#e74c3c' : '#2ecc71';
 
-        ['btnGuessReady', 'btnMonoReady', 'btnRaceReady', 'btnTabuReady', 'btnImpReady', 'btnStickReady'].forEach(id => {
+        ['btnGuessReady', 'btnMonoReady', 'btnRaceReady', 'btnTabuReady', 'btnImpReady', 'btnStickReady', 'btnWormsReady'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) { btn.innerText = text; btn.style.background = bg; }
         });
@@ -105,6 +107,7 @@ socket.on('updateLobbyStatuses', (data) => {
     renderBadges('raceReadyList');
     renderBadges('impReadyList');
     renderBadges('stickReadyList');
+    renderBadges('wormsReadyList');
 });
 
 socket.on('monoGlobalAlert', (msg) => {
