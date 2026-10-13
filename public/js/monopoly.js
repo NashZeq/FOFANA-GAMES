@@ -45,7 +45,6 @@ function triggerDiceAnimation(d1, d2) {
     }, 65);
 }
 
-// İFLAS BUTONUNU HTML'E DİNAMİK OLARAK EKLİYORUZ
 function injectBankruptButton() {
     if (!document.getElementById('btnBankrupt')) {
         const btn = document.createElement('button');
@@ -100,7 +99,6 @@ socket.on('monopolyStateUpdated', (state) => {
         const isMyTurn = socket.id === cp.id;
         let turnText = `Sıra: <span style="color:${cp.color};">${cp.name}</span> ${isMyTurn ? '👉 (SENDE!)' : ''}`;
         
-        // BORÇLU DURUMU UYARISI
         if (state.mustResolveDebt && cp.money < 0) {
             turnText += `<br><span style="color:#e74c3c; font-size:12px; font-weight:bold;">⚠️ BORÇLUSUN! Varlıklarından tapu sat veya İflas Et!</span>`;
         }
@@ -109,13 +107,16 @@ socket.on('monopolyStateUpdated', (state) => {
         triggerDiceAnimation(state.dice[0], state.dice[1]);
         lastDiceValues = [...state.dice];
 
+        // Zar Atma veya Borç Ödeme Butonu Görünürlüğü
         const canAct = isMyTurn && state.active && !cp.bankrupt && !state.waitingForDecision && !state.waitingForDoblo && !state.mustResolveDebt;
         
+        // Eğer hapisteyse ama borçlu değilse kefalet ödeyebilir
+        const canPayBail = (isMyTurn && cp.inJail && cp.money >= 100 && !state.mustResolveDebt);
+        
         document.getElementById('btnRollDice').style.display = canAct ? 'inline-block' : 'none';
-        document.getElementById('btnPayBail').style.display = (canAct && cp.inJail && cp.money >= 100) ? 'inline-block' : 'none';
+        document.getElementById('btnPayBail').style.display = canPayBail ? 'inline-block' : 'none';
         document.getElementById('btnUseCard').style.display = (canAct && cp.inJail && cp.jailCardCount > 0) ? 'inline-block' : 'none';
         
-        // Sadece borçluyken veya kendi turundayken iflas edebilir
         const btnBankrupt = document.getElementById('btnBankrupt');
         if (btnBankrupt) btnBankrupt.style.display = (isMyTurn && state.mustResolveDebt) ? 'inline-block' : 'none';
     }
@@ -187,7 +188,6 @@ function syncMonoBoard(state) {
     });
 }
 
-// OYUNU GÖZLE TAKİP EDEBİLMEK İÇİN ZIPLAMA HIZI 450ms'YE ÇIKARILDI (YAVAŞLATILDI)
 function animateTokenStepByStep(playerId, startPos, targetPos) {
     if (activeAnimations[playerId]) clearInterval(activeAnimations[playerId]);
     let curr = startPos;
@@ -210,7 +210,7 @@ function animateTokenStepByStep(playerId, startPos, targetPos) {
             holder.appendChild(token);
             token.classList.remove('token-hop'); void token.offsetWidth; token.classList.add('token-hop');
         }
-    }, 450); // <-- İşte bu sayı oyunun yürüme hızıdır (Büyüdükçe yavaşlar)
+    }, 450); 
 }
 
 function onTileClick(tileId) {
@@ -264,9 +264,8 @@ socket.on('monopolyBuyoutPrompt', (data) => {
     document.getElementById('buyoutPromptMsg').innerText = `💥 ${data.ownerName}'in ${data.tile.name} tapusunu 1.5 katına (${data.buyoutPrice}₺) zorla satın alacak mısın?`;
 });
 
-// YENİ: VARLIKLARIM MENÜSÜNDEN TAPU SATMA (Yarı Fiyatına)
 function sellProperty(tileId) {
-    if (confirm('Bu mülkü bankaya yarı fiyatına satmak istediğine emin misin? (Mülk sahipsiz kalır)')) {
+    if (confirm('Bu mülkü bankaya %70 fiyatına satmak istediğine emin misin? (Mülk sahipsiz kalır)')) {
         socket.emit('monopolySellProperty', tileId);
     }
 }
@@ -288,7 +287,10 @@ function openAssetsModal() {
             if (a.type === 'property') {
                 const groupTiles = latestMonoState.board.filter(t => t.type === 'property' && t.group === a.group);
                 const isMono = groupTiles.every(t => t.owner === socket.id);
-                rentText = `Kira: ${isMono ? a.baseRent * 2 : a.baseRent}₺ ${isMono ? '🔥(TEKEL x2)' : ''}`;
+                // Kira hesaplaması %20
+                let baseR = Math.floor(a.price * 0.20);
+                if(baseR < 1) baseR = 1;
+                rentText = `Kira: ${isMono ? baseR * 2 : baseR}₺ ${isMono ? '🔥(TEKEL x2)' : ''}`;
             } else if (a.type === 'pitch') {
                 const count = myAssets.filter(t => t.type === 'pitch').length;
                 const pitchRents = { 1: 25, 2: 50, 3: 100, 4: 200 };
@@ -298,9 +300,10 @@ function openAssetsModal() {
                 rentText = `Kira: Zar x ${count === 2 ? 10 : 4}`;
             }
 
-            // Sadece kendi sırasında veya borçluyken satabilir
+            // GÜNCELLEME: İADE ORANI %70
+            const sellVal = Math.floor(a.price * 0.70);
             const sellBtnHtml = (isMyTurn || latestMonoState.mustResolveDebt) ? 
-                `<button style="background:#e74c3c; padding: 6px 10px; font-size:12px; margin-top:5px;" onclick="sellProperty(${a.id})">Bankaya Sat (+${Math.floor(a.price/2)}₺)</button>` : '';
+                `<button style="background:#e74c3c; padding: 6px 10px; font-size:12px; margin-top:5px;" onclick="sellProperty(${a.id})">Bankaya Sat (+${sellVal}₺)</button>` : '';
 
             const div = document.createElement('div');
             div.style.cssText = 'background:#262a3b; padding:10px; border-radius:6px; margin:6px 0; display:flex; justify-content:space-between; align-items:center; border-left: 4px solid #00adb5;';

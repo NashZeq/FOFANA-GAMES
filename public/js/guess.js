@@ -88,10 +88,11 @@ socket.on('guessRoundEnded', (data) => {
         </div>
     `).join('');
 
-    // Butonu sıfırla
+    // Butonun kilitlenmesini engelliyoruz, her tur sonu sıfırlanır
     const btn = document.getElementById('btnNextRoundReady');
     btn.innerText = data.isLastQuestion ? 'Final Podyumuna Hazırım 🏆' : 'Sıradaki Soruya Hazırım ⏳';
     btn.style.background = '#f39c12';
+    btn.disabled = false; 
     
     renderNextRoundBadges(data.readyStatus);
 });
