@@ -13,32 +13,23 @@ button:disabled { background: #555 !important; cursor: not-allowed; transform: n
 .btn-back { background: #e74c3c; margin-top: 25px; }
 
 /* ==========================================
-   2. LOBİ, HAZIR OLMA VE YENİ ZARİF BİLDİRİMLER
+   2. LOBİ VE BİLDİRİMLER
    ========================================== */
 .ready-panel { background: #202433; padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid #3d435e; }
 .ready-badge { display: inline-block; padding: 6px 12px; margin: 4px; border-radius: 4px; font-size: 13px; font-weight: bold; }
 .is-ready { background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; }
 .not-ready { background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #e74c3c; }
 
-.main-event-banner {
-    display: none; position: fixed; top: 20px; right: 20px; left: auto; transform: none;
-    background: #202433; color: #fff; padding: 16px 20px; border-radius: 8px;
-    border-left: 6px solid #00adb5; font-weight: bold; z-index: 999999;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6); font-size: 14px; max-width: 350px; text-align: left;
-    animation: slideInRight 0.3s ease-out forwards;
-}
+.main-event-banner { display: none; position: fixed; top: 20px; right: 20px; left: auto; transform: none; background: #202433; color: #fff; padding: 16px 20px; border-radius: 8px; border-left: 6px solid #00adb5; font-weight: bold; z-index: 999999; box-shadow: 0 8px 20px rgba(0,0,0,0.6); font-size: 14px; max-width: 350px; text-align: left; animation: slideInRight 0.3s ease-out forwards; }
 @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 .banner-close-btn { background: transparent; color: #aaa; border: none; font-size: 20px; padding: 0 5px; float: right; cursor: pointer; margin-top: -3px; }
 .banner-close-btn:hover { color: #e74c3c; }
 
-/* ==========================================
-   3. AÇILIR PENCERELER (MODAL POPUP)
-   ========================================== */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 99999; }
 .modal-content { background: #1a1d29; border: 2px solid #00adb5; border-radius: 12px; width: 90%; max-width: 480px; padding: 25px; max-height: 80vh; overflow-y: auto; text-align: left; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); }
 
 /* ==========================================
-   4. MONOPOLY (SADE, BEYAZ VE BELİRGİN TASARIM)
+   3. ESKİ OYUN TASARIMLARI (Monopoly, Yarış vb.)
    ========================================== */
 .mono-container { display: flex; flex-direction: column; gap: 15px; }
 .mono-hud { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 10px; }
@@ -67,9 +58,6 @@ button:disabled { background: #555 !important; cursor: not-allowed; transform: n
 @keyframes slideInLog { from { opacity: 0; transform: translateX(-15px); background: rgba(0, 173, 181, 0.25); } to { opacity: 1; transform: translateX(0); background: transparent; } }
 .log-entry-new { animation: slideInLog 0.6s ease-out; padding: 3px 6px; border-radius: 4px; border-left: 3px solid #00adb5; margin-bottom: 4px; font-weight: bold; color: #fff; }
 
-/* ==========================================
-   5. DİĞER OYUN TASARIMLARI
-   ========================================== */
 .guess-timer-bar { width: 100%; background: #3d435e; height: 12px; border-radius: 6px; margin-bottom: 15px; overflow: hidden; }
 .guess-timer-fill { height: 100%; background: #e74c3c; width: 100%; transition: width 1s linear; }
 .guess-card { background: #202433; padding: 25px; border-radius: 12px; border: 2px solid #3d435e; }
@@ -87,33 +75,44 @@ button:disabled { background: #555 !important; cursor: not-allowed; transform: n
 .action-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 .btn-correct { background: #2ecc71; font-size: 18px; padding: 12px 25px; } .btn-taboo { background: #e74c3c; font-size: 18px; padding: 12px 25px; } .btn-pass { background: #3498db; font-size: 18px; padding: 12px 25px; }
 
-/* ==========================================
-   6. YENİ GAMEPAD KONFORLU MOBİL BUTONLAR
-   ========================================== */
 .race-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
 canvas { background: #262a3b; border: 3px solid #3d435e; border-radius: 8px; width: 100%; max-width: 1000px; height: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); touch-action: none; }
-
-.mobile-controls { 
-    display: flex; justify-content: space-between; align-items: center; 
-    width: 100%; max-width: 1000px; margin-top: 20px; padding: 0 10px; box-sizing: border-box; 
-}
+.mobile-controls { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1000px; margin-top: 20px; padding: 0 10px; box-sizing: border-box; }
 .control-cluster { display: flex; gap: 15px; }
-
-/* Dev Başparmak Butonları */
-.touch-btn { 
-    padding: 22px; background: #34495e; color: #fff; font-size: 24px; 
-    border-radius: 12px; border: none; font-weight: bold; user-select: none; 
-    min-width: 75px; text-align: center; box-shadow: 0 6px 0 #1a252f, 0 8px 15px rgba(0,0,0,0.5); 
-    transition: 0.1s;
-}
+.touch-btn { padding: 22px; background: #34495e; color: #fff; font-size: 24px; border-radius: 12px; border: none; font-weight: bold; user-select: none; min-width: 75px; text-align: center; box-shadow: 0 6px 0 #1a252f, 0 8px 15px rgba(0,0,0,0.5); transition: 0.1s; }
 .touch-btn:active { background: #00adb5; transform: translateY(6px); box-shadow: 0 0 0 #1a252f, 0 2px 5px rgba(0,0,0,0.5); }
-
-/* Ortadaki Dev Özel Güç / Ateş Butonu */
-.touch-btn-action { 
-    background: #e74c3c; border-radius: 50%; width: 85px; height: 85px; 
-    display: flex; align-items: center; justify-content: center; font-size: 32px; 
-    box-shadow: 0 6px 0 #c0392b, 0 8px 15px rgba(0,0,0,0.5); 
-}
+.touch-btn-action { background: #e74c3c; border-radius: 50%; width: 85px; height: 85px; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 6px 0 #c0392b, 0 8px 15px rgba(0,0,0,0.5); }
 .touch-btn-action:active { background: #c0392b; transform: translateY(6px); box-shadow: 0 0 0 #c0392b, 0 2px 5px rgba(0,0,0,0.5); }
-
 .item-slot-hud { background: #2c3e50; padding: 8px 18px; border-radius: 20px; border: 2px solid #f39c12; color: #fff; font-weight: bold; font-size: 15px; }
+
+/* ==========================================
+   7. YENİ: CASUS BELLI (BENTO UI)
+   ========================================== */
+.bento-box {
+    background: #202433; border-radius: 16px; padding: 15px;
+    border: 1px solid #3d435e; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.bento-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(65px, 1fr)); gap: 10px;
+}
+.casus-card {
+    background: linear-gradient(145deg, #2c3e50, #1a252f); border: 2px solid #34495e;
+    border-radius: 8px; padding: 10px 5px; text-align: center; color: #fff;
+    cursor: pointer; transition: 0.2s; user-select: none;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    min-height: 80px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+.casus-card:active { transform: scale(0.95); }
+.casus-card:hover { border-color: #00adb5; }
+.casus-card.army { border-color: #3498db; }
+.casus-card.support { border-color: #e67e22; background: linear-gradient(145deg, #d35400, #a04000); }
+
+.card-slot {
+    width: 80px; height: 110px; border: 2px dashed #3d435e; border-radius: 8px;
+    display: flex; justify-content: center; align-items: center; perspective: 1000px;
+}
+.card-facedown {
+    background: repeating-linear-gradient(45deg, #2c3e50, #2c3e50 10px, #1a252f 10px, #1a252f 20px);
+    width: 100%; height: 100%; border-radius: 6px; border: 2px solid #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}

@@ -36,18 +36,38 @@ let currentTabuDeck = [];
 let tabuState = { scores: { red: 0, blue: 0 }, currentCard: null, describerId: null, currentTeam: 'red', passCount: 3, timer: null, timeLeft: 60, roundActive: false, isIntermission: false, intermissionTimer: null, maxRounds: 5, currentRound: 1, teamTurnCount: 0 };
 let currentImposterDeck = [];
 let imposterState = { word: '', imposterId: '', imposterName: '', votes: {}, timer: null };
-
-// WORMS STATE
 let wormsState = { active: false, worms: {}, turnId: null, turnOrder: [], wind: 0, activeProjectile: null, terrainHeights: Array(1000).fill(600), loopInterval: null, winner: null, projectileFired: false };
 
+// YENİ: CASUS BELLI STATE
+let casusState = { active: false, players: {}, phase: 'play', resolveMessage: '', winner: null };
+
+function generateCasusDeck() {
+    const deck = [];
+    const types = [
+        { name: 'Casus', power: 1, type: 'support' },
+        { name: 'Miladi Piyade', power: 2, type: 'army' },
+        { name: 'Mızraklı', power: 3, type: 'army' },
+        { name: 'Kılıçlı', power: 4, type: 'army' },
+        { name: 'Okçu', power: 5, type: 'army' },
+        { name: 'Arbaletçi', power: 6, type: 'army' },
+        { name: 'Hafif Süvari', power: 7, type: 'army' },
+        { name: 'Ağır Süvari', power: 8, type: 'army' },
+        { name: 'Kuşatma', power: 9, type: 'army' },
+        { name: 'Şövalye', power: 10, type: 'army' }
+    ];
+    for (let i = 0; i < 2; i++) { types.forEach(t => deck.push({...t})); }
+    return shuffleArray(deck);
+}
+
 function checkAndResetEmptyRooms() {
-    const counts = { guess: 0, monopoly: 0, race: 0, stickrun: 0, tabu: 0, imposter: 0, worms: 0 };
+    const counts = { guess: 0, monopoly: 0, race: 0, stickrun: 0, tabu: 0, imposter: 0, worms: 0, casus: 0 };
     players.forEach(p => { if (counts[p.lobby] !== undefined) counts[p.lobby]++; });
     if (counts.guess === 0 && guessState.active) { guessState.active = false; clearInterval(guessState.timer); guessState.timer = null; }
     if (counts.monopoly === 0 && monoState.active) { monoState.active = false; }
     if (counts.race === 0 && raceState.active) { raceState.active = false; clearInterval(raceState.loopInterval); raceState.loopInterval = null; }
     if (counts.stickrun === 0 && stickState.active) { stickState.active = false; clearInterval(stickState.loopInterval); stickState.loopInterval = null; }
     if (counts.worms === 0 && wormsState.active) { wormsState.active = false; clearInterval(wormsState.loopInterval); wormsState.loopInterval = null; }
+    if (counts.casus === 0 && casusState.active) { casusState.active = false; }
     if (counts.tabu === 0 && (tabuState.roundActive || tabuState.isIntermission)) { tabuState.roundActive = false; tabuState.isIntermission = false; clearInterval(tabuState.timer); clearInterval(tabuState.intermissionTimer); }
     if (counts.imposter === 0 && imposterState.timer) { clearInterval(imposterState.timer); imposterState.timer = null; }
 }
@@ -66,26 +86,15 @@ function generateStickParkour() {
     } return { obstacles, platforms, pads, boxes };
 }
 
-// YENİ HARİTA MOTORU: WORMS KAOS DAĞLARI VE KRATERLERİ
 function generateWormsTerrain() {
     let terrain = new Array(1000).fill(0);
     let seed1 = Math.random() * 100; let seed2 = Math.random() * 100; let seed3 = Math.random() * 100;
-    
     for(let x=0; x<1000; x++) {
         let h = 400; 
-        h += Math.sin(x / 150 + seed1) * 120; // Büyük dağlar/vadiler
-        h += Math.sin(x / 50 + seed2) * 60;   // Orta tepeler
-        h += Math.sin(x / 15 + seed3) * 20;   // Küçük çıkıntılar
-        h += (Math.random() - 0.5) * 15;      // Tırtıklı toprak dokusu
-        
-        if(h < 150) h = 150; if(h > 580) h = 580;
-        terrain[x] = h;
+        h += Math.sin(x / 150 + seed1) * 120; h += Math.sin(x / 50 + seed2) * 60; h += Math.sin(x / 15 + seed3) * 20; h += (Math.random() - 0.5) * 15;
+        if(h < 150) h = 150; if(h > 580) h = 580; terrain[x] = h;
     }
-    // Toprağı yürünek için hafifçe pürüzsüzleştir
-    for(let passes = 0; passes < 3; passes++) {
-        let temp = [...terrain];
-        for(let i=1; i<999; i++) terrain[i] = (temp[i-1] + temp[i] + temp[i+1]) / 3;
-    }
+    for(let passes = 0; passes < 3; passes++) { let temp = [...terrain]; for(let i=1; i<999; i++) terrain[i] = (temp[i-1] + temp[i] + temp[i+1]) / 3; }
     return terrain;
 }
 
@@ -154,7 +163,87 @@ io.on('connection', (socket) => {
         checkAndResetEmptyRooms(); socket.emit('gameSelected', 'lobby'); io.emit('updateLobby', { players });
     });
 
-    // ---------------- 1. İŞKEMBEDEN SALLAMA ----------------
+    // ---------------- 1. CASUS BELLI (YENİ OYUN MOTORU) ----------------
+    socket.on('startCasusGame', () => {
+        const gamePlayers = players.filter(p => p.lobby === 'casus');
+        if (gamePlayers.length !== 2) return socket.emit('errorMsg', 'Casus Belli tam olarak 2 kişiyle oynanır!');
+        if (!gamePlayers.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmalı!');
+
+        casusState.active = true; casusState.players = {}; casusState.phase = 'play'; casusState.winner = null;
+        gamePlayers.forEach(p => {
+            const deck = generateCasusDeck();
+            const hand = deck.splice(0, 5);
+            casusState.players[p.id] = { id: p.id, name: p.name, deck: deck, hand: hand, trash: [], playedCard: null, hasPlayed: false };
+        });
+        io.emit('casusStarted');
+        sendCasusUpdate();
+    });
+
+    socket.on('casusPlayCard', (handIndex) => {
+        if (!casusState.active || casusState.phase !== 'play') return;
+        const p = casusState.players[socket.id];
+        if (!p || p.hasPlayed || !p.hand[handIndex]) return;
+
+        p.playedCard = p.hand.splice(handIndex, 1)[0];
+        p.hasPlayed = true;
+
+        const allPlayed = Object.values(casusState.players).every(player => player.hasPlayed);
+        if (allPlayed) { resolveCasusTurn(); } else { sendCasusUpdate(); }
+    });
+
+    function resolveCasusTurn() {
+        casusState.phase = 'resolve';
+        const pIds = Object.keys(casusState.players);
+        const p1 = casusState.players[pIds[0]]; const p2 = casusState.players[pIds[1]];
+        const c1 = p1.playedCard; const c2 = p2.playedCard;
+
+        let winnerId = null; let msg = '';
+
+        if (c1.power === 1 && c2.power === 10) winnerId = p1.id;
+        else if (c2.power === 1 && c1.power === 10) winnerId = p2.id;
+        else if (c1.power > c2.power) winnerId = p1.id;
+        else if (c2.power > c1.power) winnerId = p2.id;
+
+        if (winnerId === p1.id) {
+            p1.deck.unshift(c1); p2.trash.push(c2); msg = `⚔️ ${p1.name} (${c1.power}), ${p2.name}'i (${c2.power}) yendi!`;
+        } else if (winnerId === p2.id) {
+            p2.deck.unshift(c2); p1.trash.push(c1); msg = `⚔️ ${p2.name} (${c2.power}), ${p1.name}'i (${c1.power}) yendi!`;
+        } else {
+            p1.trash.push(c1); p2.trash.push(c2); msg = `⚔️ İki taraf da denk güçte (${c1.power})! İki kart da çöpe gitti.`;
+        }
+
+        casusState.resolveMessage = msg;
+        sendCasusUpdate();
+
+        setTimeout(() => {
+            [p1, p2].forEach(p => {
+                p.playedCard = null; p.hasPlayed = false;
+                if (p.hand.length < 5 && p.deck.length > 0) p.hand.push(p.deck.pop());
+            });
+
+            const p1Alive = p1.hand.length > 0 || p1.deck.length > 0;
+            const p2Alive = p2.hand.length > 0 || p2.deck.length > 0;
+
+            if (!p1Alive && !p2Alive) { casusState.active = false; io.emit('casusFinished', { winner: 'BERABERE' }); } 
+            else if (!p1Alive) { casusState.active = false; io.emit('casusFinished', { winner: p2.name }); } 
+            else if (!p2Alive) { casusState.active = false; io.emit('casusFinished', { winner: p1.name }); } 
+            else { casusState.phase = 'play'; casusState.resolveMessage = ''; sendCasusUpdate(); }
+        }, 4000);
+    }
+
+    function sendCasusUpdate() {
+        const safePlayers = {};
+        for (let id in casusState.players) {
+            const p = casusState.players[id];
+            safePlayers[id] = { id: p.id, name: p.name, deckCount: p.deck.length, trashCount: p.trash.length, handCount: p.hand.length, hasPlayed: p.hasPlayed, playedCard: casusState.phase === 'resolve' ? p.playedCard : null };
+        }
+        for (let id in casusState.players) {
+            const p = casusState.players[id];
+            io.to(id).emit('casusUpdate', { phase: casusState.phase, resolveMessage: casusState.resolveMessage, players: safePlayers, myHand: p.hand });
+        }
+    }
+
+    // ---------------- 2. İŞKEMBEDEN SALLAMA ----------------
     socket.on('startGuessGame', (data) => {
         const gamePlayers = players.filter(p => p.lobby === 'guess');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -234,7 +323,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // ---------------- 2. ARABA YARIŞI ----------------
+    // ---------------- 3. ARABA YARIŞI ----------------
     socket.on('startRaceGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'race');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -327,7 +416,7 @@ io.on('connection', (socket) => {
         car.heldItem = null;
     });
 
-    // ---------------- 3. STICK RUN ----------------
+    // ---------------- 4. STICK RUN ----------------
     socket.on('startStickGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'stickrun');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -423,7 +512,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // ---------------- 4. MONOPOLY ----------------
+    // ---------------- 5. MONOPOLY ----------------
     socket.on('startMonopolyGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'monopoly');
         if (gamePlayers.length < 2) return socket.emit('errorMsg', 'En az 2 oyuncu olmalı!');
@@ -604,7 +693,7 @@ io.on('connection', (socket) => {
         const activePlayers = monoState.players.filter(p => !p.bankrupt); if (activePlayers.length <= 1 && monoState.players.length > 1) { monoState.active = false; if (activePlayers[0]) broadcastMonoLog(`👑 OYUN BİTTİ! KAZANAN: ${activePlayers[0].name}!`); }
     }
 
-    // ---------------- 5. TABU ----------------
+    // ---------------- 6. TABU ----------------
     socket.on('switchTabuTeam', (newTeam) => {
         const p = players.find(x => x.id === socket.id);
         if (p && (newTeam === 'red' || newTeam === 'blue')) { p.team = newTeam; p.ready = false; const gamePlayers = players.filter(pl => pl.lobby === 'tabu'); io.emit('updateTabuLobby', { players: gamePlayers, tabuState }); }
@@ -672,7 +761,7 @@ io.on('connection', (socket) => {
         io.emit('tabuScoreUpdated', { scores: tabuState.scores, passCount: tabuState.passCount }); io.to(tabuState.describerId).emit('tabuNewCardForDescriber', tabuState.currentCard);
     });
 
-    // ---------------- 6. İMPOSTER ----------------
+    // ---------------- 7. İMPOSTER ----------------
     socket.on('startImposter', () => {
         const gamePlayers = players.filter(p => p.lobby === 'imposter');
         if (gamePlayers.length < 3) return socket.emit('errorMsg', 'İmposter için en az 3 oyuncu gerekir!');
@@ -716,7 +805,7 @@ io.on('connection', (socket) => {
         io.emit('imposterResult', { winner: correct ? 'IMPOSTER' : 'CIVILIANS', msg: correct ? `İmposter bildi! ("${guess}")` : `İmposter bilemedi! ("${guess}")`, imposterName: imposterState.imposterName, word: imposterState.word });
     });
 
-    // ---------------- 7. YENİ: WORMS SUNUCU MOTORU ----------------
+    // ---------------- 8. WORMS ----------------
     socket.on('startWormsGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'worms');
         if (gamePlayers.length < 2) return socket.emit('errorMsg', 'Worms için en az 2 oyuncu gerekir!');

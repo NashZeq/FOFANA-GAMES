@@ -12,7 +12,7 @@ socket.on('disconnect', () => {
 });
 
 function showView(viewId) {
-    ['view-login', 'view-lobby', 'view-guess', 'view-monopoly', 'view-race', 'view-tabu', 'view-imposter', 'view-stickrun', 'view-worms'].forEach(id => {
+    ['view-login', 'view-lobby', 'view-guess', 'view-monopoly', 'view-race', 'view-tabu', 'view-imposter', 'view-stickrun', 'view-worms', 'view-casus'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = id === viewId ? 'block' : 'none';
     });
@@ -62,6 +62,10 @@ socket.on('gameSelected', (game) => {
         showView('view-worms');
         document.getElementById('wormsLobbyControls').style.display = 'block';
         document.getElementById('wormsGameArea').style.display = 'none';
+    } else if (game === 'casus') {
+        showView('view-casus');
+        document.getElementById('casusLobbyControls').style.display = 'block';
+        document.getElementById('casusGameArea').style.display = 'none';
     } else {
         showView('view-lobby');
     }
@@ -84,7 +88,7 @@ socket.on('updateLobbyStatuses', (data) => {
         const text = isReady ? 'Hazır Vazgeç ❌' : 'Hazır Ol ✓';
         const bg = isReady ? '#e74c3c' : '#2ecc71';
 
-        ['btnGuessReady', 'btnMonoReady', 'btnRaceReady', 'btnTabuReady', 'btnImpReady', 'btnStickReady', 'btnWormsReady'].forEach(id => {
+        ['btnGuessReady', 'btnMonoReady', 'btnRaceReady', 'btnTabuReady', 'btnImpReady', 'btnStickReady', 'btnWormsReady', 'btnCasusReady'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) { btn.innerText = text; btn.style.background = bg; }
         });
@@ -108,6 +112,7 @@ socket.on('updateLobbyStatuses', (data) => {
     renderBadges('impReadyList');
     renderBadges('stickReadyList');
     renderBadges('wormsReadyList');
+    renderBadges('casusReadyList');
 });
 
 socket.on('monoGlobalAlert', (msg) => {
