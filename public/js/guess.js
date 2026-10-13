@@ -13,9 +13,43 @@ function startGuessGame() {
     socket.emit('startGuessGame', { mode: mode, rounds: rounds });
 }
 
+// 🔥 WIKIPEDIA'DAN CANLI VE KIRILMAZ FOTOĞRAF ÇEKEN AKILLI MOTOR
+async function loadSmartImage(imgElement, question) {
+    const cleanTitle = encodeURIComponent(question.title);
+    const fallbackBanner = `https://placehold.co/600x400/151824/00adb5?text=${cleanTitle}`;
+    
+    imgElement.referrerPolicy = "no-referrer";
+    imgElement.onerror = () => {
+        imgElement.onerror = null;
+        imgElement.src = fallbackBanner;
+    };
+
+    if (question.wiki) {
+        const lang = question.wikiLang || 'tr';
+        try {
+            const res = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(question.wiki)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data.originalimage && data.originalimage.source) {
+                    imgElement.src = data.originalimage.source;
+                    return;
+                }
+                if (data.thumbnail && data.thumbnail.source) {
+                    imgElement.src = data.thumbnail.source;
+                    return;
+                }
+            }
+        } catch (err) {
+            console.log("Wiki API yedek görsele geçiyor...");
+        }
+    }
+
+    imgElement.src = question.img || fallbackBanner;
+}
+
 // 3. Yeni Soru Geldiğinde Görseli, Süreyi ve Kutuları Hazırlar
 socket.on('guessRoundStarted', (data) => {
-    document.getElementById('guessLobbyPanel').style.display = 'none';
+    document.getElementById('guessLobbyPanel').style.display = 'none'; // KESİN GİZLE
     document.getElementById('guessRevealPanel').style.display = 'none';
     document.getElementById('guessArenaPanel').style.display = 'block';
 
@@ -23,7 +57,9 @@ socket.on('guessRoundStarted', (data) => {
     document.getElementById('guessTimerText').innerText = `${data.timeLeft}s`;
     document.getElementById('guessTimerFill').style.width = '100%';
 
-    document.getElementById('guessImage').src = data.question.img;
+    const imgEl = document.getElementById('guessImage');
+    loadSmartImage(imgEl, data.question);
+
     document.getElementById('guessTitle').innerText = data.question.title;
     document.getElementById('guessHint').innerText = data.question.hint;
 
@@ -54,7 +90,6 @@ function submitGuess() {
     document.getElementById('guessSubmittedNotice').style.display = 'block';
 }
 
-// Tahmin kilitlendiğinde giriş kutusunu gizler
 socket.on('guessLockedNotice', () => {
     document.getElementById('guessInputBox').style.display = 'none';
     document.getElementById('guessSubmittedNotice').style.display = 'block';
@@ -62,6 +97,8 @@ socket.on('guessLockedNotice', () => {
 
 // 6. Tur Sonu: Gerçek Değeri ve Puan Tablosunu Ekrana Basar
 socket.on('guessRoundEnded', (data) => {
+    // 🔥 EKRANIN ÇORBA OLMASINI ENGELLEYEN KİLİT BURADA
+    document.getElementById('guessLobbyPanel').style.display = 'none'; 
     document.getElementById('guessArenaPanel').style.display = 'none';
     document.getElementById('guessRevealPanel').style.display = 'block';
 
@@ -108,6 +145,7 @@ function renderNextRoundBadges(readyList) {
 
 // 8. Final Podyumu: Kazananı İlan Eder
 socket.on('guessGameOver', (data) => {
+    document.getElementById('guessLobbyPanel').style.display = 'none';
     document.getElementById('guessRevealPanel').style.display = 'none';
     document.getElementById('guessGameOverPanel').style.display = 'block';
 

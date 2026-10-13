@@ -2,6 +2,7 @@ const socket = io();
 let myId = '';
 let isReady = false;
 let eventBannerTimeout = null;
+let readyCooldown = false; // Spam koruma kilidi
 
 socket.on('connect', () => { myId = socket.id; });
 
@@ -58,7 +59,14 @@ socket.on('gameSelected', (game) => {
     }
 });
 
-function toggleGeneralReady() { socket.emit('toggleGeneralReady'); }
+// Hazır butonuna art arda basılmasını engelleyen kilit mekanizması
+function toggleGeneralReady() { 
+    if (readyCooldown) return; 
+    socket.emit('toggleGeneralReady'); 
+    
+    readyCooldown = true;
+    setTimeout(() => { readyCooldown = false; }, 500);
+}
 
 // Sadece aynı lobidekilerin hazır olduğunu göreceksin
 socket.on('updateLobbyStatuses', (data) => {
