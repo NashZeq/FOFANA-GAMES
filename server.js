@@ -7,6 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// MODÜLER VERİLER
 const iskembedenData = require('./data/iskembedenData');
 const monoData = require('./data/monopolyData');
 const monopolyBoard = (monoData && monoData.monopolyBoard) ? monoData.monopolyBoard : [];
@@ -25,10 +26,11 @@ const playerColors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1
 
 function broadcastMonoLog(msg) { monoState.log.unshift(msg); io.emit('monoGlobalAlert', msg); }
 
+// OYUN STATE'LERİ
 const usedQuestionMemory = { celebrity: new Set(), market: new Set(), car: new Set() };
 let guessState = { active: false, mode: 'celebrity', currentQuestionIndex: 0, questions: [], timer: null, timeLeft: 15, guesses: {}, totalScores: {}, readyForNextRound: {}, maxQuestions: 5 };
 let monoState = { active: false, board: monopolyBoard.length ? JSON.parse(JSON.stringify(monopolyBoard)) : [], players: [], turnIndex: 0, dice: [1, 1], doubleRollCount: 0, waitingForDecision: false, waitingForDoblo: false, activeTrade: null, mustResolveDebt: false, log: [] };
-let raceState = { active: false, cars: {}, items: [], itemBoxes: [ { id: 1, x: 380, y: 640, active: true, respawnTimer: 0 }, { id: 2, x: 1060, y: 380, active: true, respawnTimer: 0 }, { id: 3, x: 620, y: 160, active: true, respawnTimer: 0 } ], loopInterval: null, totalLaps: 3, winner: null };
+let raceState = { active: false, cars: {}, items: [], itemBoxes: [ { id: 1, x: 380, y: 640, active: true, respawnTimer: 0 }, { id: 2, x: 1060, y: 380, active: true, respawnTimer: 0 }, { id: 3, x: 620, y: 160, active: true, respawnTimer: 0 }, { id: 4, x: 160, y: 340, active: true, respawnTimer: 0 }, { id: 5, x: 580, y: 320, active: true, respawnTimer: 0 } ], loopInterval: null, totalLaps: 3, winner: null };
 let stickState = { active: false, runners: {}, obstacles: [], platforms: [], pads: [], boxes: [], projectiles: [], finishLine: 7500, loopInterval: null, winner: null };
 let currentTabuDeck = [];
 let tabuState = { scores: { red: 0, blue: 0 }, currentCard: null, describerId: null, currentTeam: 'red', passCount: 3, timer: null, timeLeft: 60, roundActive: false, isIntermission: false, intermissionTimer: null, maxRounds: 5, currentRound: 1, teamTurnCount: 0 };
@@ -159,11 +161,12 @@ io.on('connection', (socket) => {
         checkAndResetEmptyRooms(); socket.emit('gameSelected', 'lobby'); io.emit('updateLobby', { players });
     });
 
-    // Casus Belli
+    // ---------------- 1. CASUS BELLI ----------------
     socket.on('startCasusGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'casus');
         if (gamePlayers.length !== 2) return socket.emit('errorMsg', 'Casus Belli tam olarak 2 kişiyle oynanır!');
         if (!gamePlayers.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmalı!');
+
         casusState.active = true; casusState.players = {}; casusState.phase = 'play'; casusState.winner = null;
         gamePlayers.forEach(p => {
             const deck = generateCasusDeck(); const hand = deck.splice(0, 5);
@@ -223,7 +226,7 @@ io.on('connection', (socket) => {
         }
     }
 
-    // İşkembeden Sallama
+    // ---------------- 2. İŞKEMBEDEN SALLAMA ----------------
     socket.on('startGuessGame', (data) => {
         const gamePlayers = players.filter(p => p.lobby === 'guess');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -293,7 +296,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Araba Yarışı
+    // ---------------- 3. ARABA YARIŞI ----------------
     socket.on('startRaceGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'race');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -373,7 +376,7 @@ io.on('connection', (socket) => {
         car.heldItem = null;
     });
 
-    // Stick Run
+    // ---------------- 4. STICK RUN ----------------
     socket.on('startStickGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'stickrun');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -457,7 +460,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Monopoly
+    // ---------------- 5. MONOPOLY ----------------
     socket.on('startMonopolyGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'monopoly');
         if (gamePlayers.length < 2) return socket.emit('errorMsg', 'En az 2 oyuncu olmalı!');
@@ -633,7 +636,7 @@ io.on('connection', (socket) => {
         const activePlayers = monoState.players.filter(p => !p.bankrupt); if (activePlayers.length <= 1 && monoState.players.length > 1) { monoState.active = false; if (activePlayers[0]) broadcastMonoLog(`👑 OYUN BİTTİ! KAZANAN: ${activePlayers[0].name}!`); }
     }
 
-    // Tabu
+    // ---------------- 6. TABU ----------------
     socket.on('switchTabuTeam', (newTeam) => {
         const p = players.find(x => x.id === socket.id);
         if (p && (newTeam === 'red' || newTeam === 'blue')) { p.team = newTeam; p.ready = false; const gamePlayers = players.filter(pl => pl.lobby === 'tabu'); io.emit('updateTabuLobby', { players: gamePlayers, tabuState }); }
@@ -697,7 +700,7 @@ io.on('connection', (socket) => {
         io.emit('tabuScoreUpdated', { scores: tabuState.scores, passCount: tabuState.passCount }); io.to(tabuState.describerId).emit('tabuNewCardForDescriber', tabuState.currentCard);
     });
 
-    // İmposter
+    // ---------------- 7. İMPOSTER ----------------
     socket.on('startImposter', () => {
         const gamePlayers = players.filter(p => p.lobby === 'imposter');
         if (gamePlayers.length < 3) return socket.emit('errorMsg', 'İmposter için en az 3 oyuncu gerekir!');
@@ -736,7 +739,7 @@ io.on('connection', (socket) => {
         io.emit('imposterResult', { winner: correct ? 'IMPOSTER' : 'CIVILIANS', msg: correct ? `İmposter bildi! ("${guess}")` : `İmposter bilemedi! ("${guess}")`, imposterName: imposterState.imposterName, word: imposterState.word });
     });
 
-    // Worms
+    // ---------------- 8. WORMS ----------------
     socket.on('startWormsGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'worms');
         if (gamePlayers.length < 2) return socket.emit('errorMsg', 'Worms için en az 2 oyuncu gerekir!');
