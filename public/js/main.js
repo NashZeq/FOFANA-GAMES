@@ -19,13 +19,17 @@ function join() {
     showView('view-lobby');
 }
 
-function selectGame(game) { socket.emit('selectGame', game); }
+function selectGame(game) { 
+    socket.emit('selectGame', game); 
+}
+
 function backToLobby() { socket.emit('backToLobby'); }
 
 socket.on('updateLobby', (data) => {
     document.getElementById('lobbyPlayers').innerText = data.players.map(p => p.name).join(', ');
 });
 
+// Sadece menü tuşuna basan kişinin ekranı değişecek
 socket.on('gameSelected', (game) => {
     if (game === 'guess') {
         showView('view-guess');
@@ -56,10 +60,12 @@ socket.on('gameSelected', (game) => {
 
 function toggleGeneralReady() { socket.emit('toggleGeneralReady'); }
 
-// TÜM 6 OYUNUN HAZIR BUTONLARINI VE ROZETLERİNİ GÜNCELLEYEN MERKEZ
+// Sadece aynı lobidekilerin hazır olduğunu göreceksin
 socket.on('updateLobbyStatuses', (data) => {
     const pList = data.players;
     const myP = pList.find(x => x.id === socket.id);
+    const myLobby = myP ? myP.lobby : 'main';
+
     if (myP) {
         isReady = myP.ready;
         const text = isReady ? 'Hazır Vazgeç ❌' : 'Hazır Ol ✓';
@@ -71,10 +77,12 @@ socket.on('updateLobbyStatuses', (data) => {
         });
     }
 
+    const lobbyPlayers = pList.filter(p => p.lobby === myLobby);
+
     const renderBadges = (elementId) => {
         const el = document.getElementById(elementId);
         if (!el) return;
-        el.innerHTML = pList.map(p => `
+        el.innerHTML = lobbyPlayers.map(p => `
             <span class="ready-badge ${p.ready ? 'is-ready' : 'not-ready'}">
                 ${p.name}: ${p.ready ? '✓ HAZIR' : '⏳ BEKLİYOR'}
             </span>
