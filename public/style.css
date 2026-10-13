@@ -1,298 +1,90 @@
 /* ==========================================
    1. GENEL SİTE TASARIMI VE KARANLIK TEMA
    ========================================== */
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #0f111a;
-    color: #fff;
-    text-align: center;
-    overflow-x: hidden;
-}
-
-.box {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #1a1d29;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-}
-
-h2 { color: #00adb5; }
-h3 { color: #fff; }
-
-input, select {
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #3d435e;
-    background: #262a3b;
-    color: #fff;
-    margin-bottom: 10px;
-    width: 80%;
-    max-width: 300px;
-    outline: none;
-    font-size: 15px;
-}
-
-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    background: #00adb5;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-    margin: 5px;
-    font-size: 15px;
-}
-
-button:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-}
-
-button:disabled {
-    background: #555 !important;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Ana Menü Butonları */
-.btn-menu {
-    display: block;
-    width: 80%;
-    max-width: 320px;
-    margin: 12px auto;
-    padding: 16px;
-    font-size: 16px;
-    background: #262a3b;
-    border: 2px solid #00adb5;
-    color: #fff;
-    text-align: left;
-    border-radius: 8px;
-}
+body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f111a; color: #fff; text-align: center; overflow-x: hidden; }
+.box { max-width: 1200px; margin: 20px auto; padding: 20px; background: #1a1d29; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+h2 { color: #00adb5; } h3 { color: #fff; }
+input, select { padding: 10px; border-radius: 6px; border: 1px solid #3d435e; background: #262a3b; color: #fff; margin-bottom: 10px; width: 80%; max-width: 300px; outline: none; font-size: 15px; }
+button { padding: 10px 20px; border: none; border-radius: 6px; background: #00adb5; color: #fff; font-weight: bold; cursor: pointer; transition: 0.2s; margin: 5px; font-size: 15px; }
+button:hover { filter: brightness(1.1); transform: translateY(-2px); }
+button:disabled { background: #555 !important; cursor: not-allowed; transform: none; }
+.btn-menu { display: block; width: 80%; max-width: 320px; margin: 12px auto; padding: 16px; font-size: 16px; background: #262a3b; border: 2px solid #00adb5; color: #fff; text-align: left; border-radius: 8px; }
 .btn-menu:hover { background: #00adb5; color: #fff; }
-
 .btn-back { background: #e74c3c; margin-top: 25px; }
 
 /* ==========================================
-   2. LOBİ, HAZIR OLMA VE BİLDİRİM ROZETLERİ
+   2. LOBİ, HAZIR OLMA VE YENİ ZARİF BİLDİRİMLER
    ========================================== */
-.ready-panel {
-    background: #202433;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 15px 0;
-    border: 1px solid #3d435e;
-}
-
-.ready-badge {
-    display: inline-block;
-    padding: 6px 12px;
-    margin: 4px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: bold;
-}
+.ready-panel { background: #202433; padding: 15px; border-radius: 8px; margin: 15px 0; border: 1px solid #3d435e; }
+.ready-badge { display: inline-block; padding: 6px 12px; margin: 4px; border-radius: 4px; font-size: 13px; font-weight: bold; }
 .is-ready { background: rgba(46, 204, 113, 0.2); border: 1px solid #2ecc71; color: #2ecc71; }
 .not-ready { background: rgba(231, 76, 60, 0.2); border: 1px solid #e74c3c; color: #e74c3c; }
 
-/* Üstten Çıkan Bildirim Banner'ı */
+/* OPTİMİZE EDİLMİŞ BİLDİRİM BANNERI (Sağ üstten zarifçe kayarak gelir, ekranı kapatmaz) */
 .main-event-banner {
-    display: none;
-    position: fixed;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #f1c40f;
-    color: #000;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-weight: bold;
-    z-index: 999999;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-    font-size: 15px;
+    display: none; position: fixed; top: 20px; right: 20px; left: auto; transform: none;
+    background: #202433; color: #fff; padding: 16px 20px; border-radius: 8px;
+    border-left: 6px solid #00adb5; font-weight: bold; z-index: 999999;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6); font-size: 14px; max-width: 350px; text-align: left;
+    animation: slideInRight 0.3s ease-out forwards;
 }
-.banner-close-btn { background: transparent; color: #000; border: none; font-size: 20px; padding: 0 5px; margin-left: 10px; cursor: pointer; }
-.banner-close-btn:hover { transform: none; color: #e74c3c; }
+@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.banner-close-btn { background: transparent; color: #aaa; border: none; font-size: 20px; padding: 0 5px; float: right; cursor: pointer; margin-top: -3px; }
+.banner-close-btn:hover { color: #e74c3c; }
 
 /* ==========================================
    3. AÇILIR PENCERELER (MODAL POPUP)
    ========================================== */
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 99999;
-}
-
-.modal-content {
-    background: #1a1d29;
-    border: 2px solid #00adb5;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 480px;
-    padding: 25px;
-    max-height: 80vh;
-    overflow-y: auto;
-    text-align: left;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
-}
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 99999; }
+.modal-content { background: #1a1d29; border: 2px solid #00adb5; border-radius: 12px; width: 90%; max-width: 480px; padding: 25px; max-height: 80vh; overflow-y: auto; text-align: left; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8); }
 
 /* ==========================================
-   4. MONOPOLY (SADELEŞTİRİLMİŞ, BEYAZ VE NET TASARIM)
+   4. MONOPOLY (SADE, BEYAZ VE BELİRGİN TASARIM)
    ========================================== */
 .mono-container { display: flex; flex-direction: column; gap: 15px; }
 .mono-hud { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 10px; }
+.player-stat-card { background: #262a3b; padding: 12px; border-radius: 6px; border-left: 5px solid #fff; font-size: 13px; text-align: left; flex: 1; min-width: 150px; }
 
-.player-stat-card {
-    background: #262a3b;
-    padding: 12px;
-    border-radius: 6px;
-    border-left: 5px solid #fff;
-    font-size: 13px;
-    text-align: left;
-    flex: 1;
-    min-width: 150px;
-}
+.mono-board { display: grid; grid-template-columns: repeat(11, 1fr); grid-template-rows: repeat(11, 1fr); gap: 3px; background: #111; padding: 4px; border-radius: 8px; width: 100%; max-width: 950px; margin: 0 auto; aspect-ratio: 1 / 1; }
+.mono-center { grid-column: 2 / 11; grid-row: 2 / 11; background: #202433; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
 
-/* Tahta Izgarası */
-.mono-board {
-    display: grid;
-    grid-template-columns: repeat(11, 1fr);
-    grid-template-rows: repeat(11, 1fr);
-    gap: 3px;
-    background: #111; /* Karelerin arasındaki çizgileri siyah yapar */
-    padding: 4px;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 950px;
-    margin: 0 auto;
-    aspect-ratio: 1 / 1;
-}
-
-.mono-center {
-    grid-column: 2 / 11;
-    grid-row: 2 / 11;
-    background: #202433; /* Zar atılan orta alan karanlık kalır */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-}
-
-/* SADELİŞTİRİLMİŞ KARE TASARIMI (Beyaz Zemin, Net Çizgiler) */
-.mono-tile {
-    background: #fdfdfd;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 9px;
-    position: relative;
-    text-align: center;
-    cursor: pointer;
-    color: #111; /* Yazılar siyah */
-    overflow: hidden;
-}
+.mono-tile { background: #fdfdfd; display: flex; flex-direction: column; justify-content: space-between; align-items: center; font-size: 10px; font-weight: bold; position: relative; text-align: center; cursor: pointer; color: #111; overflow: hidden; border-radius: 4px; }
 .mono-tile:hover { filter: brightness(0.85); }
 
-/* Arsa Renk Şeridi (Kutunun Üstünde İnce Bar) */
-.tile-color-bar {
-    width: 100%;
-    height: 16px;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-}
+/* BELİRGİNLEŞTİRİLMİŞ RENK BARLARI */
+.tile-color-bar { width: 100%; height: 22px; border-bottom: 2px solid rgba(0,0,0,0.4); margin-bottom: 2px; }
+.c-brown { background: #8B4513; } .c-light_blue { background: #87CEEB; } .c-pink { background: #FF69B4; } .c-orange { background: #FFA500; } .c-red { background: #FF0000; } .c-yellow { background: #FFD700; } .c-green { background: #008000; } .c-dark_blue { background: #00008B; } .c-pitch { background: #2c3e50; } .c-utility { background: #7f8c8d; } .c-doblo { background: #8e44ad; }
 
-.c-brown { background: #8B4513; }
-.c-light_blue { background: #87CEEB; }
-.c-pink { background: #FF69B4; }
-.c-orange { background: #FFA500; }
-.c-red { background: #FF0000; }
-.c-yellow { background: #FFD700; }
-.c-green { background: #008000; }
-.c-dark_blue { background: #00008B; }
-.c-pitch { background: #2c3e50; }
-.c-utility { background: #7f8c8d; }
-.c-doblo { background: #8e44ad; }
+.tokens-holder { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; padding: 2px; min-height: 14px; }
+.player-token { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 10; }
+.mono-log { background: #262a3b; border: 1px solid #3d435e; border-radius: 8px; height: 130px; overflow-y: auto; padding: 10px; text-align: left; font-size: 13px; color: #aaa; }
 
-/* Piyonların Durduğu Yer */
-.tokens-holder {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2px;
-    padding: 2px;
-    min-height: 14px;
-}
-.player-token {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 1px solid #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    z-index: 10;
-}
-
-/* Monopoly Olay Günlüğü */
-.mono-log {
-    background: #262a3b;
-    border: 1px solid #3d435e;
-    border-radius: 8px;
-    height: 130px;
-    overflow-y: auto;
-    padding: 10px;
-    text-align: left;
-    font-size: 13px;
-    color: #aaa;
-}
-
-/* ==========================================
-   5. MONOPOLY ANİMASYONLARI (Smooth Efektler)
-   ========================================== */
+/* ANİMASYONLAR */
 @keyframes turnPulse { 0% { transform: translateY(0) scale(1); } 50% { transform: translateY(-3px) scale(1.02); } 100% { transform: translateY(0) scale(1); } }
 .active-turn-card { animation: turnPulse 1.8s infinite ease-in-out; z-index: 5; }
-
 @keyframes floatMoney { 0% { opacity: 1; transform: translateY(0) scale(0.8); } 30% { opacity: 1; transform: translateY(-12px) scale(1.15); } 100% { opacity: 0; transform: translateY(-32px) scale(0.95); } }
 .money-diff-popup { position: absolute; right: 12px; top: 6px; font-weight: 900; font-size: 16px; pointer-events: none; animation: floatMoney 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9); z-index: 20; }
-.money-plus { color: #2ecc71; }
-.money-minus { color: #ff4d4d; }
-
+.money-plus { color: #2ecc71; } .money-minus { color: #ff4d4d; }
 @keyframes shakeDice { 0% { transform: rotate(0deg) scale(1); } 20% { transform: rotate(-18deg) scale(1.25); color: #f1c40f; } 40% { transform: rotate(18deg) scale(1.3); color: #00adb5; } 60% { transform: rotate(-12deg) scale(1.25); color: #f1c40f; } 80% { transform: rotate(12deg) scale(1.15); } 100% { transform: rotate(0deg) scale(1); } }
 .dice-rolling { display: inline-block; animation: shakeDice 0.45s ease-in-out; }
-
-@keyframes tileLandingPulse { 0% { box-shadow: inset 0 0 0px #f1c40f, 0 0 0px #f1c40f; transform: scale(1); } 50% { box-shadow: inset 0 0 18px #f1c40f, 0 0 20px #f1c40f; transform: scale(1.08); z-index: 15; } 100% { box-shadow: inset 0 0 0px #f1c40f, 0 0 0px #f1c40f; transform: scale(1); } }
-.tile-landing-glow { animation: tileLandingPulse 1.4s ease-out; border-color: #f1c40f !important; }
-
+@keyframes tileLandingPulse { 0% { box-shadow: inset 0 0 0px #e74c3c, 0 0 0px #e74c3c; transform: scale(1); } 50% { box-shadow: inset 0 0 20px #e74c3c, 0 0 25px #e74c3c; transform: scale(1.1); z-index: 15; } 100% { box-shadow: inset 0 0 0px #e74c3c, 0 0 0px #e74c3c; transform: scale(1); } }
+.tile-landing-glow { animation: tileLandingPulse 1.6s ease-out; border-color: #e74c3c !important; }
 @keyframes hop { 0% { transform: scale(1) translateY(0); } 50% { transform: scale(1.7) translateY(-6px); box-shadow: 0 6px 10px rgba(0,0,0,0.6); } 100% { transform: scale(1) translateY(0); } }
-.token-hop { animation: hop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1); }
-
+.token-hop { animation: hop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
 @keyframes slideInLog { from { opacity: 0; transform: translateX(-15px); background: rgba(0, 173, 181, 0.25); } to { opacity: 1; transform: translateX(0); background: transparent; } }
 .log-entry-new { animation: slideInLog 0.6s ease-out; padding: 3px 6px; border-radius: 4px; border-left: 3px solid #00adb5; margin-bottom: 4px; font-weight: bold; color: #fff; }
 
 /* ==========================================
-   6. İŞKEMBEDEN SALLAMA TASARIMI
+   5. DİĞER OYUN TASARIMLARI
    ========================================== */
 .guess-timer-bar { width: 100%; background: #3d435e; height: 12px; border-radius: 6px; margin-bottom: 15px; overflow: hidden; }
 .guess-timer-fill { height: 100%; background: #e74c3c; width: 100%; transition: width 1s linear; }
 .guess-card { background: #202433; padding: 25px; border-radius: 12px; border: 2px solid #3d435e; }
 .guess-img-holder img { width: 100%; max-width: 450px; border-radius: 8px; margin-bottom: 15px; object-fit: cover; max-height: 350px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
 .result-row { display: flex; justify-content: space-between; background: #1a1d29; padding: 12px; margin-bottom: 6px; border-radius: 6px; border-left: 4px solid #00adb5; }
-
-/* ==========================================
-   7. TABU TASARIMI
-   ========================================== */
 .teams-grid { display: flex; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
 .team-col { flex: 1; min-width: 200px; background: #202433; padding: 15px; border-radius: 8px; border: 2px solid #3d435e; }
-.team-red { border-color: #ff6b6b; }
-.team-blue { border-color: #4dabf7; }
+.team-red { border-color: #ff6b6b; } .team-blue { border-color: #4dabf7; }
 .member-badge { display: flex; justify-content: space-between; background: #1a1d29; padding: 10px; margin: 5px 0; border-radius: 6px; font-size: 14px; }
 .tabu-intermission-box { background: #202433; border: 3px solid #f39c12; border-radius: 12px; padding: 30px; margin: 20px 0; }
 .tabu-score { font-size: 24px; font-weight: bold; margin: 15px 0; display: flex; justify-content: space-around; background: #202433; padding: 15px; border-radius: 8px; }
@@ -300,13 +92,7 @@ button:disabled {
 .tabu-main { font-size: 30px; font-weight: 900; margin-bottom: 15px; color: #e74c3c; border-bottom: 2px solid #eee; padding-bottom: 12px; }
 .tabu-forbidden { font-size: 18px; font-weight: bold; color: #333; margin: 6px 0; }
 .action-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.btn-correct { background: #2ecc71; font-size: 18px; padding: 12px 25px; }
-.btn-taboo { background: #e74c3c; font-size: 18px; padding: 12px 25px; }
-.btn-pass { background: #3498db; font-size: 18px; padding: 12px 25px; }
-
-/* ==========================================
-   8. ARABA YARIŞI & STICK RUN (CANVAS EKRANLARI)
-   ========================================== */
+.btn-correct { background: #2ecc71; font-size: 18px; padding: 12px 25px; } .btn-taboo { background: #e74c3c; font-size: 18px; padding: 12px 25px; } .btn-pass { background: #3498db; font-size: 18px; padding: 12px 25px; }
 .race-container { display: flex; flex-direction: column; align-items: center; width: 100%; }
 canvas { background: #262a3b; border: 3px solid #3d435e; border-radius: 8px; width: 100%; max-width: 1000px; height: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .mobile-controls { display: flex; justify-content: space-between; width: 100%; max-width: 1000px; margin-top: 15px; flex-wrap: wrap; gap: 10px; }

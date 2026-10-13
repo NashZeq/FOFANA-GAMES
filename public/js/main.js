@@ -2,13 +2,12 @@ const socket = io();
 let myId = '';
 let isReady = false;
 let eventBannerTimeout = null;
-let readyCooldown = false; // Spam koruma kilidi
+let readyCooldown = false; 
 
 socket.on('connect', () => { myId = socket.id; });
 
-// ⚡ HAYALET/ZOMBİ OYUNCU KİLİDİ: Sunucu yeniden başladığında seni uyarır ve sayfayı yeniler
 socket.on('disconnect', () => {
-    alert("Sunucu güncellendi veya anlık bağlantı koptu. Sisteme tekrar bağlanılıyor...");
+    alert("Sunucu güncellendi veya bağlantı koptu. Sisteme tekrar bağlanılıyor...");
     window.location.reload();
 });
 
@@ -36,7 +35,7 @@ socket.on('updateLobby', (data) => {
     document.getElementById('lobbyPlayers').innerText = data.players.map(p => p.name).join(', ');
 });
 
-// Sadece menü tuşuna basan kişinin ekranı değişecek
+// YENİ: Sadece menü tuşuna basan kişinin KENDİ ekranı değişecek
 socket.on('gameSelected', (game) => {
     if (game === 'guess') {
         showView('view-guess');
@@ -65,16 +64,14 @@ socket.on('gameSelected', (game) => {
     }
 });
 
-// Hazır butonuna art arda basılmasını engelleyen kilit mekanizması
 function toggleGeneralReady() { 
     if (readyCooldown) return; 
     socket.emit('toggleGeneralReady'); 
-    
     readyCooldown = true;
     setTimeout(() => { readyCooldown = false; }, 500);
 }
 
-// Sadece aynı lobidekilerin hazır olduğunu göreceksin
+// YENİ: Sadece aynı lobide (aynı oyunda) olanların hazır durumu görünecek
 socket.on('updateLobbyStatuses', (data) => {
     const pList = data.players;
     const myP = pList.find(x => x.id === socket.id);

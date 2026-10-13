@@ -1,4 +1,3 @@
-// 1. Lobiyi ve Ekranları Başlangıç Haline Getirir
 function resetGuessLobby() {
     document.getElementById('guessLobbyPanel').style.display = 'block';
     document.getElementById('guessArenaPanel').style.display = 'none';
@@ -6,50 +5,33 @@ function resetGuessLobby() {
     document.getElementById('guessGameOverPanel').style.display = 'none';
 }
 
-// 2. Mod ve Tur Sayısını Alıp Sunucuya Başlatma Emri Verir
 function startGuessGame() {
     const mode = document.getElementById('guessSubModeSelect').value;
     const rounds = document.getElementById('guessRoundsSelect').value;
     socket.emit('startGuessGame', { mode: mode, rounds: rounds });
 }
 
-// 🔥 WIKIPEDIA'DAN CANLI VE KIRILMAZ FOTOĞRAF ÇEKEN AKILLI MOTOR
 async function loadSmartImage(imgElement, question) {
     const cleanTitle = encodeURIComponent(question.title);
     const fallbackBanner = `https://placehold.co/600x400/151824/00adb5?text=${cleanTitle}`;
-    
     imgElement.referrerPolicy = "no-referrer";
-    imgElement.onerror = () => {
-        imgElement.onerror = null;
-        imgElement.src = fallbackBanner;
-    };
-
+    imgElement.onerror = () => { imgElement.onerror = null; imgElement.src = fallbackBanner; };
     if (question.wiki) {
         const lang = question.wikiLang || 'tr';
         try {
             const res = await fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(question.wiki)}`);
             if (res.ok) {
                 const data = await res.json();
-                if (data.originalimage && data.originalimage.source) {
-                    imgElement.src = data.originalimage.source;
-                    return;
-                }
-                if (data.thumbnail && data.thumbnail.source) {
-                    imgElement.src = data.thumbnail.source;
-                    return;
-                }
+                if (data.originalimage && data.originalimage.source) { imgElement.src = data.originalimage.source; return; }
+                if (data.thumbnail && data.thumbnail.source) { imgElement.src = data.thumbnail.source; return; }
             }
-        } catch (err) {
-            console.log("Wiki API yedek görsele geçiyor...");
-        }
+        } catch (err) {}
     }
-
     imgElement.src = question.img || fallbackBanner;
 }
 
-// 3. Yeni Soru Geldiğinde Görseli, Süreyi ve Kutuları Hazırlar
 socket.on('guessRoundStarted', (data) => {
-    document.getElementById('guessLobbyPanel').style.display = 'none'; // KESİN GİZLE
+    document.getElementById('guessLobbyPanel').style.display = 'none';
     document.getElementById('guessRevealPanel').style.display = 'none';
     document.getElementById('guessArenaPanel').style.display = 'block';
 
@@ -67,19 +49,15 @@ socket.on('guessRoundStarted', (data) => {
     document.getElementById('guessSubmittedNotice').style.display = 'none';
     
     const inp = document.getElementById('userGuessInput');
-    inp.value = '';
-    inp.disabled = false;
-    inp.focus();
+    inp.value = ''; inp.disabled = false; inp.focus();
 });
 
-// 4. Kırmızı Zaman Çubuğunu Her Saniye Eritir
 socket.on('guessTimerTick', (timeLeft) => {
     document.getElementById('guessTimerText').innerText = `${timeLeft}s`;
     const pct = (timeLeft / 15) * 100;
     document.getElementById('guessTimerFill').style.width = `${pct}%`;
 });
 
-// 5. Oyuncunun Tahminini Sunucuya Gönderir
 function submitGuess() {
     const inp = document.getElementById('userGuessInput');
     const val = inp.value.trim();
@@ -95,9 +73,7 @@ socket.on('guessLockedNotice', () => {
     document.getElementById('guessSubmittedNotice').style.display = 'block';
 });
 
-// 6. Tur Sonu: Gerçek Değeri ve Puan Tablosunu Ekrana Basar
 socket.on('guessRoundEnded', (data) => {
-    // 🔥 EKRANIN ÇORBA OLMASINI ENGELLEYEN KİLİT BURADA
     document.getElementById('guessLobbyPanel').style.display = 'none'; 
     document.getElementById('guessArenaPanel').style.display = 'none';
     document.getElementById('guessRevealPanel').style.display = 'block';
@@ -112,25 +88,32 @@ socket.on('guessRoundEnded', (data) => {
         </div>
     `).join('');
 
+    // Butonu sıfırla
     const btn = document.getElementById('btnNextRoundReady');
     btn.innerText = data.isLastQuestion ? 'Final Podyumuna Hazırım 🏆' : 'Sıradaki Soruya Hazırım ⏳';
     btn.style.background = '#f39c12';
-    btn.disabled = false;
-
+    
     renderNextRoundBadges(data.readyStatus);
 });
 
-// 7. Sıradaki Soru İçin Hazır Olma İşlemleri
+// AÇ/KAPA (Toggle) MANTIĞI DÜZELTİLDİ
 function toggleNextRoundReady() {
     socket.emit('guessNextRoundReadyToggle');
-    const btn = document.getElementById('btnNextRoundReady');
-    btn.innerText = 'Hazırsın! Diğerleri Bekleniyor... ✓';
-    btn.style.background = '#2ecc71';
-    btn.disabled = true;
 }
 
 socket.on('guessNextRoundReadyUpdate', (readyList) => {
     renderNextRoundBadges(readyList);
+    
+    const myStatus = readyList.find(p => p.id === socket.id);
+    const btn = document.getElementById('btnNextRoundReady');
+    
+    if (myStatus && myStatus.ready) {
+        btn.innerText = 'Hazırsın (İptal Et) ❌';
+        btn.style.background = '#e74c3c';
+    } else {
+        btn.innerText = 'Sıradaki Soruya Hazırım ⏳';
+        btn.style.background = '#f39c12';
+    }
 });
 
 function renderNextRoundBadges(readyList) {
@@ -143,7 +126,6 @@ function renderNextRoundBadges(readyList) {
     `).join('');
 }
 
-// 8. Final Podyumu: Kazananı İlan Eder
 socket.on('guessGameOver', (data) => {
     document.getElementById('guessLobbyPanel').style.display = 'none';
     document.getElementById('guessRevealPanel').style.display = 'none';
