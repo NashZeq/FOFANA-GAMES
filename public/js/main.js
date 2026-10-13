@@ -6,6 +6,12 @@ let readyCooldown = false; // Spam koruma kilidi
 
 socket.on('connect', () => { myId = socket.id; });
 
+// ⚡ HAYALET/ZOMBİ OYUNCU KİLİDİ: Sunucu yeniden başladığında seni uyarır ve sayfayı yeniler
+socket.on('disconnect', () => {
+    alert("Sunucu güncellendi veya anlık bağlantı koptu. Sisteme tekrar bağlanılıyor...");
+    window.location.reload();
+});
+
 function showView(viewId) {
     ['view-login', 'view-lobby', 'view-guess', 'view-monopoly', 'view-race', 'view-tabu', 'view-imposter', 'view-stickrun'].forEach(id => {
         const el = document.getElementById(id);
