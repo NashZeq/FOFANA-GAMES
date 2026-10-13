@@ -26,6 +26,7 @@ window.addEventListener('keyup', (e) => {
     if (e.code === 'KeyS' || e.code === 'ArrowDown') { e.preventDefault(); socket.emit('stickInput', { action: 'duck', state: false }); }
 });
 
+// BÜYÜK DOKUNMATİK JOYSTICK VE KONTROL SİSTEMİ
 function bindStickTouch() {
     const btnJump = document.getElementById('btnStickJump');
     const btnDuck = document.getElementById('btnStickDuck');
@@ -44,6 +45,26 @@ function bindStickTouch() {
     if (btnItem) {
         btnItem.addEventListener('touchstart', (e) => { e.preventDefault(); socket.emit('stickInput', { action: 'item' }); });
         btnItem.addEventListener('mousedown', () => socket.emit('stickInput', { action: 'item' }));
+    }
+
+    // Canvas Üzerinde Sanal Joystick Kaydırma Algılama
+    if (stickCanvas) {
+        let touchStartX = 0;
+        stickCanvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+        stickCanvas.addEventListener('touchmove', (e) => {
+            let moveX = e.touches[0].clientX;
+            if (moveX - touchStartX > 40) {
+                // Sağa kaydırma -> Eğil veya Güç Kullan
+                socket.emit('stickInput', { action: 'duck', state: true });
+            } else if (touchStartX - moveX > 40) {
+                socket.emit('stickInput', { action: 'duck', state: false });
+            }
+        });
+        stickCanvas.addEventListener('touchend', () => {
+            socket.emit('stickInput', { action: 'duck', state: false });
+        });
     }
 }
 bindStickTouch();
@@ -157,7 +178,6 @@ socket.on('stickUpdate', (data) => {
             stickCtx.beginPath(); stickCtx.arc(0, 0, 6, 0, Math.PI * 2); stickCtx.fillStyle = '#e74c3c'; stickCtx.fill();
             stickCtx.restore();
         } else if (obs.type === 'low') {
-            // YENİ TÜR: AHŞAP KUTU (Üstüne basılıp yürünebilir)
             stickCtx.fillStyle = '#8B4513';
             stickCtx.fillRect(sx, 290, obs.w, 60);
             stickCtx.strokeStyle = '#5c2a0b';

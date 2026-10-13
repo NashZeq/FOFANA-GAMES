@@ -17,12 +17,10 @@ let isCharging = false;
 window.addEventListener('keydown', (e) => {
     const view = document.getElementById('view-worms');
     if (!view || view.style.display === 'none') return;
-
     if (e.code === 'KeyA' || e.code === 'ArrowLeft') wInputs.left = true;
     if (e.code === 'KeyD' || e.code === 'ArrowRight') wInputs.right = true;
     if (e.code === 'KeyW' || e.code === 'ArrowUp') wInputs.up = true;
     if (e.code === 'KeyS' || e.code === 'ArrowDown') wInputs.down = true;
-    
     if (e.code === 'Space' && !e.repeat) {
         const myWorm = wormsStateData?.worms[socket.id];
         if (myWorm && wormsStateData.turnId === socket.id && !wormsStateData.projectileFired) {
@@ -35,12 +33,10 @@ window.addEventListener('keydown', (e) => {
 window.addEventListener('keyup', (e) => {
     const view = document.getElementById('view-worms');
     if (!view || view.style.display === 'none') return;
-
     if (e.code === 'KeyA' || e.code === 'ArrowLeft') wInputs.left = false;
     if (e.code === 'KeyD' || e.code === 'ArrowRight') wInputs.right = false;
     if (e.code === 'KeyW' || e.code === 'ArrowUp') wInputs.up = false;
     if (e.code === 'KeyS' || e.code === 'ArrowDown') wInputs.down = false;
-
     if (e.code === 'Space') {
         if (isCharging) {
             isCharging = false;
@@ -96,12 +92,9 @@ function spawnWormsExplosion(x, y, radius) {
     }
 }
 
-// 🛡️ GÜÇLENDİRİLMİŞ HARİTA ÇİZİM FONKSİYONU
 function drawTerrainToCanvas(heights) {
     if (!heights || heights.length === 0) return;
     terrainCtx.clearRect(0, 0, 1000, 600);
-    
-    // Çim Katmanı
     terrainCtx.fillStyle = '#27ae60';
     terrainCtx.beginPath();
     terrainCtx.moveTo(0, 600);
@@ -112,7 +105,6 @@ function drawTerrainToCanvas(heights) {
     terrainCtx.closePath();
     terrainCtx.fill();
     
-    // Toprak Dolgusu
     terrainCtx.globalCompositeOperation = 'source-atop';
     terrainCtx.fillStyle = '#8e44ad';
     terrainCtx.fillRect(0, 0, 1000, 600);
@@ -123,7 +115,6 @@ socket.on('wormsStarted', (data) => {
     wormsStateData = data;
     wParticles = [];
     wExplosions = [];
-    
     document.getElementById('wormsLobbyControls').style.display = 'none';
     document.getElementById('wormsGameArea').style.display = 'flex';
     document.getElementById('wormsWinnerBox').style.display = 'none';
@@ -135,7 +126,6 @@ socket.on('wormsStarted', (data) => {
 
 socket.on('wormsExplosionSync', (data) => {
     spawnWormsExplosion(data.x, data.y, data.radius);
-    
     terrainCtx.globalCompositeOperation = 'destination-out';
     terrainCtx.beginPath();
     terrainCtx.arc(data.x, data.y, data.radius, 0, Math.PI * 2);
@@ -146,11 +136,6 @@ socket.on('wormsExplosionSync', (data) => {
 socket.on('wormsUpdate', (state) => {
     if (!wormsCtx) return;
     wormsStateData = state;
-    
-    // Eğer gizli kanvasta henüz harita çizilmediyse ve sunucudan yükseklik geldiyse hemen çiz
-    if (terrainCanvas.width > 0 && terrainCtx.getImageData(0,0,1,1).data[3] === 0 && state.worms) {
-        // Harita yüksekliklerini tekrar çizmeyi tetikle (güvenlik önlemi)
-    }
 
     const me = state.worms[socket.id];
     if (me && state.turnId === socket.id && !state.projectileFired) {
@@ -161,20 +146,17 @@ socket.on('wormsUpdate', (state) => {
         }
     }
 
-    // Gökyüzü Arka Planı
     const skyGrad = wormsCtx.createLinearGradient(0, 0, 0, 600);
     skyGrad.addColorStop(0, '#0f111a');
     skyGrad.addColorStop(1, '#2c3e50');
     wormsCtx.fillStyle = skyGrad;
     wormsCtx.fillRect(0, 0, 1000, 600);
 
-    // Yıldızlar
     wormsCtx.fillStyle = 'rgba(255,255,255,0.3)';
     for(let i=0; i<50; i++) {
         wormsCtx.fillRect((Math.sin(i*7)*500)+500, (Math.cos(i*13)*300)+300, 2, 2);
     }
 
-    // 🗺️ HARİTAYI EKRANA AKTAR
     wormsCtx.drawImage(terrainCanvas, 0, 0);
 
     if (state.activeProjectile) {
@@ -186,7 +168,6 @@ socket.on('wormsUpdate', (state) => {
         wParticles.push({ x: p.x, y: p.y, vx: 0, vy: 0, life: 1, color: '#e74c3c' });
     }
 
-    // Solucanları Çiz
     for (let id in state.worms) {
         const w = state.worms[id];
         if (w.hp <= 0) continue;
@@ -194,7 +175,6 @@ socket.on('wormsUpdate', (state) => {
         wormsCtx.save();
         wormsCtx.translate(w.x, w.y);
 
-        // Can Barı
         wormsCtx.fillStyle = '#e74c3c';
         wormsCtx.fillRect(-15, -25, 30, 4);
         wormsCtx.fillStyle = '#2ecc71';
@@ -213,7 +193,6 @@ socket.on('wormsUpdate', (state) => {
         wormsCtx.rotate(w.aimAngle);
         wormsCtx.fillStyle = '#bdc3c7';
         wormsCtx.fillRect(0, -3, 20, 6);
-        
         wormsCtx.restore();
     }
 
