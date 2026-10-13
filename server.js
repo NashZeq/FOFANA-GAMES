@@ -7,6 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// MODÜLER VERİLER
 const iskembedenData = require('./data/iskembedenData');
 const monoData = require('./data/monopolyData');
 const monopolyBoard = (monoData && monoData.monopolyBoard) ? monoData.monopolyBoard : (Array.isArray(monoData) ? monoData : []);
@@ -30,6 +31,7 @@ function shuffleArray(array) {
     return arr;
 }
 
+// OYUNCU DURUMLARI VE OYUN STATELERİ
 let players = [];
 const playerColors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#e84393', '#00cec9', '#fdcb6e'];
 
@@ -38,7 +40,6 @@ function broadcastMonoLog(msg) {
     io.emit('monoGlobalAlert', msg);
 }
 
-// ---------------- STATE OLUŞTURMALARI ----------------
 const usedQuestionMemory = { celebrity: new Set(), market: new Set(), car: new Set() };
 let guessState = { active: false, mode: 'celebrity', currentQuestionIndex: 0, questions: [], timer: null, timeLeft: 15, guesses: {}, totalScores: {}, readyForNextRound: {}, maxQuestions: 5 };
 let monoState = { active: false, board: monopolyBoard.length ? JSON.parse(JSON.stringify(monopolyBoard)) : [], players: [], turnIndex: 0, dice: [1, 1], doubleRollCount: 0, waitingForDecision: false, waitingForDoblo: false, activeTrade: null, log: [] };
@@ -109,10 +110,10 @@ function checkHalısahaWin(ownerId, ownerName) {
 
 function checkSideWin(ownerId, ownerName) {
     const sides = [
-        [1, 3, 5, 6, 8, 9], // Alt
-        [11, 12, 13, 14, 15, 16, 18, 19], // Sol
-        [21, 23, 24, 25, 26, 27, 28, 29], // Üst
-        [31, 32, 34, 35, 37, 39] // Sağ
+        [1, 3, 5, 6, 8, 9], // Alt Kenar
+        [11, 12, 13, 14, 15, 16, 18, 19], // Sol Kenar
+        [21, 23, 24, 25, 26, 27, 28, 29], // Üst Kenar
+        [31, 32, 34, 35, 37, 39] // Sağ Kenar
     ];
     for (let side of sides) {
         const ownsAll = side.every(id => monoState.board[id].owner === ownerId);
@@ -134,7 +135,7 @@ function checkBankruptcy(player) {
             if (t.owner === player.id) {
                 delete t.owner;
                 delete t.ownerName;
-                delete t.buyoutCount; // İflasla tapular temizleniyor
+                delete t.buyoutCount;
             }
         });
     }
@@ -158,7 +159,7 @@ io.on('connection', (socket) => {
         if (p) {
             p.lobby = gameType;
             p.ready = false;
-            socket.emit('gameSelected', gameType); // Sadece tıklayana gider
+            socket.emit('gameSelected', gameType); 
             io.emit('updateLobbyStatuses', { players });
             if (gameType === 'tabu') socket.emit('updateTabuLobby', { players, tabuState });
         }
@@ -183,7 +184,7 @@ io.on('connection', (socket) => {
         io.emit('updateLobby', { players });
     });
 
-    // ---------------- İŞKEMBEDEN SALLAMA ----------------
+    // ---------------- 1. İŞKEMBEDEN SALLAMA ----------------
     socket.on('startGuessGame', (data) => {
         const gamePlayers = players.filter(p => p.lobby === 'guess');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -304,7 +305,7 @@ io.on('connection', (socket) => {
         }
     });
 
-    // ---------------- ARABA YARIŞI ----------------
+    // ---------------- 2. ARABA YARIŞI ----------------
     socket.on('startRaceGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'race');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -329,12 +330,147 @@ io.on('connection', (socket) => {
 
         raceState.loopInterval = setInterval(() => {
             if (!raceState.active) return;
-            // (Yarış mantığı buraya sığıyor, daha önce yazdığımızın aynısı)
-            // ... [Kod kalabalığı yapmamak için aynen çalışır]
+            raceState.itemBoxes.forEach(box => {
+                if (!box.active) {
+                    box.respawnTimer--;
+                    if (box.respawnTimer <= 0) box.active = true;
+                }
+            });
+
+            for (let i = raceState.items.length - 1; i >= 0; i--) {
+                const item = raceState.items[i];
+                if (item.type === 'rocket') {
+                    item.x += Math.cos(item.angle) * 14;
+                    item.y += Math.sin(item.angle) * 14;
+                    item.life--;
+                    for (let id in raceState.cars) {
+                        const car = raceState.cars[id];
+                        if (id !== item.ownerId && !car.finished) {
+                            if (Math.hypot(car.x - item.x, car.y - item.y) < 28) {
+                                car.isSpinning = true;
+                                car.spinAngleSpeed = 0.35;
+                                car.vx = Math.cos(item.angle) * 4;
+                                car.vy = Math.sin(item.angle) * 4;
+                                car.speed = Math.max(1.5, car.speed * 0.6);
+                                item.life = 0;
+                                io.emit('monoGlobalAlert', `💥 ${item.ownerName}'in Roketi ${car.name}'i savurdu!`);
+                                break;
+                            }
+                        }
+                    }
+                    if (item.life <= 0 || item.x < 0 || item.x > 1200 || item.y < 0 || item.y > 750) {
+                        raceState.items.splice(i, 1);
+                    }
+                }
+            }
+
+            for (let id in raceState.cars) {
+                const car = raceState.cars[id];
+                if (car.finished) continue;
+
+                const onTrack = isCarOnTrack(car.x, car.y);
+                const maxSpeed = onTrack ? 7.2 : 2.6;
+
+                if (car.isSpinning) {
+                    car.angle += car.spinAngleSpeed;
+                    car.spinAngleSpeed *= 0.94;
+                    car.speed *= 0.94;
+                    car.x += car.vx;
+                    car.y += car.vy;
+                    car.vx *= 0.94;
+                    car.vy *= 0.94;
+                    if (Math.abs(car.spinAngleSpeed) < 0.03) {
+                        car.isSpinning = false;
+                        car.spinAngleSpeed = 0;
+                    }
+                } else {
+                    if (car.inputs.up) car.speed += onTrack ? 0.28 : 0.09;
+                    if (car.inputs.down) car.speed -= 0.2;
+                    car.speed *= onTrack ? 0.96 : 0.88;
+                    if (car.speed > maxSpeed) car.speed = maxSpeed;
+                    if (car.speed < -2.0) car.speed = -2.0;
+
+                    if (Math.abs(car.speed) > 0.1) {
+                        const dir = car.speed > 0 ? 1 : -1;
+                        if (car.inputs.left) car.angle -= 0.065 * dir;
+                        if (car.inputs.right) car.angle += 0.065 * dir;
+                    }
+                    car.vx = Math.cos(car.angle) * car.speed;
+                    car.vy = Math.sin(car.angle) * car.speed;
+                    car.x += car.vx;
+                    car.y += car.vy;
+                }
+
+                car.x = Math.max(20, Math.min(1180, car.x));
+                car.y = Math.max(20, Math.min(730, car.y));
+
+                raceState.itemBoxes.forEach(box => {
+                    if (box.active && Math.hypot(car.x - box.x, car.y - box.y) < 30) {
+                        box.active = false;
+                        box.respawnTimer = 150;
+                        if (!car.heldItem) car.heldItem = Math.random() < 0.5 ? 'banana' : 'rocket';
+                    }
+                });
+
+                for (let i = raceState.items.length - 1; i >= 0; i--) {
+                    const item = raceState.items[i];
+                    if (item.type === 'banana') {
+                        if (Math.hypot(car.x - item.x, car.y - item.y) < 22) {
+                            car.isSpinning = true;
+                            car.spinAngleSpeed = 0.38;
+                            car.vx = Math.cos(car.angle) * (car.speed * 0.8);
+                            car.vy = Math.sin(car.angle) * (car.speed * 0.8);
+                            car.speed *= 0.7;
+                            raceState.items.splice(i, 1);
+                            io.emit('monoGlobalAlert', `🍌 ${car.name} muza bastı ve drift attı!`);
+                            break;
+                        }
+                    }
+                }
+
+                if (car.x > 950 && car.y < 350) car.checkpoints[0] = true;
+                if (car.x < 650 && car.x > 500 && car.y < 380) car.checkpoints[1] = true;
+                if (car.x < 250 && car.y > 350) car.checkpoints[2] = true;
+
+                if (car.checkpoints[0] && car.checkpoints[1] && car.checkpoints[2]) {
+                    if (car.x > 570 && car.x < 605 && car.y > 580) {
+                        car.checkpoints = [false, false, false];
+                        car.lap++;
+                        if (car.lap > raceState.totalLaps) {
+                            car.finished = true;
+                            if (!raceState.winner) {
+                                raceState.winner = car.name;
+                                raceState.active = false;
+                                clearInterval(raceState.loopInterval);
+                                io.emit('raceFinished', { winner: car.name });
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            io.emit('raceUpdate', { cars: raceState.cars, items: raceState.items, boxes: raceState.itemBoxes });
         }, 1000 / 30);
     });
 
-    // ---------------- STICK RUN (ÇÖP ADAM PARKUR) ----------------
+    socket.on('raceInput', (inputs) => {
+        if (raceState.active && raceState.cars[socket.id]) raceState.cars[socket.id].inputs = inputs;
+    });
+
+    socket.on('raceUseItem', () => {
+        if (!raceState.active || !raceState.cars[socket.id]) return;
+        const car = raceState.cars[socket.id];
+        if (!car.heldItem || car.isSpinning) return;
+
+        if (car.heldItem === 'banana') {
+            raceState.items.push({ type: 'banana', x: car.x - Math.cos(car.angle) * 26, y: car.y - Math.sin(car.angle) * 26 });
+        } else if (car.heldItem === 'rocket') {
+            raceState.items.push({ type: 'rocket', ownerId: car.id, ownerName: car.name, x: car.x + Math.cos(car.angle) * 28, y: car.y + Math.sin(car.angle) * 28, angle: car.angle, life: 100 });
+        }
+        car.heldItem = null;
+    });
+
+    // ---------------- 3. STICK RUN (ÇÖP ADAM PARKUR) ----------------
     socket.on('startStickGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'stickrun');
         if (gamePlayers.length < 1) return socket.emit('errorMsg', 'En az 1 oyuncu olmalı!');
@@ -365,11 +501,189 @@ io.on('connection', (socket) => {
 
         stickState.loopInterval = setInterval(() => {
             if (!stickState.active) return;
-            // ... (Stick Run parkur mantığı)
+            stickState.boxes.forEach(b => {
+                if (!b.active) {
+                    b.respawnTimer--;
+                    if (b.respawnTimer <= 0) b.active = true;
+                }
+            });
+
+            for (let i = stickState.projectiles.length - 1; i >= 0; i--) {
+                const proj = stickState.projectiles[i];
+                if (proj.type === 'rocket') {
+                    proj.x += 13.5;
+                    proj.life--;
+                }
+                let hitSomeone = false;
+                for (let id in stickState.runners) {
+                    const r = stickState.runners[id];
+                    if (id !== proj.ownerId && r.shieldTimer <= 0 && r.hitCooldown <= 0) {
+                        const distX = Math.abs(r.x - proj.x);
+                        const distY = Math.abs((r.y - 25) - proj.y);
+                        if (distX < 26 && distY < 38) {
+                            r.stunTimer = 38;
+                            r.hitCooldown = 50;
+                            r.vy = -9;
+                            r.onGround = false;
+                            r.x -= 35;
+                            hitSomeone = true;
+                            io.emit('stickEffect', { type: 'hit', x: r.x, y: r.y - 20, id: r.id });
+                            io.emit('monoGlobalAlert', `💥 ${proj.ownerName}'in ${proj.type === 'trap' ? 'Mayını' : 'Füzesi'} ${r.name}'i havaya uçurdu!`);
+                            break;
+                        }
+                    }
+                }
+                if (hitSomeone || (proj.type === 'rocket' && proj.life <= 0)) {
+                    stickState.projectiles.splice(i, 1);
+                }
+            }
+
+            for (let id in stickState.runners) {
+                const r = stickState.runners[id];
+                if (r.boostTimer > 0) r.boostTimer--;
+                if (r.shieldTimer > 0) r.shieldTimer--;
+                if (r.stunTimer > 0) r.stunTimer--;
+                if (r.hitCooldown > 0) r.hitCooldown--;
+
+                if (r.stunTimer > 0) { r.speed = 0.8; } 
+                else if (r.boostTimer > 0) { r.speed = 11.2; } 
+                else { r.speed = r.ducking && r.onGround ? 4.8 : 6.4; }
+
+                const prevY = r.y;
+                r.x += r.speed;
+                r.y += r.vy;
+                r.vy += 0.82; 
+                r.onGround = false;
+
+                if (r.vy >= 0) {
+                    stickState.platforms.forEach(plat => {
+                        if (r.x >= plat.x - 10 && r.x <= plat.x + plat.w + 10) {
+                            if (prevY <= plat.y + 4 && r.y >= plat.y) {
+                                r.y = plat.y;
+                                r.vy = 0;
+                                r.onGround = true;
+                                r.jumpsLeft = 2;
+                            }
+                        }
+                    });
+                }
+
+                if (r.y >= 350) {
+                    r.y = 350;
+                    r.vy = 0;
+                    r.onGround = true;
+                    r.jumpsLeft = 2;
+                }
+
+                if (r.y >= 340) {
+                    stickState.pads.forEach(pad => {
+                        if (r.x >= pad.x && r.x <= pad.x + pad.w) {
+                            if (pad.type === 'jump' && r.vy >= 0) {
+                                r.vy = -17.5; 
+                                r.onGround = false;
+                                r.jumpsLeft = 1;
+                                io.emit('stickEffect', { type: 'bounce', x: r.x, y: 345 });
+                            } else if (pad.type === 'speed') {
+                                r.boostTimer = Math.max(r.boostTimer, 25);
+                            }
+                        }
+                    });
+                }
+
+                const centerY = r.y - (r.ducking ? 15 : 28);
+                stickState.boxes.forEach(box => {
+                    if (box.active && Math.abs(r.x - box.x) < 30 && Math.abs(centerY - box.y) < 36) {
+                        box.active = false;
+                        box.respawnTimer = 110;
+                        if (!r.heldItem) {
+                            const pool = ['boost', 'lightning', 'shield', 'trap', 'rocket'];
+                            r.heldItem = pool[Math.floor(Math.random() * pool.length)];
+                        }
+                    }
+                });
+
+                if (r.shieldTimer <= 0 && r.hitCooldown <= 0) {
+                    stickState.obstacles.forEach(obs => {
+                        if (r.x + 12 > obs.x && r.x - 12 < obs.x + obs.w) {
+                            if ((obs.type === 'low' || obs.type === 'saw') && r.y > 296) {
+                                r.stunTimer = 25;
+                                r.hitCooldown = 40;
+                                r.vy = -7;
+                                r.onGround = false;
+                                r.x -= 35;
+                                io.emit('stickEffect', { type: 'hit', x: r.x, y: r.y - 15, id: r.id });
+                            } else if (obs.type === 'high' && r.y > 250 && (!r.ducking || r.y < 335)) {
+                                r.stunTimer = 25;
+                                r.hitCooldown = 40;
+                                r.x -= 35;
+                                io.emit('stickEffect', { type: 'hit', x: r.x, y: r.y - 35, id: r.id });
+                            }
+                        }
+                    });
+                }
+
+                if (r.x >= stickState.finishLine && !stickState.winner) {
+                    stickState.winner = r.name;
+                    stickState.active = false;
+                    clearInterval(stickState.loopInterval);
+                    io.emit('stickFinished', { winner: r.name });
+                    io.emit('monoGlobalAlert', `🏆 ${r.name} Stick Run parkurunu 1. tamamladı!`);
+                    break;
+                }
+            }
+
+            io.emit('stickUpdate', { runners: stickState.runners, boxes: stickState.boxes, projectiles: stickState.projectiles });
         }, 1000 / 30);
     });
 
-    // ---------------- MONOPOLY (KTÜ EDITION - ZORLA SATIN ALMA KALICI ARTIŞ) ----------------
+    socket.on('stickInput', (data) => {
+        const r = stickState.runners[socket.id];
+        if (!stickState.active || !r) return;
+
+        if (data.action === 'jump' && r.jumpsLeft > 0 && r.stunTimer <= 0) {
+            if (r.onGround || r.jumpsLeft === 2) {
+                r.vy = -13.5;
+                r.onGround = false;
+                r.jumpsLeft = 1;
+            } else if (r.jumpsLeft === 1) {
+                r.vy = -12.5; 
+                r.jumpsLeft = 0;
+                io.emit('stickEffect', { type: 'doubleJump', x: r.x, y: r.y });
+            }
+            r.ducking = false;
+        } else if (data.action === 'duck') {
+            r.ducking = !!data.state;
+            if (r.ducking && !r.onGround) r.vy += 3; 
+        } else if (data.action === 'item' && r.heldItem) {
+            const item = r.heldItem;
+            r.heldItem = null;
+
+            if (item === 'boost') {
+                r.boostTimer = 70;
+                io.emit('monoGlobalAlert', `🔥 ${r.name} Nitro Turbo bastı!`);
+            } else if (item === 'shield') {
+                r.shieldTimer = 140;
+                io.emit('monoGlobalAlert', `🛡️ ${r.name} Enerji Kalkanı açtı!`);
+            } else if (item === 'trap') {
+                stickState.projectiles.push({ type: 'trap', ownerId: r.id, ownerName: r.name, x: r.x - 30, y: 345 });
+            } else if (item === 'rocket') {
+                stickState.projectiles.push({ type: 'rocket', ownerId: r.id, ownerName: r.name, x: r.x + 25, y: r.y - 28, life: 90 });
+            } else if (item === 'lightning') {
+                const struckTargets = [];
+                for (let otherId in stickState.runners) {
+                    const target = stickState.runners[otherId];
+                    if (otherId !== socket.id && target.x > r.x && target.shieldTimer <= 0) {
+                        target.stunTimer = 45;
+                        struckTargets.push(target.x);
+                    }
+                }
+                io.emit('stickEffect', { type: 'lightning', targets: struckTargets });
+                io.emit('monoGlobalAlert', `⚡ ${r.name} Yıldırım çaktı ve öndeki ${struckTargets.length} kişiyi çarptı!`);
+            }
+        }
+    });
+
+    // ---------------- 4. MONOPOLY (KTÜ EDITION - LOBİ VE KALICI ZAM) ----------------
     socket.on('startMonopolyGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'monopoly');
         if (gamePlayers.length < 2) return socket.emit('errorMsg', 'En az 2 oyuncu olmalı!');
@@ -583,7 +897,6 @@ io.on('connection', (socket) => {
         postMonoAction(isDouble);
     });
 
-    // 💥 YENİ: ZORLA SATIN ALMA İLE FİYAT KATLANMASI
     socket.on('monopolyBuyoutDecision', (buyout) => {
         const cp = monoState.players[monoState.turnIndex];
         if (!cp || socket.id !== cp.id) return;
@@ -598,7 +911,6 @@ io.on('connection', (socket) => {
             tile.owner = cp.id;
             tile.ownerName = cp.name;
             
-            // Fiyat kalıcı olarak artıyor ve el değiştirme sayısı işleniyor
             tile.price = buyoutPrice;
             tile.buyoutCount = (tile.buyoutCount || 0) + 1;
 
@@ -701,9 +1013,193 @@ io.on('connection', (socket) => {
         }
     }
 
-    // ---------------- TABU VE İMPOSTER MANTIKLARI AYNEN DURUYOR ----------------
-    // ... [Önceki Tabu & Imposter blokları, yer tasarrufu için özetlenmemiştir, aynen çalışır] ...
-    
+    // ---------------- 5. TABU MOTORU ----------------
+    socket.on('switchTabuTeam', (newTeam) => {
+        const p = players.find(x => x.id === socket.id);
+        if (p && (newTeam === 'red' || newTeam === 'blue')) {
+            p.team = newTeam;
+            p.ready = false;
+            const gamePlayers = players.filter(pl => pl.lobby === 'tabu');
+            io.emit('updateTabuLobby', { players: gamePlayers, tabuState });
+        }
+    });
+
+    socket.on('startTabuGame', (selectedMaxRounds) => {
+        const gamePlayers = players.filter(p => p.lobby === 'tabu');
+        const redTeam = gamePlayers.filter(p => p.team === 'red');
+        const blueTeam = gamePlayers.filter(p => p.team === 'blue');
+        if (redTeam.length === 0 || blueTeam.length === 0) return socket.emit('errorMsg', 'Her takımda en az 1 oyuncu olmalı!');
+        if (!gamePlayers.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan oyun başlamaz!');
+
+        currentTabuDeck = shuffleArray(rawTabuKartlari);
+        tabuState.scores = { red: 0, blue: 0 };
+        tabuState.currentTeam = 'red';
+        tabuState.maxRounds = parseInt(selectedMaxRounds) || 5;
+        tabuState.currentRound = 1;
+        tabuState.teamTurnCount = 0;
+        triggerTabuIntermission(gamePlayers);
+    });
+
+    function triggerTabuIntermission(gamePlayers) {
+        const teamPlayers = gamePlayers.filter(p => p.team === tabuState.currentTeam);
+        const describer = teamPlayers[Math.floor(Math.random() * teamPlayers.length)];
+        tabuState.describerId = describer.id;
+        tabuState.roundActive = false;
+        tabuState.isIntermission = true;
+        let prepTime = 10;
+
+        io.emit('tabuIntermissionStart', {
+            team: tabuState.currentTeam, describerName: describer.name, describerId: describer.id,
+            prepTime, currentRound: tabuState.currentRound, maxRounds: tabuState.maxRounds, scores: tabuState.scores
+        });
+
+        if (tabuState.intermissionTimer) clearInterval(tabuState.intermissionTimer);
+        tabuState.intermissionTimer = setInterval(() => {
+            prepTime--;
+            io.emit('tabuIntermissionTick', prepTime);
+            if (prepTime <= 0) {
+                clearInterval(tabuState.intermissionTimer);
+                tabuState.isIntermission = false;
+                startTabuActualRound(describer, gamePlayers);
+            }
+        }, 1000);
+    }
+
+    function startTabuActualRound(describer, gamePlayers) {
+        if (currentTabuDeck.length === 0) currentTabuDeck = shuffleArray(rawTabuKartlari);
+        const card = currentTabuDeck.pop();
+        tabuState.currentCard = card;
+        tabuState.timeLeft = 60;
+        tabuState.passCount = 3;
+        tabuState.roundActive = true;
+
+        gamePlayers.forEach(p => {
+            const isDescriber = p.id === describer.id;
+            const isPlayingTeam = p.team === tabuState.currentTeam;
+            io.to(p.id).emit('tabuTurnStarted', {
+                describerId: describer.id, describerName: describer.name, currentTeam: tabuState.currentTeam,
+                card: isDescriber ? card : null, scores: tabuState.scores, passCount: tabuState.passCount,
+                currentRound: tabuState.currentRound, maxRounds: tabuState.maxRounds,
+                role: isDescriber ? 'describer' : (isPlayingTeam ? 'guesser' : 'opponent')
+            });
+        });
+
+        if (tabuState.timer) clearInterval(tabuState.timer);
+        tabuState.timer = setInterval(() => {
+            tabuState.timeLeft--;
+            io.emit('tabuTimer', tabuState.timeLeft);
+            if (tabuState.timeLeft <= 0) {
+                clearInterval(tabuState.timer);
+                endTabuTurn(gamePlayers);
+            }
+        }, 1000);
+    }
+
+    function endTabuTurn(gamePlayers) {
+        tabuState.roundActive = false;
+        tabuState.teamTurnCount++;
+        if (tabuState.teamTurnCount % 2 === 0) tabuState.currentRound++;
+
+        if (tabuState.currentRound > tabuState.maxRounds) {
+            let winnerTeam = 'BERABERE';
+            if (tabuState.scores.red > tabuState.scores.blue) winnerTeam = 'KIRMIZI';
+            else if (tabuState.scores.blue > tabuState.scores.red) winnerTeam = 'MAVİ';
+            io.emit('tabuMatchOver', { scores: tabuState.scores, winner: winnerTeam, maxRounds: tabuState.maxRounds });
+        } else {
+            tabuState.currentTeam = tabuState.currentTeam === 'red' ? 'blue' : 'red';
+            io.emit('tabuTurnEnded', {
+                scores: tabuState.scores, nextTeam: tabuState.currentTeam,
+                currentRound: tabuState.currentRound, maxRounds: tabuState.maxRounds
+            });
+        }
+    }
+
+    socket.on('tabuNextTurn', () => {
+        const gamePlayers = players.filter(p => p.lobby === 'tabu');
+        if (!tabuState.roundActive && !tabuState.isIntermission) triggerTabuIntermission(gamePlayers);
+    });
+
+    socket.on('tabuAction', (action) => {
+        if (!tabuState.roundActive || socket.id !== tabuState.describerId) return;
+        if (action === 'correct') tabuState.scores[tabuState.currentTeam] += 1;
+        else if (action === 'taboo') tabuState.scores[tabuState.currentTeam] -= 1;
+        else if (action === 'pass') {
+            if (tabuState.passCount <= 0) return socket.emit('errorMsg', 'Pas hakkın kalmadı!');
+            tabuState.passCount -= 1;
+        }
+
+        if (currentTabuDeck.length === 0) currentTabuDeck = shuffleArray(rawTabuKartlari);
+        tabuState.currentCard = currentTabuDeck.pop();
+        io.emit('tabuScoreUpdated', { scores: tabuState.scores, passCount: tabuState.passCount });
+        io.to(tabuState.describerId).emit('tabuNewCardForDescriber', tabuState.currentCard);
+    });
+
+    // ---------------- 6. İMPOSTER MOTORU ----------------
+    socket.on('startImposter', () => {
+        const gamePlayers = players.filter(p => p.lobby === 'imposter');
+        if (gamePlayers.length < 3) return socket.emit('errorMsg', 'İmposter için en az 3 oyuncu gerekir!');
+        if (!gamePlayers.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmadan oyun başlamaz!');
+        if (imposterState.timer) clearInterval(imposterState.timer);
+
+        currentImposterDeck = shuffleArray(rawImposterKelimeler);
+        const secilen = currentImposterDeck[Math.floor(Math.random() * currentImposterDeck.length)];
+        const imposter = gamePlayers[Math.floor(Math.random() * gamePlayers.length)];
+
+        imposterState = {
+            word: secilen.kelime.trim().toUpperCase('tr-TR'),
+            imposterId: imposter.id, imposterName: imposter.name, votes: {}, timer: null
+        };
+
+        gamePlayers.forEach(p => {
+            if (p.id === imposter.id) io.to(p.id).emit('imposterRole', { isImposter: true, info: `Sen IMPOSTER'sın! İpucun: "${secilen.ipucu}"` });
+            else io.to(p.id).emit('imposterRole', { isImposter: false, info: `Gizli Kelime: "${secilen.kelime}"` });
+        });
+
+        let timeLeft = 30;
+        io.emit('imposterTimer', timeLeft);
+        imposterState.timer = setInterval(() => {
+            timeLeft--;
+            io.emit('imposterTimer', timeLeft);
+            if (timeLeft <= 0) {
+                clearInterval(imposterState.timer);
+                io.emit('imposterStartVoting', gamePlayers);
+            }
+        }, 1000);
+    });
+
+    socket.on('imposterVote', (votedId) => {
+        imposterState.votes[socket.id] = votedId;
+        const gamePlayers = players.filter(p => p.lobby === 'imposter');
+        if (Object.keys(imposterState.votes).length === gamePlayers.length) {
+            const counts = {};
+            Object.values(imposterState.votes).forEach(id => counts[id] = (counts[id] || 0) + 1);
+            let mostVoted = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+            const votedP = gamePlayers.find(p => p.id === mostVoted);
+
+            if (mostVoted === imposterState.imposterId) {
+                io.to(imposterState.imposterId).emit('imposterLastChance');
+                gamePlayers.forEach(p => {
+                    if (p.id !== imposterState.imposterId) io.to(p.id).emit('imposterWaitGuess', votedP ? votedP.name : '');
+                });
+            } else {
+                io.emit('imposterResult', {
+                    winner: 'IMPOSTER',
+                    msg: `Yanlış kişi (${votedP ? votedP.name : 'Kimse'}) seçildi!`,
+                    imposterName: imposterState.imposterName, word: imposterState.word
+                });
+            }
+        }
+    });
+
+    socket.on('imposterGuess', (guess) => {
+        const correct = guess.trim().toUpperCase('tr-TR') === imposterState.word;
+        io.emit('imposterResult', {
+            winner: correct ? 'IMPOSTER' : 'CIVILIANS',
+            msg: correct ? `İmposter bildi! ("${guess}")` : `İmposter bilemedi! ("${guess}")`,
+            imposterName: imposterState.imposterName, word: imposterState.word
+        });
+    });
+
     socket.on('disconnect', () => {
         players = players.filter(p => p.id !== socket.id);
         delete raceState.cars[socket.id];
