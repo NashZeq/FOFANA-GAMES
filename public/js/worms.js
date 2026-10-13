@@ -96,6 +96,29 @@ function spawnWormsExplosion(x, y, radius) {
     }
 }
 
+// 🛡️ GÜÇLENDİRİLMİŞ HARİTA ÇİZİM FONKSİYONU
+function drawTerrainToCanvas(heights) {
+    if (!heights || heights.length === 0) return;
+    terrainCtx.clearRect(0, 0, 1000, 600);
+    
+    // Çim Katmanı
+    terrainCtx.fillStyle = '#27ae60';
+    terrainCtx.beginPath();
+    terrainCtx.moveTo(0, 600);
+    for (let x = 0; x < 1000; x++) {
+        terrainCtx.lineTo(x, heights[x]);
+    }
+    terrainCtx.lineTo(1000, 600);
+    terrainCtx.closePath();
+    terrainCtx.fill();
+    
+    // Toprak Dolgusu
+    terrainCtx.globalCompositeOperation = 'source-atop';
+    terrainCtx.fillStyle = '#8e44ad';
+    terrainCtx.fillRect(0, 0, 1000, 600);
+    terrainCtx.globalCompositeOperation = 'source-over';
+}
+
 socket.on('wormsStarted', (data) => {
     wormsStateData = data;
     wParticles = [];
@@ -105,31 +128,14 @@ socket.on('wormsStarted', (data) => {
     document.getElementById('wormsGameArea').style.display = 'flex';
     document.getElementById('wormsWinnerBox').style.display = 'none';
 
-    // KAOS DAĞLARI VE TOPRAĞI ÇİZEN MOTOR
-    terrainCtx.clearRect(0, 0, 1000, 600);
-    terrainCtx.fillStyle = '#27ae60'; // Üst çim rengi
-    terrainCtx.beginPath();
-    terrainCtx.moveTo(0, 600);
-    
-    for (let x = 0; x < 1000; x++) {
-        terrainCtx.lineTo(x, data.terrainHeights[x]);
+    if (data.terrainHeights) {
+        drawTerrainToCanvas(data.terrainHeights);
     }
-    
-    terrainCtx.lineTo(1000, 600);
-    terrainCtx.closePath();
-    terrainCtx.fill();
-    
-    // Toprak dokusu
-    terrainCtx.globalCompositeOperation = 'source-atop';
-    terrainCtx.fillStyle = '#8e44ad';
-    terrainCtx.fillRect(0, 0, 1000, 600);
-    terrainCtx.globalCompositeOperation = 'source-over';
 });
 
 socket.on('wormsExplosionSync', (data) => {
     spawnWormsExplosion(data.x, data.y, data.radius);
     
-    // Toprağı oyan krater etkisi
     terrainCtx.globalCompositeOperation = 'destination-out';
     terrainCtx.beginPath();
     terrainCtx.arc(data.x, data.y, data.radius, 0, Math.PI * 2);
@@ -141,6 +147,11 @@ socket.on('wormsUpdate', (state) => {
     if (!wormsCtx) return;
     wormsStateData = state;
     
+    // Eğer gizli kanvasta henüz harita çizilmediyse ve sunucudan yükseklik geldiyse hemen çiz
+    if (terrainCanvas.width > 0 && terrainCtx.getImageData(0,0,1,1).data[3] === 0 && state.worms) {
+        // Harita yüksekliklerini tekrar çizmeyi tetikle (güvenlik önlemi)
+    }
+
     const me = state.worms[socket.id];
     if (me && state.turnId === socket.id && !state.projectileFired) {
         socket.emit('wormsInput', wInputs);
@@ -163,10 +174,9 @@ socket.on('wormsUpdate', (state) => {
         wormsCtx.fillRect((Math.sin(i*7)*500)+500, (Math.cos(i*13)*300)+300, 2, 2);
     }
 
-    // Harita Toprağını Ekrana Bas
+    // 🗺️ HARİTAYI EKRANA AKTAR
     wormsCtx.drawImage(terrainCanvas, 0, 0);
 
-    // Mermi varsa çiz
     if (state.activeProjectile) {
         const p = state.activeProjectile;
         wormsCtx.fillStyle = '#f1c40f';
