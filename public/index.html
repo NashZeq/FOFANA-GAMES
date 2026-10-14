@@ -177,7 +177,7 @@
             <div class="casus-hero-copy">
                 <p class="casus-eyebrow">FOFANA GAMES <span>•</span> STRATEJİK DÜELLO</p>
                 <h2>CASUS <span>BELLI</span></h2>
-                <p class="casus-subtitle">Her hamle bir karar. Her kart bir risk. Ordunu koru, rakibini alt et.</p>
+                <p class="casus-subtitle">İki deste. Gizli hamleler. Zamanında kullanılan destek, savaşın kaderini değiştirir.</p>
             </div>
             <div class="casus-hero-seal" aria-hidden="true"><span>CB</span><small>DUELLO</small></div>
         </header>
@@ -188,9 +188,9 @@
                 <h3>İki komutan.<br><em>Tek zafer.</em></h3>
                 <p>Elindeki beş karttan birini seç. Gücünü rakibinin hamlesiyle karşılaştır ve desteni savaş alanında ayakta tut.</p>
                 <div class="casus-rules-row">
-                    <div><span class="casus-rule-icon">01</span><b>Kartını seç</b><small>Her tur tek hamle</small></div>
-                    <div><span class="casus-rule-icon">02</span><b>Gücünü karşılaştır</b><small>En yüksek güç kazanır</small></div>
-                    <div><span class="casus-rule-icon">03</span><b>Orduyu koru</b><small>Son kalan kazanır</small></div>
+                    <div><span class="casus-rule-icon">01</span><b>İki kart çek</b><small>Ordu veya Destek destesinden</small></div>
+                    <div><span class="casus-rule-icon">02</span><b>Gizlice oyna</b><small>En az bir kartı cepheye sür</small></div>
+                    <div><span class="casus-rule-icon">03</span><b>Çatışmayı çöz</b><small>Destekleri ve ordu gücünü kullan</small></div>
                 </div>
             </div>
             <aside class="casus-ready-panel">
@@ -206,36 +206,45 @@
         </div>
 
         <div id="casusGameArea" class="casus-battle-layout" style="display: none;">
-            <div class="casus-battle-topline"><span class="casus-live-dot"></span><span>CANLI DÜELLO</span><span class="casus-topline-rule"></span><span class="casus-round-label">STRATEJİK KART SAVAŞI</span></div>
+            <div class="casus-battle-topline"><span class="casus-live-dot"></span><span>CANLI SAVAŞ</span><span class="casus-topline-rule"></span><span id="casusRoundLabel" class="casus-round-label">TUR 1 · KLASİK MOD</span></div>
             <section class="casus-opponent-panel">
                 <div class="casus-player-emblem casus-enemy-emblem" aria-hidden="true">♜</div>
-                <div class="casus-player-info"><small>RAKİP KOMUTAN</small><strong id="casusOpponentName">Rakip Bekleniyor...</strong><span class="casus-player-caption">Karşı ordunun durumu</span></div>
-                <div class="casus-stat"><small>DESTE</small><strong id="casusOppDeck">0</strong></div>
-                <div class="casus-stat"><small>EL</small><strong id="casusOppHand">0</strong></div>
-                <div class="casus-stat"><small>ISKARTA</small><strong id="casusOppTrash">0</strong></div>
+                <div class="casus-player-info"><small>RAKİP KRALLIK</small><strong id="casusOpponentName">Rakip Bekleniyor...</strong><span class="casus-player-caption">Ordu ve destek desteleri</span></div>
+                <div class="casus-stat"><small>ORDU</small><strong id="casusOppArmyDeck">15</strong></div>
+                <div class="casus-stat"><small>DESTEK</small><strong id="casusOppSupportDeck">10</strong></div>
+                <div class="casus-stat"><small>ÇÖP</small><strong id="casusOppTrash">0</strong></div>
             </section>
 
-            <section class="casus-arena" aria-label="Düello alanı">
+            <section class="casus-arena" aria-label="Savaş alanı">
                 <div class="casus-arena-ornament casus-ornament-left" aria-hidden="true">✦</div>
-                <div class="casus-arena-caption">SAVAŞ ALANI</div>
-                <div class="casus-duel-row">
-                    <div class="casus-side-card"><small>RAKİBİN HAMLESİ</small><div class="card-slot" id="casusOppSlot"><div class="casus-slot-placeholder"><span>?</span><small>HAMLE BEKLENİYOR</small></div></div></div>
+                <div class="casus-arena-caption">CEPHE · GİZLİ HAMLELER</div>
+                <div class="casus-reveal-grid">
+                    <div class="casus-reveal-side"><small>RAKİBİN CEPHESİ</small><div id="casusOppPlayedCards" class="casus-played-cards"><div class="casus-slot-placeholder"><span>?</span><small>HAMLE BEKLENİYOR</small></div></div></div>
                     <div class="casus-versus"><span>VS</span><i></i></div>
-                    <div class="casus-side-card"><small>SENİN HAMLĖN</small><div class="card-slot" id="casusMySlot"><div class="casus-slot-placeholder"><span>⚔</span><small>KARTINI SEÇ</small></div></div></div>
+                    <div class="casus-reveal-side"><small>SENİN CEPHEN</small><div id="casusMyPlayedCards" class="casus-played-cards"><div class="casus-slot-placeholder"><span>⚔</span><small>KARTLARINI SEÇ</small></div></div></div>
                 </div>
-                <div id="casusStatusText" class="casus-status-message" role="status" aria-live="polite">Hamleni seç ve savaşın seyrini değiştir.</div>
+                <div id="casusStatusText" class="casus-status-message" role="status" aria-live="polite">Önce iki kart çek.</div>
                 <div class="casus-arena-ornament casus-ornament-right" aria-hidden="true">✦</div>
             </section>
 
             <section class="casus-hand-panel">
-                <div class="casus-hand-heading"><div><small>KOMUTANIN ELİ</small><h3>Bir kart seç, kaderi belirle.</h3></div><div class="casus-hand-count"><span>✧</span> ELİNDEKİ KARTLAR</div></div>
-                <div class="casus-own-stats"><span><i></i> SENİN ORDUN</span><div><span>DESTE <b id="casusMyDeck">0</b></span><span>ISKARTA <b id="casusMyTrash">0</b></span></div></div>
-                <div class="bento-grid" id="casusMyHand"><!-- Kartlar buraya dizilecek --></div>
-                <p class="casus-hand-hint">Bir karta tıklayarak hamleni kilitle. Seçimini yaptıktan sonra rakibini beklersin.</p>
+                <div class="casus-hand-heading"><div><small>KOMUTANIN ELİ</small><h3 id="casusHandTitle">Kartlarını hazırla</h3></div><div class="casus-hand-count"><span id="casusDrawCount">0</span> / 2 KART ÇEKİLDİ</div></div>
+                <div class="casus-own-stats">
+                    <span><i></i> SENİN KRALLIĞIN</span>
+                    <div><span>ORDU <b id="casusMyArmyDeck">15</b></span><span>DESTEK <b id="casusMySupportDeck">10</b></span><span>ÇÖP <b id="casusMyTrash">0</b></span></div>
+                </div>
+                <div id="casusDrawControls" class="casus-draw-controls">
+                    <p>Bu tur iki kart çek. İstediğin desteyi seçebilirsin.</p>
+                    <button type="button" class="casus-btn casus-btn-secondary" onclick="drawCasusCard('army')">⚔ Ordu destesinden çek <b id="casusArmyDrawCount">15</b></button>
+                    <button type="button" class="casus-btn casus-btn-secondary" onclick="drawCasusCard('support')">➶ Destek destesinden çek <b id="casusSupportDrawCount">10</b></button>
+                </div>
+                <div class="casus-hand-actions"><span id="casusSelectionHint">En az bir kartı seçip cepheye sürmelisin.</span><button id="casusSubmitButton" type="button" class="casus-btn casus-btn-primary" onclick="submitCasusCards()" disabled>Seçili kartları gizlice oyna <span>↗</span></button></div>
+                <div class="bento-grid casus-hand-grid" id="casusMyHand"><!-- Kartlar buraya dizilecek --></div>
+                <p class="casus-hand-hint">Seçmediğin kartlar ilgili destenin en altına döner. Ordu kartları savaşır; destek kartları tek kullanımlıdır.</p>
             </section>
 
             <div id="casusWinnerBox" class="casus-winner-panel" style="display: none;">
-                <div class="casus-winner-crown">♛</div><p>SONUÇ</p><h3 id="casusWinnerTitle"></h3><span>Düello sona erdi.</span>
+                <div class="casus-winner-crown">♛</div><p>SONUÇ</p><h3 id="casusWinnerTitle"></h3><span>Savaş sona erdi.</span>
             </div>
         </div>
         <button class="btn-back casus-back-btn" onclick="backToLobby()">← Ana Menüye Dön</button>

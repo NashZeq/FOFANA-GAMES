@@ -257,3 +257,62 @@ canvas { background: #0b0c10; border: 3px solid #2c3540; border-radius: 10px; wi
 @media (prefers-reduced-motion: reduce) {
   #view-casus *, #view-casus *:before, #view-casus *:after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; }
 }
+
+/* Casus Belli: illustrated card table and draw/commit flow */
+#view-casus .casus-reveal-grid { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:start; gap:clamp(10px,2.5vw,28px); position:relative; z-index:1; }
+#view-casus .casus-reveal-side { min-width:0; display:flex; flex-direction:column; align-items:center; gap:12px; }
+#view-casus .casus-reveal-side>small { color:#a7aab1; font-size:9px; font-weight:800; letter-spacing:1.5px; text-align:center; }
+#view-casus .casus-played-cards { width:100%; min-height:190px; display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:center; gap:8px; }
+#view-casus .casus-played-cards .casus-card { width:clamp(100px,13vw,145px); min-height:190px; flex:0 1 145px; }
+#view-casus .casus-card { position:relative; display:flex; flex-direction:column; align-items:stretch; text-align:left; padding:0; cursor:pointer; min-width:0; color:#f4f0e7; transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease; }
+#view-casus .casus-card-art { display:block; width:100%; height:116px; object-fit:cover; object-position:center 28%; border-bottom:1px solid rgba(220,190,132,.3); filter:saturate(.85) contrast(1.04); }
+#view-casus .casus-card-power { position:absolute; z-index:2; top:7px; left:7px; min-width:30px; height:30px; padding:0 6px; display:grid; place-items:center; border:1px solid rgba(237,208,152,.8); border-radius:50%; background:rgba(12,14,18,.88); color:#ffe2a3; font:700 15px Georgia,serif; box-shadow:0 3px 9px #0008; }
+#view-casus .casus-support-symbol { color:#ffd2a1; }
+#view-casus .casus-card-copy { display:flex; flex-direction:column; align-items:flex-start; gap:4px; width:100%; padding:9px 9px 11px; }
+#view-casus .casus-card-copy>small { color:#d4b67a; font-size:8px; font-weight:800; letter-spacing:1.3px; }
+#view-casus .casus-card-copy>strong { color:#f6f0e4; font:normal 15px/1.15 Georgia,'Times New Roman',serif; overflow-wrap:anywhere; }
+#view-casus .casus-card-description { color:#9ba0a8; font-size:9px; line-height:1.35; }
+#view-casus .casus-card.army { background:linear-gradient(160deg,#243447,#111720); border-color:rgba(115,158,207,.55); }
+#view-casus .casus-card.support { background:linear-gradient(160deg,#49301f,#191316); border-color:rgba(220,158,93,.6); }
+#view-casus .casus-card.is-selected { transform:translateY(-7px); border-color:#f4d99b; box-shadow:0 0 0 2px rgba(244,217,155,.22),0 16px 30px #0009; }
+#view-casus .casus-card-select { display:block; margin:0 8px 8px; padding:5px 6px; text-align:center; border:1px solid rgba(255,255,255,.12); border-radius:4px; color:#aeb3bb; font-size:8px; font-weight:800; letter-spacing:1px; }
+#view-casus .casus-card.is-selected .casus-card-select { color:#19140b; background:#e7c98d; border-color:#e7c98d; }
+#view-casus .casus-ability-picker { display:flex; flex-direction:column; gap:4px; padding:0 6px 7px; }
+#view-casus .casus-ability { display:flex; flex-direction:column; gap:3px; padding:6px; border:1px solid rgba(255,255,255,.12); border-radius:5px; background:#11151be8; color:#c4c6ca; text-align:left; cursor:pointer; }
+#view-casus .casus-ability b { font-size:9px; line-height:1.2; }
+#view-casus .casus-ability small { color:#9ca2ab; font-size:8px; line-height:1.25; }
+#view-casus .casus-ability.is-chosen { border-color:#d7b878; background:#40331f; }
+#view-casus .casus-ability.is-chosen b { color:#f4d99b; }
+#view-casus .casus-card-back { width:clamp(90px,11vw,125px); height:175px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:12px; border:1px solid rgba(213,180,119,.65); border-radius:9px; background:repeating-linear-gradient(45deg,#242016,#242016 8px,#15161a 8px,#15161a 16px); box-shadow:0 7px 18px #0006; }
+#view-casus .casus-card-back span { width:58px; height:58px; display:grid; place-items:center; border:1px solid rgba(213,180,119,.5); color:#e3c58b; font:italic bold 24px Georgia,serif; transform:rotate(45deg); }
+#view-casus .casus-card-back small { color:#a18b62; font-size:8px; letter-spacing:1px; }
+#view-casus .casus-draw-controls { display:flex; align-items:stretch; gap:10px; flex-wrap:wrap; margin:0 0 14px; }
+#view-casus .casus-draw-controls p { width:100%; margin:0 0 2px; color:#a2a6ad; font-size:11px; }
+#view-casus .casus-draw-controls .casus-btn { width:auto; flex:1 1 210px; justify-content:space-between; margin:0; }
+#view-casus .casus-draw-controls .casus-btn b { color:#d9bb7d; }
+#view-casus .casus-draw-controls .casus-btn:disabled { opacity:.4; cursor:not-allowed; transform:none; }
+#view-casus .casus-hand-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:0 0 16px; }
+#view-casus .casus-hand-actions>span { color:#a5a9b0; font-size:10px; line-height:1.5; }
+#view-casus .casus-hand-actions .casus-btn { width:auto; margin:0; white-space:nowrap; }
+#view-casus .casus-hand-actions .casus-btn:disabled { opacity:.38; cursor:not-allowed; }
+#view-casus .casus-hand-grid { grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); align-items:start; }
+#view-casus .casus-hand-grid .casus-card { min-height:0; }
+#view-casus .casus-hand-grid .casus-card-art { height:clamp(112px,14vw,160px); }
+#view-casus .casus-hand-grid .casus-card-copy>strong { font-size:16px; }
+#view-casus .casus-hand-hint { margin-top:15px; }
+@media (max-width:720px) {
+  #view-casus .casus-reveal-grid { gap:7px; }
+  #view-casus .casus-played-cards { min-height:130px; gap:5px; }
+  #view-casus .casus-played-cards .casus-card { width:clamp(82px,27vw,112px); min-height:0; flex-basis:clamp(82px,27vw,112px); }
+  #view-casus .casus-played-cards .casus-card-art { height:88px; }
+  #view-casus .casus-card-copy { padding:7px 6px 8px; }
+  #view-casus .casus-card-copy>strong { font-size:12px; }
+  #view-casus .casus-card-description { font-size:8px; }
+  #view-casus .casus-card-power { width:26px; min-width:26px; height:26px; font-size:12px; }
+  #view-casus .casus-hand-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+  #view-casus .casus-hand-grid .casus-card-art { height:clamp(105px,32vw,145px); }
+  #view-casus .casus-hand-actions { flex-direction:column; align-items:stretch; }
+  #view-casus .casus-hand-actions .casus-btn { width:100%; }
+  #view-casus .casus-draw-controls { flex-direction:column; }
+  #view-casus .casus-draw-controls .casus-btn { width:100%; flex-basis:auto; }
+}

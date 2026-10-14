@@ -78,22 +78,61 @@ function generateWormsTerrain() {
     return terrain;
 }
 
-function generateCasusDeck() {
-    const deck = [];
-    const types = [
-        { name: 'Casus', power: 1, type: 'support' },
-        { name: 'Miladi Piyade', power: 2, type: 'army' },
-        { name: 'Mızraklı', power: 3, type: 'army' },
-        { name: 'Kılıçlı', power: 4, type: 'army' },
-        { name: 'Okçu', power: 5, type: 'army' },
-        { name: 'Arbaletçi', power: 6, type: 'army' },
-        { name: 'Hafif Süvari', power: 7, type: 'army' },
-        { name: 'Ağır Süvari', power: 8, type: 'army' },
-        { name: 'Kuşatma', power: 9, type: 'army' },
-        { name: 'Şövalye', power: 10, type: 'army' }
+function makeCasusCard(name, type, power, image, abilities = [], speed = 2, trait = null) {
+    return { id: `${name}-${Math.random().toString(36).slice(2, 9)}`, name, type, power, image: `/assets/casus-cards/${image}.webp`, abilities, speed, trait };
+}
+
+function generateCasusDecks() {
+    const army = [
+        ['Köylü', 1, 'piyade', 'peasant'], ['Piyade', 2, 'piyade'], ['Mızraklı', 3, 'mizrakli'],
+        ['Kılıçlı', 4, 'kilicli'], ['Okçu', 4, 'okcu'], ['Arbaletçi', 5, 'arbaletci'],
+        ['Hafif Süvari', 5, 'hafif-suvari'], ['Ninja', 5, 'casus'], ['Prens', 6, 'komutan'],
+        ['Ağır Süvari', 7, 'agir-suvari'], ['Lord', 7, 'komutan'], ['Samuray', 7, 'kilicli'],
+        ['Şövalye', 8, 'agir-suvari'], ['Cellat', 9, 'kusatma'], ['Suikastçı', 2, 'casus']
+    ].map(([name, power, image, trait]) => makeCasusCard(name, 'army', power, image, [], 2, trait || null));
+    const support = [
+        makeCasusCard('Avcı', 'support', null, 'okcu', [
+            { label: 'Keskin Atış', text: 'Kendi orduna +3 güç', target: 'self', value: 3 },
+            { label: 'Avı Zayıflat', text: 'Rakip orduya −2 güç', target: 'enemy', value: -2 }
+        ], 0),
+        makeCasusCard('Pusu', 'support', null, 'casus', [
+            { label: 'Ani Hücum', text: 'Kendi orduna +2 güç', target: 'self', value: 2 },
+            { label: 'Paniğe Sürükle', text: 'Rakip orduya −3 güç', target: 'enemy', value: -3 }
+        ], 1),
+        makeCasusCard('Savaş Narası', 'support', null, 'komutan', [
+            { label: 'Moral Yükselt', text: 'Kendi orduna +3 güç', target: 'self', value: 3 },
+            { label: 'Gözdağı', text: 'Rakip orduya −1 güç', target: 'enemy', value: -1 }
+        ], 1),
+        makeCasusCard('Kalkan Duvarı', 'support', null, 'mizrakli', [
+            { label: 'Savunmayı Kur', text: 'Kendi orduna +2 güç', target: 'self', value: 2 },
+            { label: 'Safları Boz', text: 'Rakip orduya −2 güç', target: 'enemy', value: -2 }
+        ], 2),
+        makeCasusCard('Sahte Emir', 'support', null, 'casus', [
+            { label: 'Yanılt', text: 'Rakip orduya −3 güç', target: 'enemy', value: -3 },
+            { label: 'Karşı Hamle', text: 'Kendi orduna +1 güç', target: 'self', value: 1 }
+        ], 2),
+        makeCasusCard('İkmal', 'support', null, 'piyade', [
+            { label: 'Erzak Desteği', text: 'Kendi orduna +2 güç', target: 'self', value: 2 },
+            { label: 'Takviye Çağır', text: 'Kendi orduna +1 güç', target: 'self', value: 1 }
+        ], 2),
+        makeCasusCard('Sabotaj', 'support', null, 'kusatma', [
+            { label: 'Kuşatma Hilesi', text: 'Rakip orduya −3 güç', target: 'enemy', value: -3 },
+            { label: 'Zayıf Nokta', text: 'Rakip orduya −2 güç', target: 'enemy', value: -2 }
+        ], 3),
+        makeCasusCard('Komutanın Planı', 'support', null, 'komutan', [
+            { label: 'Birleşik Hücum', text: 'Kendi orduna +4 güç', target: 'self', value: 4 },
+            { label: 'Temkinli İlerleyiş', text: 'Kendi orduna +2 güç', target: 'self', value: 2 }
+        ], 3),
+        makeCasusCard('Gece Baskını', 'support', null, 'hafif-suvari', [
+            { label: 'Gece Hücumu', text: 'Kendi orduna +3 güç', target: 'self', value: 3 },
+            { label: 'Karmaşa Yarat', text: 'Rakip orduya −2 güç', target: 'enemy', value: -2 }
+        ], 1),
+        makeCasusCard('Diplomatik Tuzak', 'support', null, 'agir-suvari', [
+            { label: 'Müttefik Desteği', text: 'Kendi orduna +2 güç', target: 'self', value: 2 },
+            { label: 'Rakibi Oyalama', text: 'Rakip orduya −2 güç', target: 'enemy', value: -2 }
+        ], 3)
     ];
-    for (let i = 0; i < 2; i++) { types.forEach(t => deck.push({...t})); }
-    return shuffleArray(deck);
+    return { army: shuffleArray(army), support: shuffleArray(support) };
 }
 
 function getRentDetails(tile, diceSum) {
@@ -162,67 +201,147 @@ io.on('connection', (socket) => {
     });
 
     // ---------------- 1. CASUS BELLI ----------------
+    // Classic rules-inspired implementation: separate Army/Support decks,
+    // draw up to two cards, secretly submit one or more, resolve supports then battle.
     socket.on('startCasusGame', () => {
         const gamePlayers = players.filter(p => p.lobby === 'casus');
-        if (gamePlayers.length !== 2) return socket.emit('errorMsg', 'Casus Belli tam olarak 2 kişiyle oynanır!');
+        if (gamePlayers.length !== 2) return socket.emit('errorMsg', 'Klasik Casus Belli şu anda 2 kişiyle oynanır.');
         if (!gamePlayers.every(p => p.ready)) return socket.emit('errorMsg', 'Herkes HAZIR olmalı!');
 
-        casusState.active = true; casusState.players = {}; casusState.phase = 'play'; casusState.winner = null;
+        casusState = { active: true, players: {}, phase: 'draw', round: 1, resolveMessage: '', winner: null };
         gamePlayers.forEach(p => {
-            const deck = generateCasusDeck(); const hand = deck.splice(0, 5);
-            casusState.players[p.id] = { id: p.id, name: p.name, deck: deck, hand: hand, trash: [], playedCard: null, hasPlayed: false };
+            const decks = generateCasusDecks();
+            casusState.players[p.id] = {
+                id: p.id, name: p.name, armyDeck: decks.army, supportDeck: decks.support,
+                armyTrash: [], supportTrash: [], hand: [], playedCards: [], drawCount: 0,
+                hasSubmitted: false, submitted: false
+            };
         });
-        io.emit('casusStarted'); sendCasusUpdate();
+        gamePlayers.forEach(p => io.to(p.id).emit('casusStarted')); sendCasusUpdate();
     });
 
-    socket.on('casusPlayCard', (handIndex) => {
+    socket.on('casusDrawCard', (deckType) => {
+        if (!casusState.active || casusState.phase !== 'draw') return;
+        const p = casusState.players[socket.id];
+        if (!p || p.hasSubmitted || p.drawCount >= 2) return;
+        const deck = deckType === 'support' ? p.supportDeck : p.armyDeck;
+        if (!deck || !deck.length) return socket.emit('errorMsg', `Bu destede kart kalmadı. Diğer desteden çekebilirsin.`);
+        p.hand.push(deck.shift());
+        p.drawCount += 1;
+        maybeStartCasusPlayPhase();
+        sendCasusUpdate();
+    });
+
+    socket.on('casusSubmitCards', (payload) => {
         if (!casusState.active || casusState.phase !== 'play') return;
         const p = casusState.players[socket.id];
-        if (!p || p.hasPlayed || !p.hand[handIndex]) return;
-        p.playedCard = p.hand.splice(handIndex, 1)[0]; p.hasPlayed = true;
-        if (Object.values(casusState.players).every(player => player.hasPlayed)) { resolveCasusTurn(); } else { sendCasusUpdate(); }
+        if (!p || p.hasSubmitted || !Array.isArray(payload?.indices)) return;
+        const indices = [...new Set(payload.indices)].filter(i => Number.isInteger(i) && i >= 0 && i < p.hand.length).sort((a,b) => b-a);
+        if (!indices.length) return socket.emit('errorMsg', 'En az bir kartı cepheye sürmelisin.');
+        const chosen = indices.map(i => p.hand[i]).reverse();
+        const choices = payload.abilityChoices || {};
+        chosen.forEach(card => {
+            if (card.type === 'support') card.chosenAbility = Number(choices[card.id]) === 1 ? 1 : 0;
+        });
+        const chosenIds = new Set(chosen.map(c => c.id));
+        p.hand.forEach(card => {
+            if (!chosenIds.has(card.id)) (card.type === 'support' ? p.supportDeck : p.armyDeck).push(card);
+        });
+        p.hand = [];
+        p.playedCards = chosen;
+        p.hasSubmitted = true;
+        p.submitted = true;
+        if (Object.values(casusState.players).every(player => player.hasSubmitted)) resolveCasusTurn();
+        else sendCasusUpdate();
     });
+
+    function maybeStartCasusPlayPhase() {
+        const allReady = Object.values(casusState.players).every(p => p.drawCount >= 2 || (!p.armyDeck.length && !p.supportDeck.length));
+        if (allReady) casusState.phase = 'play';
+    }
 
     function resolveCasusTurn() {
         casusState.phase = 'resolve';
         const pIds = Object.keys(casusState.players);
-        const p1 = casusState.players[pIds[0]]; const p2 = casusState.players[pIds[1]];
-        const c1 = p1.playedCard; const c2 = p2.playedCard;
-        let winnerId = null; let msg = '';
+        const playersInTurn = pIds.map(id => casusState.players[id]);
+        const [p1, p2] = playersInTurn;
+        const totals = { [p1.id]: p1.playedCards.filter(c => c.type === 'army').reduce((s,c) => s + (c.power || 0) + (c.trait === 'peasant' ? 0 : 0), 0), [p2.id]: p2.playedCards.filter(c => c.type === 'army').reduce((s,c) => s + (c.power || 0) + (c.trait === 'peasant' ? 0 : 0), 0) };
+        const supports = playersInTurn.flatMap(p => p.playedCards.filter(c => c.type === 'support').map(card => ({ owner: p.id, card })))
+            .sort((a,b) => (a.card.speed ?? 2) - (b.card.speed ?? 2));
+        const supportLog = [];
+        supports.forEach(({ owner, card }) => {
+            const ability = card.abilities?.[card.chosenAbility || 0];
+            if (!ability) return;
+            const targetId = ability.target === 'enemy' ? (owner === p1.id ? p2.id : p1.id) : owner;
+            totals[targetId] = Math.max(0, (totals[targetId] || 0) + ability.value);
+            supportLog.push(`${card.name}: ${ability.label}`);
+        });
+        // Köylü's small, thematic bonus is applied only when its army card is played.
+        playersInTurn.forEach(p => p.playedCards.filter(c => c.type === 'army' && c.trait === 'peasant').forEach(() => { totals[p.id] += 3; }));
+        const army1 = p1.playedCards.filter(c => c.type === 'army');
+        const army2 = p2.playedCards.filter(c => c.type === 'army');
+        let winner = null;
+        const unengagedArmy = (army1.length > 0 && army2.length === 0) || (army2.length > 0 && army1.length === 0);
+        if (army1.length && army2.length) {
+            if (totals[p1.id] > totals[p2.id]) winner = p1;
+            else if (totals[p2.id] > totals[p1.id]) winner = p2;
+        }
 
-        if (c1.power === 1 && c2.power === 10) winnerId = p1.id;
-        else if (c2.power === 1 && c1.power === 10) winnerId = p2.id;
-        else if (c1.power > c2.power) winnerId = p1.id;
-        else if (c2.power > c1.power) winnerId = p2.id;
-
-        if (winnerId === p1.id) { p1.deck.unshift(c1); p2.trash.push(c2); msg = `⚔️ ${p1.name} (${c1.name}: ${c1.power}), ${p2.name}'i (${c2.name}: ${c2.power}) yendi!`; } 
-        else if (winnerId === p2.id) { p2.deck.unshift(c2); p1.trash.push(c1); msg = `⚔️ ${p2.name} (${c2.name}: ${c2.power}), ${p1.name}'i (${c1.name}: ${c1.power}) yendi!`; } 
-        else { p1.trash.push(c1); p2.trash.push(c2); msg = `⚔️ İki taraf da denk güçte (${c1.power})! İki kart da çöpe gitti.`; }
-
-        casusState.resolveMessage = msg; sendCasusUpdate();
+        playersInTurn.forEach(p => {
+            p.playedCards.filter(c => c.type === 'support').forEach(c => p.supportTrash.push(c));
+        });
+        if (unengagedArmy) {
+            playersInTurn.forEach(p => p.playedCards.filter(c => c.type === 'army').forEach(c => p.armyDeck.push(c)));
+        } else if (winner) {
+            const loser = winner.id === p1.id ? p2 : p1;
+            winner.playedCards.filter(c => c.type === 'army').forEach(c => winner.armyDeck.push(c));
+            loser.playedCards.filter(c => c.type === 'army').forEach(c => loser.armyTrash.push(c));
+        } else {
+            playersInTurn.forEach(p => p.playedCards.filter(c => c.type === 'army').forEach(c => p.armyTrash.push(c)));
+        }
+        let msg = '';
+        if (!army1.length && !army2.length) msg = 'Bu tur iki taraf da yalnızca destek kullandı; ordular çarpışmadı.';
+        else if (unengagedArmy) msg = 'Karşı cephede ordu olmadığı için çatışma kurulmadı; oynanan ordu kartı destesine döndü.';
+        else if (winner) msg = `${winner.name} üstün geldi (${totals[winner.id]} güç). ${winner.name}’in ordu kartları destesine döndü; rakip ordu kayıplar verdi.`;
+        else msg = `Güçler eşit (${totals[p1.id]} – ${totals[p2.id]}). İki tarafın cepheye sürdüğü ordu kartları Çöp’e gitti.`;
+        if (supportLog.length) msg += ` Destekler: ${supportLog.join(' · ')}.`;
+        casusState.resolveMessage = msg;
+        sendCasusUpdate();
 
         setTimeout(() => {
-            [p1, p2].forEach(p => {
-                p.playedCard = null; p.hasPlayed = false;
-                if (p.hand.length < 5 && p.deck.length > 0) p.hand.push(p.deck.pop());
+            playersInTurn.forEach(p => {
+                p.playedCards = []; p.hasSubmitted = false; p.submitted = false; p.drawCount = 0; p.hand = [];
             });
-            const p1Alive = p1.hand.length > 0 || p1.deck.length > 0;
-            const p2Alive = p2.hand.length > 0 || p2.deck.length > 0;
-            if (!p1Alive && !p2Alive) { casusState.active = false; io.emit('casusFinished', { winner: 'BERABERE' }); } 
-            else if (!p1Alive) { casusState.active = false; io.emit('casusFinished', { winner: p2.name }); } 
-            else if (!p2Alive) { casusState.active = false; io.emit('casusFinished', { winner: p1.name }); } 
-            else { casusState.phase = 'play'; casusState.resolveMessage = ''; sendCasusUpdate(); }
-        }, 4000);
+            const dead = playersInTurn.filter(p => p.armyDeck.length + p.supportDeck.length === 0);
+            if (dead.length === 2) {
+                casusState.active = false; casusState.phase = 'finished'; io.emit('casusFinished', { winner: 'BERABERE' });
+            } else if (dead.length === 1) {
+                const alive = playersInTurn.find(p => p.id !== dead[0].id);
+                casusState.active = false; casusState.phase = 'finished'; io.emit('casusFinished', { winner: alive.name });
+            } else {
+                casusState.round += 1; casusState.phase = 'draw'; casusState.resolveMessage = ''; sendCasusUpdate();
+            }
+        }, 4200);
     }
 
     function sendCasusUpdate() {
         const safePlayers = {};
-        for (let id in casusState.players) {
+        for (const id in casusState.players) {
             const p = casusState.players[id];
-            safePlayers[id] = { id: p.id, name: p.name, deckCount: p.deck.length, trashCount: p.trash.length, handCount: p.hand.length, hasPlayed: p.hasPlayed, playedCard: casusState.phase === 'resolve' ? p.playedCard : null };
+            safePlayers[id] = {
+                id: p.id, name: p.name, armyDeckCount: p.armyDeck.length, supportDeckCount: p.supportDeck.length,
+                armyTrashCount: p.armyTrash.length, supportTrashCount: p.supportTrash.length,
+                handCount: p.hand.length, drawCount: p.drawCount, hasSubmitted: p.hasSubmitted,
+                playedCards: casusState.phase === 'resolve' ? p.playedCards : (p.hasSubmitted ? p.playedCards.map(c => ({ type: c.type, hidden: true })) : [])
+            };
         }
-        for (let id in casusState.players) {
-            const p = casusState.players[id]; io.to(id).emit('casusUpdate', { phase: casusState.phase, resolveMessage: casusState.resolveMessage, players: safePlayers, myHand: p.hand });
+        for (const id in casusState.players) {
+            const p = casusState.players[id];
+            io.to(id).emit('casusUpdate', {
+                phase: casusState.phase, round: casusState.round, resolveMessage: casusState.resolveMessage,
+                players: safePlayers, myHand: p.hand, myDecks: { army: p.armyDeck.length, support: p.supportDeck.length },
+                myTrash: { army: p.armyTrash.length, support: p.supportTrash.length }, drawCount: p.drawCount
+            });
         }
     }
 
