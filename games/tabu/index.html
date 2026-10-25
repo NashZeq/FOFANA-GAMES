@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tabu · FOFANA GAMES</title><link rel="stylesheet" href="../../css/main.css"><style>
+.panel{max-width:820px;margin:24px auto;padding:clamp(16px,4vw,28px);background:#141a26;border:1px solid #30394c;border-radius:20px}.field,button{font:inherit;padding:12px;border-radius:10px;border:1px solid #38445a;background:#0d121c;color:#f5f7fb;min-width:0}button{cursor:pointer;background:#f5c96a;color:#17120a;font-weight:800;border:0}button:disabled{opacity:.42;cursor:not-allowed}.word{font-size:clamp(32px,7vw,60px);font-weight:900;overflow-wrap:anywhere}.ban{display:flex;flex-wrap:wrap;gap:8px}.ban span{padding:8px 12px;background:#48252b;border-radius:9px}.muted{color:#aeb8c9}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.row>*{flex:1;min-width:0}.row .field{width:100%;max-width:100%}.scores{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.score{padding:14px;background:#0d121c;border:1px solid #30394c;border-radius:12px}.score strong{display:block;font-size:26px}.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.actions button{padding:12px 8px}.timer{font-size:clamp(22px,4vw,34px);font-weight:850;font-variant-numeric:tabular-nums}.hint{font-size:13px}.player-chip{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;max-width:100%;padding:7px 9px;background:#202b3e;border:1px solid #30394c;border-radius:10px}.player-chip-name{overflow-wrap:anywhere}.player-team-select{width:auto;max-width:145px;padding:7px 9px;font-size:14px}@media(max-width:540px){.actions{grid-template-columns:repeat(2,minmax(0,1fr))}.row label{min-width:42%}}
+</style><link rel="stylesheet" href="../../css/mobile-games.css"></head><body><script id="fofana-required-player-name">(()=>{try{let n=(localStorage.getItem('fofana.playerName')||'').trim();if(n)return;const next=location.pathname;const base=location.pathname.slice(0,location.pathname.lastIndexOf('/')+1);const gate=document.createElement('div');gate.id='fofana-name-gate';gate.style.cssText='position:fixed;inset:0;z-index:99999;background:#080d17f5;display:grid;place-items:center;padding:20px;font:16px system-ui;color:#fff';gate.innerHTML='<form style="width:min(420px,100%);background:#141a26;border:1px solid #38445a;border-radius:18px;padding:24px;box-sizing:border-box"><h2 style="margin-top:0">Önce oyuncu adını belirle</h2><p style="color:#b9c4d6">İsim olmadan oyuna giriş yapılamaz.</p><label for="fofana-required-name">Oyuncu adı</label><input id="fofana-required-name" maxlength="24" autocomplete="nickname" required style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 14px;border-radius:9px;border:1px solid #52617b;background:#0d121c;color:#fff"><button style="padding:12px 16px;border:0;border-radius:9px;background:#f5c96a;font-weight:800">Kaydet ve devam et</button></form>';document.body.append(gate);gate.querySelector('form').addEventListener('submit',e=>{e.preventDefault();const input=gate.querySelector('input');n=input.value.replace(/[\u0000-\u001f\u007f]/g,'').trim().replace(/\s+/g,' ').slice(0,24);if(!n){input.focus();return}localStorage.setItem('fofana.playerName',n);gate.remove();location.reload()});}catch{location.href='../../index.html'}})();</script><script id="fofana-profile-autofill">(()=>{try{const name=localStorage.getItem('fofana.playerName');if(!name)return;for(const input of document.querySelectorAll('input[autocomplete="nickname"],input[placeholder*="Oyuncu ad" i],input[aria-label*="Oyuncu ad" i],input[placeholder="Adın"]')){if(!input.value)input.value=name;input.addEventListener('change',()=>{const value=input.value.trim().replace(/\s+/g,' ').slice(0,24);if(value)localStorage.setItem('fofana.playerName',value)})}}catch{}})();</script><main class="home-shell"><a href="../../index.html">← Oyun Meydanı</a><p class="eyebrow">TAKIM · ANLAT · TAHMİN ET</p><h1>Tabu <span>🗣️</span></h1><p>Hedef kelimeyi, yasaklı kelimeleri kullanmadan takımına anlat. Bu sürüm özgün kartlar kullanır; resmî Tabu kartlarının metinlerini kopyalamaz.</p>
+<section class="panel" id="onlineTabuPanel">
+<h2>Çevrimiçi Tabu · Telefonlardan oyna</h2>
+<p class="muted">Bir telefonda oda oluştur, davet bağlantısını diğer telefonlara gönder veya 6 karakterli kodu paylaş. Her oyuncu kendi tarayıcısından katılır; aynı Wi-Fi ağında olmanız gerekmez, yeter ki herkes aynı canlı FOFANA sunucusuna erişsin. Kart, süre ve skor sunucuda eşitlenir. Hedef kelimeyi yalnızca anlatıcı görür.</p>
+<div class="row"><label>Oyuncu adı<br><input class="field" id="tabuOnlineName" maxlength="24" placeholder="Örn. Furkan" autocomplete="nickname"></label><label>Katılırken takımın<select class="field" id="tabuOnlineTeam"><option value="auto" selected>Otomatik dağıt</option><option value="0">Takım A</option><option value="1">Takım B</option></select></label></div>
+<div class="row" style="margin-top:10px"><button id="tabuOnlineCreate">Yeni oda oluştur</button><label>Oda kodu<input class="field" id="tabuOnlineCodeInput" maxlength="6" placeholder="ABC234" autocapitalize="characters"></label><button id="tabuOnlineJoin">Odaya katıl</button></div>
+<p class="muted" id="tabuOnlineStatus" role="status" aria-live="polite">Sunucuya bağlanınca oda oluşturabilir veya kodla katılabilirsin.</p>
+<div id="tabuOnlineRoom" class="hidden"><div class="score"><strong>Oda: <span id="tabuOnlineCode"></span></strong><span id="tabuOnlineHost" class="muted"></span></div>
+<h3>Oyuncular</h3><p class="muted hint">Lobide kendi takımını seçebilirsin. Her iki takımda da en az bir bağlı oyuncu kalmalı.</p><div id="tabuOnlinePlayers" class="ban" aria-label="Odadaki oyuncular"></div><div class="row" style="margin-top:10px"><button id="tabuOnlineShare" type="button">Davet bağlantısını paylaş</button></div>
+<div class="row"><label>Takım A adı<input class="field" id="tabuOnlineTeamA" maxlength="24" value="Takım A"></label><label>Takım B adı<input class="field" id="tabuOnlineTeamB" maxlength="24" value="Takım B"></label><label>Tur süresi (sn)<input class="field" id="tabuOnlineDuration" type="number" min="15" max="180" value="60"></label><label>Hedef puan<select class="field" id="tabuOnlineTargetScore"><option value="10">10 puan</option><option value="15" selected>15 puan</option><option value="20">20 puan</option><option value="30">30 puan</option></select></label></div>
+<div class="scores" style="margin-top:12px"><div class="score"><span id="tabuOnlineLabelA">Takım A</span><strong id="tabuOnlineScoreA">0</strong></div><div class="score"><span id="tabuOnlineLabelB">Takım B</span><strong id="tabuOnlineScoreB">0</strong></div></div>
+<p class="timer" id="tabuOnlineTimer">01:00</p><div class="word" id="tabuOnlineWord">Lobi</div><div class="ban" id="tabuOnlineForbidden"></div><p class="muted" id="tabuOnlineTurnStatus" aria-live="polite">Oda sahibi oyunu başlatınca kartlar görünür.</p><div id="tabuTurnBanner" role="status" aria-live="polite" hidden style="position:relative;margin:12px 0;padding:18px;border:2px solid #f5c96a;border-radius:14px;background:linear-gradient(120deg,#7f1d1d,#1e3a8a);color:white;text-align:center;font-weight:900;font-size:clamp(18px,4vw,28px);box-shadow:0 10px 30px #0006"></div>
+<div class="actions"><button id="tabuOnlineStartGame">Oyunu başlat</button><button id="tabuOnlineStartTurn" disabled>Tur başlat</button><button id="tabuOnlineCorrect" disabled>Doğru (+1)</button><button id="tabuOnlineSkip" disabled>Pas</button><button id="tabuOnlineTaboo" disabled>Yasak kelime (−1)</button><button id="tabuOnlinePause" disabled>Duraklat</button><button id="tabuOnlineResume" disabled>Devam et</button><button id="tabuOnlineEndTurn" disabled>Turu bitir</button><button id="tabuOnlineReset">Oyunu sıfırla</button><button id="tabuOnlineBackToLobby" class="hidden">Lobiye dön</button><button id="tabuOnlineLeave">Odadan ayrıl</button></div></div>
+</section>
+<section class="panel"><div class="row"><label>Takım A adı<br><input class="field" id="teamA" maxlength="24" value="Takım A"></label><label>Takım B adı<br><input class="field" id="teamB" maxlength="24" value="Takım B"></label><label>Tur süresi (sn)<br><input class="field" id="duration" type="number" min="15" max="180" value="60"></label><label>Hedef puan<br><select class="field" id="targetScore"><option value="10">10 puan</option><option value="15" selected>15 puan</option><option value="20">20 puan</option><option value="30">30 puan</option></select></label></div><div class="scores" style="margin-top:16px"><div class="score"><span id="labelA">Takım A</span><strong id="a">0</strong><small class="muted">puan</small></div><div class="score"><span id="labelB">Takım B</span><strong id="b">0</strong><small class="muted">puan</small></div></div><hr><p class="timer" id="timer" aria-live="polite">01:00</p><div class="word" id="word">Hazır mısınız?</div><div class="ban" id="ban"><span>Tur başlayınca kartlar görünür.</span></div><p id="status" class="muted" aria-live="polite">Takım A başlayacak. Anlatıcı yasaklı kelimeleri söylememeli.</p><div class="actions"><button id="start">Turu başlat</button><button id="correct" disabled>Doğru (+1)</button><button id="skip" disabled>Pas</button><button id="taboo" disabled>Yasak kelime (−1)</button><button id="pause" disabled>Duraklat</button><button id="resume" disabled>Devam et</button></div><div class="row" style="margin-top:10px"><button id="reset" type="button">Oyunu sıfırla</button><p class="muted hint">Tur bitince puanlar korunur ve sıra diğer takıma geçer. Aynı turda kart tekrarlanmaz.</p></div><p class="muted hint">Not: Yasak kelime cezası 1 puandır; puanlar sıfırın altına düşmez. Kart havuzu yerel olarak saklanır ve internet gerektirmez.</p></section></main>
+<script>
+'use strict';
+let cards=Array.isArray(window.TABU_CARDS)?window.TABU_CARDS:null,cardsLoadPromise=null,startingLocalTurn=false,localTurnRequest=0;
+let used=new Set(),score=[0,0],team=0,time=60,targetScore=15,localWinner=null,clock=null,active=false,paused=false,deckIndex=-1;
+const $=id=>document.getElementById(id);
+const name=i=>(($('team'+(i?'B':'A')).value||'').trim()||`Takım ${i?'B':'A'}`);
+function updateNames(){$('labelA').textContent=name(0);$('labelB').textContent=name(1);}
+function paint(){$('a').textContent=score[0];$('b').textContent=score[1];updateNames();}
+function buttons(on){['correct','skip','taboo'].forEach(id=>$(id).disabled=!on);$('start').disabled=on||paused||startingLocalTurn||localWinner!==null;$('pause').disabled=!on;$('resume').disabled=!paused||localWinner!==null;}
+function ensureCards(){if(cards?.length)return Promise.resolve(cards);if(cardsLoadPromise)return cardsLoadPromise;cardsLoadPromise=new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='./cards.js';script.onload=()=>{if(Array.isArray(window.TABU_CARDS)&&window.TABU_CARDS.length){cards=window.TABU_CARDS;resolve(cards);}else{cardsLoadPromise=null;reject(new Error('Kart destesi boş veya bozuk.'));}};script.onerror=()=>{cardsLoadPromise=null;reject(new Error('Kart destesi yüklenemedi. Sayfayı sunucu üzerinden açıp tekrar dene.'));};document.head.append(script);});return cardsLoadPromise;}
+function showCard(){if(!cards?.length)throw new Error('Kart destesi henüz yüklenmedi.');if(used.size>=cards.length)used.clear();let available=cards.map((_,i)=>i).filter(i=>!used.has(i));let i=available[Math.floor(Math.random()*available.length)];used.add(i);deckIndex=i;$('word').textContent=cards[i][0];$('ban').replaceChildren(...cards[i][1].map(word=>{const s=document.createElement('span');s.textContent=word;return s;}));}
+function stopTurn(message='Süre bitti!') {if(!active&&!paused)return;clearInterval(clock);clock=null;active=false;paused=false;buttons(false);$('status').textContent=`${message} ${name(team)} turu tamamladı. Sıradaki: ${name(1-team)}.`;team=1-team;$('start').textContent='Sıradaki turu başlat';}
+function tickTimer(){if(!active)return;time=Math.max(0,time-1);$('timer').textContent=formatTime(time);if(time<=0)stopTurn();}
+function pauseTurn(){if(!active)return;clearInterval(clock);clock=null;active=false;paused=true;buttons(false);$('status').textContent=`${name(team)} turu duraklatıldı. Kalan süre: ${formatTime(time)}.`;}
+function resumeTurn(){if(!paused)return;paused=false;active=true;buttons(true);$('status').textContent=`${name(team)} turu devam ediyor. Kalan süre: ${formatTime(time)}.`;clock=setInterval(tickTimer,1000);}
+function formatTime(seconds){return `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;}
+async function startTurn(){if(active||paused||startingLocalTurn||localWinner!==null)return;const requestId=++localTurnRequest;startingLocalTurn=true;buttons(false);$('status').textContent='Yerel oyun için kart destesi hazırlanıyor…';try{await ensureCards();if(requestId!==localTurnRequest||active||paused||localWinner!==null)return;const raw=Number($('duration').value);time=Math.max(15,Math.min(180,Number.isFinite(raw)&&raw?raw:60));$('duration').value=time;targetScore=[10,15,20,30].includes(Number($('targetScore').value))?Number($('targetScore').value):15;$('targetScore').disabled=true;updateNames();$('timer').textContent=formatTime(time);$('status').textContent=`${name(team)} anlatıyor. Hedef: ${targetScore} puan.`;$('ban').replaceChildren();showCard();active=true;$('start').textContent='Tur devam ediyor';clock=setInterval(tickTimer,1000);}catch(e){if(requestId===localTurnRequest)$('status').textContent=e.message;}finally{if(requestId===localTurnRequest){startingLocalTurn=false;if(active)buttons(true);else buttons(false);}}}
+function action(points){if(!active||localWinner!==null)return;score[team]=Math.max(0,score[team]+points);paint();if(score[team]>=targetScore){localWinner=team;clearInterval(clock);clock=null;active=false;paused=false;$('word').textContent='🏆 Oyun bitti!';$('ban').replaceChildren();$('status').textContent=`${name(team)} ${targetScore} puana ulaştı ve kazandı. Yeni maç için oyunu sıfırla.`;$('start').textContent='Maç tamamlandı';buttons(false);return;}showCard();}
+$('start').addEventListener('click',startTurn);$('pause').addEventListener('click',pauseTurn);$('resume').addEventListener('click',resumeTurn);$('correct').addEventListener('click',()=>action(1));$('taboo').addEventListener('click',()=>action(-1));$('skip').addEventListener('click',()=>{if(active)showCard();});
+$('reset').addEventListener('click',()=>{localTurnRequest++;startingLocalTurn=false;clearInterval(clock);clock=null;active=false;paused=false;localWinner=null;score=[0,0];team=0;time=Math.max(15,Math.min(180,Number($('duration').value)||60));targetScore=[10,15,20,30].includes(Number($('targetScore').value))?Number($('targetScore').value):15;$('targetScore').disabled=false;used.clear();deckIndex=-1;$('timer').textContent=formatTime(time);$('word').textContent='Hazır mısınız?';$('ban').replaceChildren();const span=document.createElement('span');span.textContent='Tur başlayınca kartlar görünür.';$('ban').append(span);$('status').textContent='Skor sıfırlandı. Takım A başlayacak.';$('start').textContent='Turu başlat';buttons(false);paint();});
+$('teamA').addEventListener('input',updateNames);$('teamB').addEventListener('input',updateNames);$('duration').addEventListener('change',()=>{if(!active&&!paused){const v=Math.max(15,Math.min(180,Number($('duration').value)||60));$('duration').value=v;$('timer').textContent=formatTime(v);}});
+paint();buttons(false);
+</script></body></html>
+
+<script>
+'use strict';
+(() => {
+const $t = id => document.getElementById(id);
+const TABU_SESSION_KEY='fofana.tabu.session.v1';
+let socket = null, myId = null, roomState = null, connecting = null, lastTurnAnnouncementKey = '', turnBannerTimer = null;
+let savedSession = readSavedSession(), resumeRequestActive = false, resumeAttemptId = 0, resumeRequestTimer = null, explicitLeave = false;
+function readSavedSession(){try{const s=JSON.parse(sessionStorage.getItem(TABU_SESSION_KEY)||'null');return s&&typeof s.code==='string'&&typeof s.resumeToken==='string'?s:null;}catch{return null;}}
+function saveSession(session){savedSession=session;try{sessionStorage.setItem(TABU_SESSION_KEY,JSON.stringify(session));}catch{}}
+function clearSession(){savedSession=null;try{sessionStorage.removeItem(TABU_SESSION_KEY);}catch{}}
+function saveAcknowledgedPlayer(response, code, name){if(response?.resumeToken)saveSession({code:response.code||code,resumeToken:response.resumeToken,name:response.name||name});}
+function status(message, error=false) { const el=$t('tabuOnlineStatus'); el.textContent=message; el.style.color=error?'#ff9f9f':'#aeb8c9'; }
+function loadClient() {
+ if (window.io) return Promise.resolve();
+ if (connecting) return connecting;
+ connecting = new Promise((resolve,reject)=>{ const sc=document.createElement('script'); sc.src='/socket.io/socket.io.js'; sc.onload=()=>window.io?resolve():reject(new Error('Socket.IO istemcisi yüklenemedi.')); sc.onerror=()=>reject(new Error('Çevrimiçi istemci yüklenemedi. Siteyi Node sunucusu üzerinden aç.')); document.head.append(sc); });
+ return connecting;
+}
+function tryResumeSavedSession(){
+ if(!savedSession||!socket?.connected||resumeRequestActive)return;
+ const attempt={...savedSession},requestId=++resumeAttemptId;resumeRequestActive=true;
+ if(resumeRequestTimer)clearTimeout(resumeRequestTimer);
+ resumeRequestTimer=setTimeout(()=>{if(requestId!==resumeAttemptId)return;resumeRequestActive=false;status('Oturum kurtarma yanıtı gecikti. Bağlantı kurulu, ancak sunucudan cevap gelmedi; oturum anahtarını korudum.',true);},8000);
+ socket.emit('tabu:session-resume',{code:attempt.code,resumeToken:attempt.resumeToken},response=>{
+  if(requestId!==resumeAttemptId)return;
+  resumeRequestActive=false;if(resumeRequestTimer)clearTimeout(resumeRequestTimer);resumeRequestTimer=null;
+  if(response?.ok){myId=response.playerId;saveSession({code:response.code||attempt.code,resumeToken:response.resumeToken||attempt.resumeToken,name:response.name||attempt.name});$t('tabuOnlineRoom').classList.remove('hidden');status('Oda oturumu kurtarıldı. Kaldığın yerden devam edebilirsin.');}
+  else{clearSession();myId=null;roomState=null;$t('tabuOnlineRoom').classList.add('hidden');status(`${response?.error||'Oturum kurtarılamadı.'} Yeniden oda oluşturabilir veya mevcut kodla katılabilirsin.`,true);}
+ });
+}
+async function connect() {
+ await loadClient();
+ if (!socket) {
+  socket=window.io({autoConnect:false,reconnection:true,timeout:7000});
+  socket.on('connect',()=>{status('Sunucuya bağlandı. Oda oluşturabilir veya kodla katılabilirsin.');tryResumeSavedSession();});
+  socket.on('connect_error',()=>status('Sunucuya bağlanılamadı. Siteyi çalışan Node.js sunucusu üzerinden aç.',true));
+  socket.on('tabu:state',state=>{roomState=state;render();});
+  socket.on('tabu:notice',data=>{if(data?.message) status(data.message);});
+  socket.on('disconnect',()=>{resumeAttemptId++;resumeRequestActive=false;if(resumeRequestTimer)clearTimeout(resumeRequestTimer);resumeRequestTimer=null;if(explicitLeave){explicitLeave=false;return;}if(savedSession){status('Bağlantı koptu. Yeniden bağlanmayı deniyorum; oda ve oyun durumu korunuyor.',true);}else if(roomState){status('Bağlantı koptu. Bu oda oturumu kurtarılamıyor; yeniden katılman gerekebilir.',true);}});
+ }
+ if (!socket.connected) await new Promise((resolve,reject)=>{const to=setTimeout(()=>reject(new Error('Bağlantı zaman aşımına uğradı.')),8000);socket.once('connect',()=>{clearTimeout(to);resolve();});socket.once('connect_error',()=>{clearTimeout(to);reject(new Error('Sunucu bağlantısı kurulamadı.'));});if(!socket.connected&&typeof socket.connect==='function')socket.connect();});
+ return socket;
+}
+async function emit(event,payload={}) { try { const s=await connect(); return await new Promise(resolve=>{let settled=false;const timer=setTimeout(()=>{if(settled)return;settled=true;resolve({ok:false,error:'Sunucudan yanıt alınamadı. Bağlantını kontrol edip tekrar dene.'});},8000);s.emit(event,payload,result=>{if(settled)return;settled=true;clearTimeout(timer);resolve(result||{ok:false,error:'Sunucudan yanıt alınamadı.'});});}); } catch(e) {status(e.message,true);return {ok:false,error:e.message};} }
+function render() {
+ const s=roomState;if(!s)return;$t('tabuOnlineRoom').classList.remove('hidden');$t('tabuOnlineCode').textContent=s.code;
+ const host=s.players.find(p=>p.id===s.hostId);$t('tabuOnlineHost').textContent=host?`Oda sahibi: ${host.name}`:'';
+ const list=$t('tabuOnlinePlayers');list.replaceChildren();s.players.forEach(p=>{
+  const chip=document.createElement('div');chip.className='player-chip';
+  const label=document.createElement('div');label.className='player-chip-name';
+  label.textContent=`${p.name} · ${p.team===0?(s.game?.teams[0]||$t('tabuOnlineTeamA').value||'Takım A'):(s.game?.teams[1]||$t('tabuOnlineTeamB').value||'Takım B')}${p.id===s.hostId?' · Sahip':''}${p.id===s.game?.speakerId?' · Anlatıcı':''}${p.connected===false?' · Bağlantı koptu (90 sn içinde dönebilir)':''}`;
+  chip.append(label);
+  if(s.status==='lobby' && p.id===myId && p.connected!==false){
+   const picker=document.createElement('select');picker.className='field player-team-select';picker.setAttribute('aria-label','Kendi takımını seç');
+   const teamA=document.createElement('option');teamA.value='0';teamA.textContent='Takım A';picker.append(teamA);
+   const teamB=document.createElement('option');teamB.value='1';teamB.textContent='Takım B';picker.append(teamB);
+   picker.value=String(p.team);
+   picker.addEventListener('change',async()=>{const wanted=Number(picker.value);picker.disabled=true;const result=await emit('tabu:set-team',{team:wanted});picker.disabled=false;if(!result.ok){picker.value=String(p.team);status(result.error||'Takım değiştirilemedi.',true);}else{status(`Takım ${wanted===0?'A':'B'} seçildi.`);}});
+   chip.append(picker);
+  }
+  list.append(chip);
+ });
+ const g=s.game, hostMe=s.hostId===myId, player=s.players.find(p=>p.id===myId), myTeam=player?.team, isSpeaker=!!g?.speakerId&&g.speakerId===myId;
+ const banner=$t('tabuTurnBanner');
+ if(g && g.phase!=='finished' && g.round>0){
+  const speaker=s.players.find(p=>p.id===g.speakerId);
+  const announcementKey=`${g.round}:${g.team}:${g.speakerId||''}`;
+  if(announcementKey!==lastTurnAnnouncementKey){
+   lastTurnAnnouncementKey=announcementKey;
+   banner.textContent=`${g.teams[g.team]} BAŞLIYOR · Anlatıcı: ${speaker?.name||'seçilecek oyuncu'}`;
+   banner.hidden=false;
+   if(turnBannerTimer)clearTimeout(turnBannerTimer);
+   turnBannerTimer=setTimeout(()=>{banner.hidden=true;},8000);
+  }
+ } else if(!g || g.phase==='finished'){
+  banner.hidden=true;lastTurnAnnouncementKey='';
+  if(turnBannerTimer)clearTimeout(turnBannerTimer);
+ }
+ $t('tabuOnlineStartGame').classList.toggle('hidden',!(s.status==='lobby'&&hostMe));
+ ['tabuOnlineTeamA','tabuOnlineTeamB','tabuOnlineDuration','tabuOnlineTargetScore'].forEach(id=>$t(id).disabled=!(s.status==='lobby'&&hostMe));
+ $t('tabuOnlineScoreA').textContent=g?.score[0]??0;$t('tabuOnlineScoreB').textContent=g?.score[1]??0;
+ $t('tabuOnlineLabelA').textContent=g?.teams[0]||$t('tabuOnlineTeamA').value||'Takım A';$t('tabuOnlineLabelB').textContent=g?.teams[1]||$t('tabuOnlineTeamB').value||'Takım B';
+ $t('tabuOnlineTimer').textContent=g?`${String(Math.floor(g.timeLeft/60)).padStart(2,'0')}:${String(g.timeLeft%60).padStart(2,'0')}`:'01:00';
+ const forbidden=$t('tabuOnlineForbidden');forbidden.replaceChildren();(g?.card?.forbidden||[]).forEach(w=>{const span=document.createElement('span');span.textContent=w;forbidden.append(span);});
+ if(g?.phase==='finished'){
+   $t('tabuOnlineWord').textContent=g.winner===null?'Oyun bitti!':`🏆 ${g.teams[g.winner]} kazandı!`;
+   forbidden.replaceChildren();
+   $t('tabuOnlineTurnStatus').textContent=`Hedef ${g.targetScore} puandı. Oda sahibi skoru sıfırlayabilir veya lobiye dönüp yeni ayarlarla maç açabilir.`;
+ } else if(g?.card){
+   $t('tabuOnlineWord').textContent=g.card.word;
+   const speaker=s.players.find(p=>p.id===g.speakerId);
+   $t('tabuOnlineTurnStatus').textContent=`Sıra: ${g.teams[g.team]} · Anlatıcı: ${speaker?.name||'oyuncu'} · ${g.active?'Tur sürüyor':g.paused?'Tur duraklatıldı':'Tur bekliyor'} · Tur ${g.round}`;
+ } else {
+   $t('tabuOnlineWord').textContent=g?.speakerId?'Kelime yalnızca anlatıcıda görünür':s.status==='lobby'?'Lobi':'Sıradaki takım turu başlatabilir';
+   $t('tabuOnlineTurnStatus').textContent=g?.speakerId?'Anlatıcı kelimeyi görür. Diğer oyuncular tahmin etmeye devam etsin.':s.status==='lobby'?'Oda sahibi oyunu başlatınca kartlar kullanılabilir.':'Sırası gelen takımın anlatıcısı “Tur başlat” düğmesine basmalı.';
+ }
+ const active=!!g?.active&&isSpeaker, paused=!!g?.paused&&isSpeaker, ready=!!g&&g.phase==='ready'&&myTeam===g.team;
+ $t('tabuOnlineStartTurn').disabled=!ready;$t('tabuOnlineStartTurn').classList.toggle('hidden',!g||g.phase!=='ready');
+ ['Correct','Skip','Taboo'].forEach(suffix=>{$t('tabuOnline'+suffix).disabled=!active;});
+ $t('tabuOnlinePause').disabled=!active;$t('tabuOnlineResume').disabled=!paused;$t('tabuOnlineEndTurn').disabled=!(active||paused);
+ $t('tabuOnlineReset').classList.toggle('hidden',!hostMe||!g);$t('tabuOnlineReset').disabled=!hostMe||!g;
+ $t('tabuOnlineBackToLobby').classList.toggle('hidden',!hostMe||g?.phase!=='finished');$t('tabuOnlineBackToLobby').disabled=!hostMe||g?.phase!=='finished';
+ }
+$t('tabuOnlineCreate').onclick=async()=>{const name=$t('tabuOnlineName').value;const r=await emit('tabu:create',{name});if(r.ok){myId=r.playerId;saveAcknowledgedPlayer(r,r.code,name);status('Oda oluşturuldu. Diğer oyuncular kodla katılabilir.');}else status(r.error||'Oda oluşturulamadı.',true);};
+$t('tabuOnlineJoin').onclick=async()=>{const name=$t('tabuOnlineName').value,code=$t('tabuOnlineCodeInput').value.trim().toUpperCase();const r=await emit('tabu:join',{name,code,team:$t('tabuOnlineTeam').value});if(r.ok){myId=r.playerId;saveAcknowledgedPlayer(r,code,name);status('Odaya katıldın.');}else status(r.error||'Odaya katılınamadı.',true);};
+$t('tabuOnlineCodeInput').addEventListener('input',()=>{$t('tabuOnlineCodeInput').value=$t('tabuOnlineCodeInput').value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g,'').slice(0,6);});
+async function shareTabuInvite(){
+ if(!roomState?.code)return;
+ const inviteUrl=new URL(window.location.href);
+ inviteUrl.searchParams.set('room',roomState.code);
+ inviteUrl.hash='onlineTabuPanel';
+ const inviteText=`FOFANA GAMES Tabu odasına katıl: ${inviteUrl.href}`;
+ try{
+  if(typeof navigator.share==='function'){
+   await navigator.share({title:'FOFANA GAMES · Tabu',text:'Tabu odama katıl.',url:inviteUrl.href});
+   status('Davet bağlantısı paylaşıldı.');
+  }else if(navigator.clipboard?.writeText){
+   await navigator.clipboard.writeText(inviteUrl.href);
+   status('Davet bağlantısı panoya kopyalandı. Arkadaşlarına gönderebilirsin.');
+  }else{
+   window.prompt('Bu davet bağlantısını kopyala:',inviteText);
+   status('Davet bağlantısı hazırlandı. Açılan pencereden bağlantıyı kopyala.');
+  }
+ }catch(error){
+  if(error?.name==='AbortError')return;
+  try{window.prompt('Davet bağlantısını kopyala:',inviteUrl.href);}catch{}
+  status('Otomatik paylaşım kullanılamadı. Bağlantıyı açılan pencereden kopyalayabilirsin.',true);
+ }
+}
+$t('tabuOnlineShare').onclick=shareTabuInvite;
+$t('tabuOnlineStartGame').onclick=async()=>{const r=await emit('tabu:start',{duration:$t('tabuOnlineDuration').value,targetScore:$t('tabuOnlineTargetScore').value,teamA:$t('tabuOnlineTeamA').value,teamB:$t('tabuOnlineTeamB').value});if(!r.ok)status(r.error,true);};
+$t('tabuOnlineStartTurn').onclick=async()=>{const r=await emit('tabu:start-turn');if(!r.ok)status(r.error,true);};
+async function onlineAction(event,payload={}){const r=await emit(event,payload);if(!r.ok)status(r.error||'İşlem yapılamadı.',true);}
+$t('tabuOnlineCorrect').onclick=()=>onlineAction('tabu:action',{kind:'correct'});$t('tabuOnlineSkip').onclick=()=>onlineAction('tabu:action',{kind:'skip'});$t('tabuOnlineTaboo').onclick=()=>onlineAction('tabu:action',{kind:'taboo'});
+$t('tabuOnlinePause').onclick=()=>onlineAction('tabu:pause');$t('tabuOnlineResume').onclick=()=>onlineAction('tabu:resume');$t('tabuOnlineEndTurn').onclick=()=>onlineAction('tabu:end-turn');$t('tabuOnlineReset').onclick=()=>onlineAction('tabu:reset');$t('tabuOnlineBackToLobby').onclick=()=>onlineAction('tabu:back-to-lobby');
+$t('tabuOnlineLeave').onclick=async()=>{const current=socket;if(current?.connected&&myId){const result=await emit('tabu:leave');if(!result.ok){status(result.error||'Odadan ayrılınamadı.',true);return;}}clearSession();roomState=null;myId=null;$t('tabuOnlineRoom').classList.add('hidden');explicitLeave=true;if(socket){socket.disconnect();socket=null;}status('Odadan ayrıldın.');};
+const inviteCode=new URLSearchParams(window.location.search).get('room');
+if(inviteCode){const normalizedInvite=inviteCode.trim().toUpperCase();if(/^[A-HJ-NP-Z2-9]{6}$/.test(normalizedInvite)){$t('tabuOnlineCodeInput').value=normalizedInvite;status('Davet bağlantısı algılandı. Adını yazıp “Odaya katıl” düğmesine bas.');}}
+if(savedSession){connect().catch(e=>status(e.message,true));}
+})();
+</script>
