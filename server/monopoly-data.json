@@ -1,0 +1,402 @@
+{
+  "monopolyBoard": [
+    {
+      "id": 0,
+      "name": "BAŞLANGIÇ",
+      "type": "go"
+    },
+    {
+      "id": 1,
+      "name": "İBF Kantin",
+      "type": "property",
+      "group": "brown",
+      "price": 60,
+      "baseRent": 2
+    },
+    {
+      "id": 2,
+      "name": "Kamu Fonu",
+      "type": "chest"
+    },
+    {
+      "id": 3,
+      "name": "Mavi Playstation",
+      "type": "property",
+      "group": "brown",
+      "price": 60,
+      "baseRent": 4
+    },
+    {
+      "id": 4,
+      "name": "Gelir Vergisi",
+      "type": "tax",
+      "amount": 200
+    },
+    {
+      "id": 5,
+      "name": "Uzunlar Halısaha",
+      "type": "pitch",
+      "price": 200
+    },
+    {
+      "id": 6,
+      "name": "Balance",
+      "type": "property",
+      "group": "light_blue",
+      "price": 100,
+      "baseRent": 6
+    },
+    {
+      "id": 7,
+      "name": "Şans",
+      "type": "chance"
+    },
+    {
+      "id": 8,
+      "name": "Oba Market",
+      "type": "property",
+      "group": "light_blue",
+      "price": 100,
+      "baseRent": 6
+    },
+    {
+      "id": 9,
+      "name": "Lokal",
+      "type": "property",
+      "group": "light_blue",
+      "price": 120,
+      "baseRent": 8
+    },
+    {
+      "id": 10,
+      "name": "BLOK DERS / ZİYARET",
+      "type": "jail"
+    },
+    {
+      "id": 11,
+      "name": "Makine Bölümü",
+      "type": "property",
+      "group": "pink",
+      "price": 140,
+      "baseRent": 10
+    },
+    {
+      "id": 12,
+      "name": "Çoruh Elektrik",
+      "type": "utility",
+      "price": 150
+    },
+    {
+      "id": 13,
+      "name": "Elektronik Bölümü",
+      "type": "property",
+      "group": "pink",
+      "price": 140,
+      "baseRent": 10
+    },
+    {
+      "id": 14,
+      "name": "Köşem",
+      "type": "property",
+      "group": "pink",
+      "price": 160,
+      "baseRent": 12
+    },
+    {
+      "id": 15,
+      "name": "Saha 3",
+      "type": "pitch",
+      "price": 200
+    },
+    {
+      "id": 16,
+      "name": "Doksanoğlu",
+      "type": "property",
+      "group": "orange",
+      "price": 180,
+      "baseRent": 14
+    },
+    {
+      "id": 17,
+      "name": "Kamu Fonu",
+      "type": "chest"
+    },
+    {
+      "id": 18,
+      "name": "Makine Kantini",
+      "type": "property",
+      "group": "orange",
+      "price": 180,
+      "baseRent": 14
+    },
+    {
+      "id": 19,
+      "name": "Şenlik",
+      "type": "property",
+      "group": "orange",
+      "price": 200,
+      "baseRent": 16
+    },
+    {
+      "id": 20,
+      "name": "Doblo Zamanı Dostum",
+      "type": "doblo"
+    },
+    {
+      "id": 21,
+      "name": "Ganita",
+      "type": "property",
+      "group": "red",
+      "price": 220,
+      "baseRent": 18
+    },
+    {
+      "id": 22,
+      "name": "Şans",
+      "type": "chance"
+    },
+    {
+      "id": 23,
+      "name": "Kalkınma",
+      "type": "property",
+      "group": "red",
+      "price": 220,
+      "baseRent": 18
+    },
+    {
+      "id": 24,
+      "name": "Konaklar",
+      "type": "property",
+      "group": "red",
+      "price": 240,
+      "baseRent": 20
+    },
+    {
+      "id": 25,
+      "name": "Bayramoğlu Halısaha",
+      "type": "pitch",
+      "price": 200
+    },
+    {
+      "id": 26,
+      "name": "KD Döner",
+      "type": "property",
+      "group": "yellow",
+      "price": 260,
+      "baseRent": 22
+    },
+    {
+      "id": 27,
+      "name": "Meydan",
+      "type": "property",
+      "group": "yellow",
+      "price": 260,
+      "baseRent": 22
+    },
+    {
+      "id": 28,
+      "name": "Kütüphane",
+      "type": "utility",
+      "price": 150
+    },
+    {
+      "id": 29,
+      "name": "Koru",
+      "type": "property",
+      "group": "yellow",
+      "price": 280,
+      "baseRent": 24
+    },
+    {
+      "id": 30,
+      "name": "BLOK DERSE GİT!",
+      "type": "go_to_jail"
+    },
+    {
+      "id": 31,
+      "name": "Cafe 5",
+      "type": "property",
+      "group": "green",
+      "price": 300,
+      "baseRent": 26
+    },
+    {
+      "id": 32,
+      "name": "Rize",
+      "type": "property",
+      "group": "green",
+      "price": 300,
+      "baseRent": 26
+    },
+    {
+      "id": 33,
+      "name": "Kamu Fonu",
+      "type": "chest"
+    },
+    {
+      "id": 34,
+      "name": "Çaykara",
+      "type": "property",
+      "group": "green",
+      "price": 320,
+      "baseRent": 28
+    },
+    {
+      "id": 35,
+      "name": "10 Numara Halısaha",
+      "type": "pitch",
+      "price": 200
+    },
+    {
+      "id": 36,
+      "name": "Şans",
+      "type": "chance"
+    },
+    {
+      "id": 37,
+      "name": "Bektaş Yaylası",
+      "type": "property",
+      "group": "dark_blue",
+      "price": 350,
+      "baseRent": 35
+    },
+    {
+      "id": 38,
+      "name": "Lüks Vergisi",
+      "type": "tax",
+      "amount": 100
+    },
+    {
+      "id": 39,
+      "name": "Thanos'un Evi",
+      "type": "property",
+      "group": "dark_blue",
+      "price": 400,
+      "baseRent": 50
+    }
+  ],
+  "sansKartlari": [
+    {
+      "text": "Gülüm başlangıç noktasına git hele 200 tl al yolluk yaparsın",
+      "action": "go_to_go"
+    },
+    {
+      "text": "Telefonun çalıyor çantayı hazırla en yakın halısahaya koş servis geliyor.",
+      "action": "nearest_pitch"
+    },
+    {
+      "text": "Paran vardır senin kanka en pahalı mülke git bakiyim sen.",
+      "action": "go_to_thanos"
+    },
+    {
+      "text": "250 gr zurna yedin az yürü ve 3 kare ileri git.",
+      "action": "forward_3"
+    },
+    {
+      "text": "Kodesi blok ders olarak değiştirelim ve blok derse git not al bize lazım not botu seni.",
+      "action": "go_to_jail"
+    },
+    {
+      "text": "Blok dersten çıkış için konferansa katılma kartı kazandın daralırsan blok dersten hemen kaç dostum :)",
+      "action": "get_jail_card"
+    },
+    {
+      "text": "Fofana Teame çay ısmarladın her oyuncu için 50tl öde",
+      "action": "pay_each_50"
+    },
+    {
+      "text": "Susadın ve su aldın 15tl öde",
+      "action": "pay_15"
+    },
+    {
+      "text": "Geçenki çayın parasını arkadaşın attı 50 tl al",
+      "action": "gain_50"
+    },
+    {
+      "text": "Emirin ayağını gördün göz sağlığı sigortası için 150 tl öde",
+      "action": "pay_150"
+    },
+    {
+      "text": "sercü soğan yiyip yüzüne üfledi acillik oldun serum masrafı: 100tl öde",
+      "action": "pay_100"
+    },
+    {
+      "text": "osmandan özürlü oyuncağı aldın: 50tl öde",
+      "action": "pay_50"
+    },
+    {
+      "text": "KYK fazladan yattı OHA LAN! 100tl al",
+      "action": "gain_100"
+    },
+    {
+      "text": "Puding tenceresini yaktın arkadaşına tencere masrafı için 150 tl öde",
+      "action": "pay_150"
+    },
+    {
+      "text": "Barış ceketi nerden aldın diyip sallarken yırttı terzi parası 100 tl öde",
+      "action": "pay_100"
+    },
+    {
+      "text": "oziye bir şey yapalım dedin ve göz kaşımaya başladı sinirden dişini kırdın muayene parası 100 tl öde",
+      "action": "pay_100"
+    },
+    {
+      "text": "Yeni aldığın şeye herkes oooo parayı buldun dedi nazar değdi ve yolda 175 lira düşürdün",
+      "action": "pay_175"
+    },
+    {
+      "text": "Thanos seni çağırdı: Doğrudan Thanos'un Evi karesine git.",
+      "action": "go_to_thanos"
+    },
+    {
+      "text": "Fotokopi ve kırtasiye masrafı: 50₺ öde.",
+      "action": "pay_50"
+    },
+    {
+      "text": "KYK bursun yattı: 200₺ al.",
+      "action": "gain_200"
+    }
+  ],
+  "kamuFonuKartlari": [
+    {
+      "text": "Halısahaya para atarken yanlış hesaplandı 150tl fazla ödedin",
+      "action": "pay_150"
+    },
+    {
+      "text": "Bugün doğum günün her oyuncudan 10 tl al",
+      "action": "collect_each_10"
+    },
+    {
+      "text": "burs yattı moruq 100 tl al",
+      "action": "gain_100"
+    },
+    {
+      "text": "kupon yaptın geldiii bebeğimmm 10tl al",
+      "action": "gain_10"
+    },
+    {
+      "text": "kartın asgarisini ödedin faiz olarak 20 tl öde",
+      "action": "pay_20"
+    },
+    {
+      "text": "Bizde yok ki abi demekten dil belası oldu dostum 100tl öde dil belası kardeşim",
+      "action": "pay_100"
+    },
+    {
+      "text": "Doğruca blok derse kardeşim seçmeseydin o dersi hadi trafo mrafo aynen hadi abicim",
+      "action": "go_to_jail"
+    },
+    {
+      "text": "Blok dersten kaçmak için konferansa katılma kartı daralırsan kullan dostum",
+      "action": "get_jail_card"
+    },
+    {
+      "text": "Yemekhane kartına yanlışlıkla çift bakiye yüklendi: Bankadan 150₺ al.",
+      "action": "gain_150"
+    },
+    {
+      "text": "Kalkınma'da cüzdan düşürdün: 50₺ kaybettin.",
+      "action": "pay_50"
+    }
+  ]
+}

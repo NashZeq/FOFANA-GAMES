@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="tr" class="home-document">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a12">
+  <meta name="description" content="FOFANA GAMES: arkadaşlarınla telefonlarından bağlanıp oyun gecesi yapabileceğin parti, strateji ve mini oyunlar.">
+  <title>FOFANA GAMES | Arkadaşlarınla oyun gecesi</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <a class="skip-link" href="#gameGrid">Oyunlara geç</a>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="FOFANA GAMES ana sayfa">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="brand-word">FOFANA<span>GAMES</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Ana menü">
+      <a class="nav-link active" href="#gameGrid">Oyunlar</a>
+      <a class="nav-link" href="#howItWorks">Nasıl oynanır?</a>
+      <a class="nav-link" href="#siteStatus">Proje durumu</a>
+    </nav>
+    <div class="player-profile" style="display:flex;align-items:center;gap:8px;margin-left:10px"><label for="sitePlayerName" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Oyuncu adın</label><input id="sitePlayerName" maxlength="24" autocomplete="nickname" placeholder="Oyuncu adın" style="width:135px;max-width:34vw;padding:9px 10px;border:1px solid #ffffff30;border-radius:10px;background:#101525;color:#fff;font:inherit"><button id="savePlayerName" type="button" style="padding:9px 10px;border:0;border-radius:10px;background:#e9c66f;color:#16130b;font-weight:800;cursor:pointer">Kaydet</button></div>
+    <a class="header-cta" href="#gameGrid">Oyunları keşfet <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main class="home-shell">
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> ARKADAŞ GRUBUNUN OYUN MERKEZİ</p>
+        <h1 id="heroTitle">Ekibi topla.<br>Oyunu seç.<br><span>Ortalık karışsın.</span></h1>
+        <p class="hero-intro">Parti oyunları, strateji kapışmaları ve kısa süreli rekabetler. FOFANA GAMES, oyun gecesini tek bir yerde toplar. Telefonundan gir, ekibine meydan oku.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#gameGrid">Oyunlara göz at <span aria-hidden="true">↓</span></a>
+          <a class="button button-secondary" href="#howItWorks"><span class="play-icon" aria-hidden="true">▶</span> Nasıl çalışıyor?</a>
+        </div>
+        <div class="hero-highlights" aria-label="Platform özellikleri">
+          <div class="highlight"><strong>08</strong><span>oyun, tek<br>bir yerde</span></div>
+          <span class="highlight-divider" aria-hidden="true"></span>
+          <div class="highlight"><strong>Mobil</strong><span>ekranlara<br>uyumlu tasarım</span></div>
+          <span class="highlight-divider" aria-hidden="true"></span>
+          <div class="highlight"><strong>Birlikte</strong><span>oynamaya<br>odaklı</span></div>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="FOFANA GAMES görsel tanıtımı">
+        <div class="visual-orbit orbit-one" aria-hidden="true"></div>
+        <div class="visual-orbit orbit-two" aria-hidden="true"></div>
+        <div class="visual-topline"><span class="tiny-spark" aria-hidden="true">✳</span> GAME NIGHT <span class="visual-topline-right">FG / 001</span></div>
+        <div class="hero-logo-panel">
+          <div class="hero-logo-symbol" aria-hidden="true"><span>F</span><span>G</span></div>
+          <p class="panel-kicker">READY FOR GAME NIGHT</p>
+          <p class="panel-title">PLAY<br><span>YOUR WAY.</span></p>
+          <div class="panel-bottom"><span>FOFANA GAMES</span><span class="equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></div>
+        </div>
+        <div class="floating-card float-card-purple"><span class="float-icon" aria-hidden="true">♜</span><span><b>STRATEJİ</b><small>Bir sonraki hamleni düşün.</small></span></div>
+        <div class="floating-card float-card-cyan"><span class="float-icon" aria-hidden="true">⚡</span><span><b>ARCADE</b><small>Reflekslerine güven.</small></span></div>
+        <div class="visual-footnote">*Çevrim içi özellikler oyuna göre değişir.</div>
+      </div>
+    </section>
+
+    <section class="section-heading" aria-labelledby="gamesTitle">
+      <div>
+        <p class="section-kicker">OYUN KÜTÜPHANESİ <span> / 01</span></p>
+        <h2 id="gamesTitle">Sıradaki rekabet <span>burada.</span></h2>
+        <p class="section-subtitle">Modunu seç, aramayı kullan veya kategoriye göre filtrele.</p>
+      </div>
+      <div class="library-counter"><span class="counter-icon" aria-hidden="true">▦</span><span><strong id="libraryTotal">08</strong><small>OYUN</small></span></div>
+    </section>
+
+    <section class="game-finder" aria-label="Oyun bul">
+      <div class="finder-search">
+        <label class="sr-only" for="gameSearch">Oyun ara</label>
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="gameSearch" type="search" placeholder="Bir oyun ara: strateji, kelime, parti…" autocomplete="off" aria-controls="gameGrid">
+        <kbd>/</kbd>
+      </div>
+      <div class="filter-row" role="group" aria-label="Oyun türüne göre filtrele">
+        <button class="filter-button is-active" type="button" data-filter="all" aria-pressed="true">Tüm oyunlar <span>08</span></button>
+        <button class="filter-button" type="button" data-filter="party" aria-pressed="false">Parti</button>
+        <button class="filter-button" type="button" data-filter="strategy" aria-pressed="false">Strateji</button>
+        <button class="filter-button" type="button" data-filter="arcade" aria-pressed="false">Arcade</button>
+        <button class="filter-button" type="button" data-filter="guess" aria-pressed="false">Tahmin</button>
+      </div>
+      <p id="gameCount" class="game-count" aria-live="polite">8 oyun gösteriliyor</p>
+    </section>
+
+    <section id="gameGrid" class="game-grid" aria-label="Oyunlar">
+      <a class="game-tile tile-casus" data-category="strategy" data-search="casus belli kart strateji krallık savaş taktik" href="games/casus-belli/index.html">
+        <div class="game-art art-casus" aria-hidden="true"><span class="art-orbit"></span><span class="card-silhouette card-back"></span><span class="card-silhouette card-mid">♜</span><span class="card-silhouette card-front">⚔</span><span class="art-index">FG / 01</span></div>
+        <div class="tile-meta"><span class="category-tag tag-strategy">STRATEJİ</span><span class="tile-status">TEST SÜRÜMÜ</span></div>
+        <h3>Casus Belli</h3><p>İki krallık, keskin hamleler. Kartlarını doğru zamanda oyna ve rakibini alt et.</p>
+        <span class="tile-footer"><span>Oyunu incele</span><span class="tile-arrow" aria-hidden="true">↗</span></span>
+      </a>
+
+      <a class="game-tile tile-imposter" data-category="party" data-search="imposter gizli kelime rol tartışma arkadaş sosyal çıkarım" href="games/imposter/index.html">
+        <div class="game-art art-imposter" aria-hidden="true"><span class="imposter-halo"></span><span class="imposter-person person-back"></span><span class="imposter-person person-front"><i></i><i></i></span><span class="art-stamp">WHO IS IT?</span><span class="art-index">FG / 02</span></div>
+        <div class="tile-meta"><span class="category-tag tag-party">PARTİ</span><span class="tile-status status-online">ODA DESTEĞİ</span></div>
+        <h3>Imposter</h3><p>Herkesin bildiği bir kelime var. Bir kişi hariç. Kim blöf yapıyor, bulabilecek misin?</p>
+        <span class="tile-footer"><span>Oyunu incele</span><span class="tile-arrow" aria-hidden="true">↗</span></span>
+      </a>
+
+      <a class="game-tile tile-monopoly" data-category="strategy" data-search="monopoly emlak kira para mülk masa oyunu zar" href="games/monopoly/index.html">
+        <div class="game-art art-monopoly" aria-hidden="true"><span class="board-grid"></span><span class="house house-one"></span><span class="house house-two"></span><span class="dice">⚄</span><span class="art-index">FG / 03</span></div>
+        <div class="tile-meta"><span class="category-tag tag-strategy">STRATEJİ</span><span class="tile-status">MASA OYUNU</span></div>
+        <h3>Monopoly</h3><p>Mülk al, kira topla ve rakiplerini iflasa sürükle. Dostluklar test edilebilir.</p>
+        <span class="tile-footer"><span>Oyunu incele</span><span class="tile-arrow" aria-hidden="true">↗</span></span>
+      </a>
+
+<a class="game-tile tile-tabu" data-category="party" data-search="tabu kelime yasaklı kelimeler takım anlat tahmin" href="games/tabu/index.html">
+        <div class="game-art art-tabu" aria-hidden="true"><span class="word-card word-card-back">ANLAT</span><span class="word-card word-card-front"><b>?</b><i></i><i></i><i></i></span><span class="speech-bubble">Şey… hani…</span><span class="art-index">FG / 04</span></div>
+        <div class="tile-meta"><span class="category-tag tag-party">PARTİ</span><span class="tile-status">TAKIM OYUNU</span></div>
+        <h3>Tabu</h3><p>Yasaklı kelimelere takılmadan anlat. Takım arkadaşların zihnini okuyamaz, dene bakalım.</p>
+        <span class="tile-footer"><span>Oyunu incele</span><span class="tile-arrow" aria-hidden="true">↗</span></span>
+      </a>
+
+      <a class="game-tile tile-worms" data-category="arcade" data-search="worms tepe savaşı topçu mermi rüzgar patlama" href="games/worms/index.html">
+        <div class="game-art art-worms" aria-hidden="true"><span class="worm-moon"></span><span class="worm-hill hill-back"></span><span class="worm-hill hill-front"></span><span class="worm-unit unit-one">•ᴗ•</span><span class="worm-unit unit-two">•ᴗ•</span><span class="bomb">✹</span><span class="art-index">FG / 05</span></div>
+        <div class="tile-meta"><span class="category-tag tag-arcade">ARCADE</span><span class="tile-status">SIRA TABANLI</span></div>
+        <h3>Worms</h3><p>Açı, güç ve rüzgârı hesapla. Bir atışla maçı çevirebilir, kendini de uçurabilirsin.</p>
+        <span class="tile-footer"><span>Oyunu incele</span><span class="tile-arrow" aria-hidden="true">↗</span></span>
+      </a>
+
+      <a class="game-tile tile-skysprint" data-category="arcade" data-search="sky sprint platform yarışı koşu zıplama çift zıplama bot engel testere hızlandırıcı fun run" href="games/sky-sprint/index.html">
+        <div class="game-art art-skysprint" aria-hidden="true"><span class="sky-cloud cloud-one"></span><span class="sky-cloud cloud-two"></span><span class="sky-ground"></span><span class="sky-gap"></span><span class="sky-runner runner-green"></span><span class="sky-runner runner-red"></span><span class="sky-runner runner-blue"></span><span class="sky-saw">✹</span><span class="art-index">FG / 06</span></div>
+        <div class="tile-meta"><span class="category-tag tag-arcade">ARCADE</span><span class="tile-status">BOTLU YARIŞ</span></div>
+        <h3>Sky Sprint</h3><p>Çift zıpla, testereyi atlat ve hız bantlarını kap. Duraklatma, kişisel rekor ve botlara karşı bitiş yarışı.</p>
+        <span class="tile-footer"><span>Yarışa başla</span><span class="tile-arrow" aria-hidden="true">↗</span></span>
+      </a>
+
+      <a class="game-tile tile-gokart" data-category="arcade" data-search="go kart gokart 3d yarış araba sürüş pist hız mobil çevrimiçi çok oyunculu oda kodu" href="games/go-kart/index.html">
+        <div class="game-art art-gokart" aria-hidden="true"><span class="kart-road"></span><span class="kart-speed speed-one"></span><span class="kart-speed speed-two"></span><span class="kart-wheel kart-wheel-one"></span><span class="kart-wheel kart-wheel-two"></span><span class="kart-wheel kart-wheel-three"></span><span class="kart-wheel kart-wheel-four"></span><span class="kart-body"></span><span class="kart-driver"></span><span class="kart-light kart-light-one"></span><span class="kart-light kart-light-two"></span><span class="art-index">FG / 07</span></div>
+        <div class="tile-meta"><span class="category-tag tag-arcade">ARCADE</span><span class="tile-status status-online">ÇEVRİMİÇİ ODA</span></div>
+        <h3>Go-Kart 3D</h3><p>Geniş pistte bariyerlerden kaç ve güçlendirmeleri topla. Botlara karşı yerel oyna veya oda koduyla 2–6 kişi çevrimiçi yarış.</p>
+        <span class="tile-footer"><span>Yarışa başla</span><span class="tile-arrow" aria-hidden="true">↗</span></span>
+      </a>
+
+      <a class="game-tile tile-sallama" data-category="guess" data-search="işkembeden sallama tahmin ünlü yaş market fiyat araba fiyatı bilgi" href="games/iskembeden-sallama/index.html">
+        <div class="game-art art-sallama" aria-hidden="true"><span class="guess-ring ring-one"></span><span class="guess-ring ring-two"></span><span class="guess-tag guess-tag-one">₺ 249</span><span class="guess-tag guess-tag-two">?</span><span class="guess-tag guess-tag-three">1998</span><span class="art-index">FG / 08</span></div>
+        <div class="tile-meta"><span class="category-tag tag-guess">TAHMİN</span><span class="tile-status">BİLGİ YARIŞI</span></div>
+        <h3>İşkembeden Sallama</h3><p>Yaş, fiyat ve genel kültür tahminleri. Yaklaşabildiğin kadar yaklaş, özgüven serbest.</p>
+        <span class="tile-footer"><span>Tahmin et</span><span class="tile-arrow" aria-hidden="true">↗</span></span>
+      </a>
+    </section>
+    <p id="noGames" class="no-games" hidden>Bu aramayla eşleşen oyun bulunamadı. Aramayı veya kategori filtresini değiştir.</p>
+
+    <section class="how-section" id="howItWorks" aria-labelledby="howTitle">
+      <div class="how-heading"><p class="section-kicker">KARIŞIKLIK ÇIKARMANIN KISA YOLU <span> / 02</span></p><h2 id="howTitle">Üç adımda <span>oyun gecesi.</span></h2></div>
+      <div class="steps-grid">
+        <article class="step-card"><span class="step-number">01</span><span class="step-icon" aria-hidden="true">▦</span><h3>Oyunu seç</h3><p>Türüne göre filtrele veya doğrudan arat. Karar verme süresi, oyunun kendisinden uzun olmasın.</p></article>
+        <article class="step-card"><span class="step-number">02</span><span class="step-icon" aria-hidden="true">⌘</span><h3>Oyun modunu kontrol et</h3><p>Her oyunun durumu kartında belirtilir. Çevrim içi oda desteği oyunlara göre farklılık gösterir.</p></article>
+        <article class="step-card"><span class="step-number">03</span><span class="step-icon" aria-hidden="true">↗</span><h3>Ekibini çağır</h3><p>Desteklenen oyunlarda oda sistemiyle bir araya gelin. Her oyuncu kendi telefonundan bağlanacak şekilde tasarlıyoruz.</p></article>
+      </div>
+    </section>
+
+    <section class="status-panel" id="siteStatus" aria-labelledby="statusTitle">
+      <div class="status-symbol" aria-hidden="true">i</div>
+      <div><p class="section-kicker">AÇIK VE NET <span> / 03</span></p><h2 id="statusTitle">Proje durumu</h2><p>FOFANA GAMES aktif olarak geliştiriliyor. Çevrim içi oda özellikleri oyun bazında değişir; desteklenen odalar için Node.js sunucusunun ayrıca çalışıyor ve internette erişilebilir olması gerekir. Henüz tüm oyunlar tam çevrim içi çok oyunculu değildir.</p></div>
+      <a href="#gameGrid" class="status-link">Oyunları gör <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
+
+  <footer class="site-footer"><a class="footer-brand" href="#top">FOFANA<span>GAMES</span></a><p>Arkadaşlarla daha iyi, yenilmek dışında.</p><a href="#top" class="back-top">Başa dön ↑</a></footer>
+
+  <script>
+  (() => {
+    const search = document.getElementById('gameSearch');
+    const tiles = [...document.querySelectorAll('.game-tile')];
+    const buttons = [...document.querySelectorAll('[data-filter]')];
+    const count = document.getElementById('gameCount');
+    const empty = document.getElementById('noGames');
+    const libraryTotal = document.getElementById('libraryTotal');
+    let category = 'all';
+    const normalize = value => value.toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    function update() {
+      const query = normalize(search.value.trim());
+      let visible = 0;
+      for (const tile of tiles) {
+        const matchesCategory = category === 'all' || tile.dataset.category === category;
+        const matchesQuery = !query || normalize(tile.dataset.search + ' ' + tile.innerText).includes(query);
+        const show = matchesCategory && matchesQuery;
+        tile.hidden = !show;
+        if (show) visible++;
+      }
+      count.textContent = `${visible} / ${tiles.length} oyun gösteriliyor`;
+      libraryTotal.textContent = String(visible).padStart(2, '0');
+      empty.hidden = visible !== 0;
+    }
+    search.addEventListener('input', update);
+    buttons.forEach(button => button.addEventListener('click', () => {
+      category = button.dataset.filter;
+      buttons.forEach(item => {
+        const active = item === button;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-pressed', String(active));
+      });
+      update();
+    }));
+    document.addEventListener('keydown', event => {
+      if (event.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+        event.preventDefault();
+        search.focus();
+      }
+      if (event.key === 'Escape' && document.activeElement === search) {
+        search.value = '';
+        update();
+        search.blur();
+      }
+    });
+    update();
+  })();
+  </script>
+
+<script>
+(()=>{const key='fofana.playerName',input=document.getElementById('sitePlayerName'),button=document.getElementById('savePlayerName');if(!input||!button)return;try{input.value=localStorage.getItem(key)||''}catch{}const save=()=>{const name=input.value.replace(/[\u0000-\u001f\u007f]/g,'').trim().replace(/\s+/g,' ').slice(0,24);if(!name){input.setCustomValidity('Devam etmek için bir oyuncu adı gir.');input.reportValidity();return}input.setCustomValidity('');input.value=name;try{localStorage.setItem(key,name);button.textContent='Kaydedildi ✓';setTimeout(()=>button.textContent='Kaydet',1400)}catch{button.textContent='Kaydedilemedi'}};button.addEventListener('click',save);input.addEventListener('keydown',e=>{if(e.key==='Enter')save()});document.addEventListener('click',e=>{const link=e.target.closest('a[href]');if(!link||!link.href.includes('/games/'))return;const current=(localStorage.getItem(key)||'').trim();if(current)return;e.preventDefault();input.focus();input.setCustomValidity('Oyuna girmek için önce oyuncu adını kaydet.');input.reportValidity();});})();
+</script>
+</body>
+</html>
