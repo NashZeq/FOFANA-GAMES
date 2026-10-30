@@ -1,0 +1,18 @@
+{
+  "name": "fofana-games",
+  "version": "2.36.0",
+  "private": true,
+  "description": "FOFANA GAMES online server: Casus Belli and Tabu",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}

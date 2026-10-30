@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fofana Games · Tabu</title>
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --panel-bg: #131b2e;
+      --panel-border: #26334d;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --team-a: #3b82f6;
+      --team-a-glow: rgba(59, 130, 246, 0.2);
+      --team-b: #f43f5e;
+      --team-b-glow: rgba(244, 63, 94, 0.2);
+      --ready-green: #22c55e;
+      --warn-amber: #f59e0b;
+      --card-bg: #1e293b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body {
+      background: radial-gradient(circle at top, #172036 0%, var(--bg-dark) 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+    }
+
+    /* ÜST BAR */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      margin-bottom: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand h1 { font-size: 1.25rem; letter-spacing: 0.5px; color: #fff; }
+    .badge {
+      padding: 4px 10px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+      background: rgba(255,255,255,0.08); color: var(--text-muted);
+    }
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+
+    /* BUTONLAR */
+    button {
+      cursor: pointer; border: none; border-radius: 10px; font-weight: 700;
+      transition: all 0.18s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    button:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+    .btn-sm { padding: 8px 14px; font-size: 0.85rem; background: #26334d; color: #fff; }
+    .btn-sm:hover:not(:disabled) { background: #334466; }
+    .btn-primary { padding: 12px 24px; font-size: 1rem; background: var(--ready-green); color: #052e16; }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+
+    /* =========================================
+       1. EKRAN: TAKIM SEÇME & HAZIR LOBİSİ
+       ========================================= */
+    #lobbyView {
+      max-width: 1120px; width: 100%; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 16px; flex: 1;
+    }
+    .lobby-controls {
+      display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center;
+      background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 14px; padding: 16px 20px;
+    }
+    .add-player-Group { display: flex; gap: 8px; flex: 1; min-width: 260px; }
+    .add-player-Group input {
+      flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--panel-border);
+      background: #0b0f19; color: #fff; font-size: 0.95rem;
+    }
+    .lobby-settings { display: flex; gap: 16px; align-items: center; font-size: 0.9rem; color: var(--text-muted); }
+    .lobby-settings select {
+      background: #0b0f19; color: #fff; border: 1px solid var(--panel-border);
+      padding: 8px 12px; border-radius: 8px; font-weight: 600;
+    }
+
+    .lobby-grid {
+      display: grid; grid-template-columns: 1fr 340px 1fr; gap: 16px; flex: 1;
+    }
+    .lobby-team-box {
+      background: var(--panel-bg); border: 2px solid var(--panel-border); border-radius: 16px;
+      padding: 20px; display: flex; flex-direction: column; gap: 14px;
+    }
+    .lobby-team-box.team-a { border-color: var(--team-a); box-shadow: 0 0 25px var(--team-a-glow); }
+    .lobby-team-box.team-b { border-color: var(--team-b); box-shadow: 0 0 25px var(--team-b-glow); }
+
+    .team-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); padding-bottom: 12px; }
+    .team-a .team-header h2 { color: #60a5fa; }
+    .team-b .team-header h2 { color: #fb7185; }
+
+    .player-list { display: flex; flex-direction: column; gap: 10px; flex: 1; min-height: 220px; }
+    .player-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      padding: 10px 14px; border-radius: 10px;
+    }
+    .player-row.is-ready { border-color: rgba(34, 197, 94, 0.5); background: rgba(34, 197, 94, 0.08); }
+    .player-info { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+    .ready-pill {
+      font-size: 0.75rem; padding: 3px 9px; border-radius: 999px; font-weight: 700;
+    }
+    .ready-pill.yes { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+    .ready-pill.no { background: rgba(245, 158, 11, 0.18); color: #fbbf24; }
+
+    .lobby-center-box {
+      background: var(--panel-bg); border: 2px solid var(--panel-border); border-radius: 16px;
+      padding: 24px 20px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center;
+    }
+    .status-banner {
+      background: rgba(255,255,255,0.04); border: 1px dashed var(--panel-border);
+      padding: 14px; border-radius: 12px; width: 100%; font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;
+    }
+
+    /* =========================================
+       2. EKRAN: ÇİZDİĞİN 3 SÜTUNLU OYUN EKRANI
+       ========================================= */
+    #gameView {
+      display: none;
+      max-width: 1280px; width: 100%; margin: 0 auto; flex: 1;
+      grid-template-columns: 290px 1fr 290px;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    /* SOL VE SAĞ SÜTUNLAR: A TAKIMI & B TAKIMI */
+    .team-column {
+      background: var(--panel-bg);
+      border: 3px solid var(--panel-border);
+      border-radius: 18px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+    }
+    .team-column.team-a { border-color: var(--team-a); }
+    .team-column.team-b { border-color: var(--team-b); }
+    .team-column.active-turn.team-a { box-shadow: 0 0 35px var(--team-a-glow); background: linear-gradient(180deg, rgba(59,130,246,0.12) 0%, var(--panel-bg) 100%); }
+    .team-column.active-turn.team-b { box-shadow: 0 0 35px var(--team-b-glow); background: linear-gradient(180deg, rgba(244,63,94,0.12) 0%, var(--panel-bg) 100%); }
+
+    .team-col-title {
+      font-size: 1.4rem; font-weight: 800; text-align: center; letter-spacing: 1px;
+      padding-bottom: 12px; border-bottom: 2px solid rgba(255,255,255,0.08);
+    }
+    .team-a .team-col-title { color: #60a5fa; }
+    .team-b .team-col-title { color: #fb7185; }
+
+    .team-score-box {
+      text-align: center; margin: 18px 0; padding: 16px;
+      background: rgba(0,0,0,0.28); border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .team-score-number { font-size: 3.2rem; font-weight: 900; line-height: 1; }
+    .team-score-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+
+    .team-roster { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .roster-member {
+      padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.04);
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.92rem;
+      border: 1px solid transparent;
+    }
+    .roster-member.is-describer {
+      border-color: var(--warn-amber); background: rgba(245, 158, 11, 0.14); font-weight: 700;
+    }
+    .role-tag { font-size: 0.74rem; padding: 2px 8px; border-radius: 6px; background: rgba(255,255,255,0.1); }
+
+    /* ORTA SÜTUN: KELİMELER VE YASAKLI KELİMELER */
+    .center-word-column {
+      background: var(--panel-bg);
+      border: 3px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      position: relative;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+    }
+
+    .turn-hud {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(0,0,0,0.3); padding: 12px 18px; border-radius: 12px;
+      border: 1px solid var(--panel-border);
+    }
+    .timer-box {
+      font-size: 1.8rem; font-weight: 900; font-variant-numeric: tabular-nums;
+      color: #fff; display: flex; align-items: center; gap: 8px;
+    }
+    .timer-box.urgent { color: #ef4444; animation: pulseUrgent 0.6s infinite alternate; }
+    @keyframes pulseUrgent { from { transform: scale(1); } to { transform: scale(1.08); } }
+
+    /* KART GÖVDESİ (KELİME + YASAKLI KELİMELER) */
+    .tabu-card-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--card-bg);
+      border: 2px solid #475569;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .main-word-section {
+      background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+      padding: 26px 20px;
+      text-align: center;
+      border-bottom: 3px solid #6366f1;
+    }
+    .main-word-label {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px;
+      color: #a5b4fc; margin-bottom: 6px; font-weight: 700;
+    }
+    .main-word-text {
+      font-size: 2.5rem; font-weight: 900; letter-spacing: 1.5px; color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    .forbidden-section {
+      flex: 1;
+      padding: 22px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+    .forbidden-label {
+      text-align: center; font-size: 0.8rem; text-transform: uppercase;
+      letter-spacing: 2px; color: #f87171; font-weight: 800; margin-bottom: 4px;
+    }
+    .forbidden-list {
+      list-style: none; display: flex; flex-direction: column; gap: 10px;
+    }
+    .forbidden-item {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fecaca;
+      padding: 12px 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    /* AKSİYON BUTONLARI */
+    .action-bar {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+    }
+    .btn-action {
+      padding: 16px 12px; font-size: 1.05rem; border-radius: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .btn-correct { background: #22c55e; color: #052e16; }
+    .btn-tabu { background: #ef4444; color: #fff; }
+    .btn-pass { background: #f59e0b; color: #1e1b4b; }
+    .btn-action:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.08); }
+
+    /* TUR ARASI OVERLAY */
+    .turn-overlay {
+      position: absolute; inset: 0; background: rgba(11, 15, 25, 0.94);
+      backdrop-filter: blur(6px); border-radius: 15px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 28px; text-align: center; gap: 16px; z-index: 10;
+    }
+    .turn-overlay h3 { font-size: 1.8rem; }
+    .turn-overlay p { color: var(--text-muted); max-width: 420px; line-height: 1.6; }
+
+    @media (max-width: 960px) {
+      .lobby-grid, #gameView { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ÜST BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <h1>🎯 FOFANA · TABU</h1>
+      <span class="badge" id="roomPhaseBadge">HAZIRLIK LOBİSİ</span>
+    </div>
+    <div class="top-actions">
+      <span class="badge" id="onlineRoomCode" style="display:none;">TEK ORTAK LOBİ</span><button class="btn-sm" id="leaveRoomBtn" type="button" style="display:none;">Odadan ayrıl</button><button class="btn-sm" id="soundToggleBtn" type="button">🔊 Ses: Açık</button>
+      <button class="btn-sm" id="backToLobbyBtn" type="button" style="display:none;">⚙️ Lobiye Dön</button>
+    </div>
+  </header>
+
+  <!-- =========================================================
+       1. HAZIR VERME VE TAKIM SEÇME LOBİSİ
+       ========================================================= -->
+  <section id="roomConnectView" style="max-width:900px;width:100%;margin:24px auto;background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:16px;padding:24px;display:grid;gap:18px;">
+    <div><h2>Tabu lobisi</h2><p style="color:var(--text-muted);margin-top:6px;">Tabu'nun tek ortak lobisi var. Oyuncular oda açmadan doğrudan buraya katılır.</p></div>
+    <label>Oyuncu adın<input id="onlinePlayerName" maxlength="18" placeholder="Adın" style="display:block;width:100%;margin-top:6px;padding:12px;border-radius:9px;background:#0b0f19;border:1px solid var(--panel-border);color:#fff;"></label>
+    <button class="btn-primary" id="enterLobbyBtn" type="button">Tabu lobisine katıl</button>
+    <p id="connectMessage" role="status" style="color:#fbbf24;"></p>
+  </section>
+  <main id="lobbyView" style="display:none;">
+    <section class="lobby-controls">
+<div style="color:var(--text-muted);font-size:.9rem;">Tabu'nun tek ortak lobisindesiniz. Takımını seçip hazır ol.</div>
+      <div class="lobby-settings">
+        <label>Süre:
+          <select id="turnTimeSelect">
+            <option value="60" selected>60 Saniye</option>
+            <option value="45">45 Saniye (Hızlı)</option>
+            <option value="90">90 Saniye</option>
+          </select>
+        </label>
+        <label>Pas Hakkı:
+          <select id="passLimitSelect">
+            <option value="3" selected>3 Pas</option>
+            <option value="2">2 Pas</option>
+            <option value="5">5 Pas</option>
+          </select>
+        </label>
+        <label>Hedef Skor:
+          <select id="targetScoreSelect">
+            <option value="15">15 Puan</option>
+            <option value="25" selected>25 Puan</option>
+            <option value="40">40 Puan</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <div class="lobby-grid">
+      <!-- A TAKIMI LOBİ KUTUSU -->
+      <div class="lobby-team-box team-a">
+        <div class="team-header">
+          <h2>🟦 A TAKIMI</h2>
+          <span class="badge" id="lobbyCountA">0 Oyuncu</span>
+        </div>
+        <div class="player-list" id="lobbyListA"></div>
+      </div>
+
+      <!-- ORTA HAZIRLIK & BAŞLATMA KUTUSU -->
+      <div class="lobby-center-box">
+        <div>
+          <span class="badge" style="background:rgba(59,130,246,0.2); color:#93c5fd;">TAKIM & HAZIR KONTROLÜ</span>
+          <h2 style="margin-top:10px; font-size:1.4rem;">Takımını Seç & Hazır Ver</h2>
+          <p style="color:var(--text-muted); font-size:0.88rem; margin-top:6px;">
+            Başlamak için A ve B takımlarında en az birer oyuncu bulunmalı ve herkes <strong>HAZIR</strong> vermelidir.
+          </p>
+        </div>
+
+        <div class="status-banner" id="lobbyStatusBanner">
+          Odaya katılan oyuncuların hazır olması bekleniyor...
+        </div>
+
+        <div style="width:100%; display:flex; flex-direction:column; gap:10px;">
+          <button class="btn-sm" id="readyAllBtn" type="button" style="width:100%; padding:10px;">✓ Hazır durumunu değiştir</button>
+          <button class="btn-primary" id="startGameBtn" type="button" style="width:100%;" disabled>🚀 OYUNU BAŞLAT</button>
+        </div>
+      </div>
+
+      <!-- B TAKIMI LOBİ KUTUSU -->
+      <div class="lobby-team-box team-b">
+        <div class="team-header">
+          <h2>🟥 B TAKIMI</h2>
+          <span class="badge" id="lobbyCountB">0 Oyuncu</span>
+        </div>
+        <div class="player-list" id="lobbyListB"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- =========================================================
+       2. ÇİZDİĞİN 3 SÜTUNLU TABU OYUN EKRANI
+       ========================================================= -->
+  <section id="gameView">
+
+    <!-- SOL KUTU: A TAKIMI -->
+    <aside class="team-column team-a" id="colTeamA">
+      <div>
+        <h2 class="team-col-title">A TAKIMI</h2>
+        <div class="team-score-box">
+          <div class="team-score-number" id="scoreTeamA">0</div>
+          <div class="team-score-label">TOPLAM PUAN</div>
+        </div>
+        <div style="margin-bottom:10px; font-size:0.8rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">
+          Takım Kadrosu & Roller
+        </div>
+        <div class="team-roster" id="rosterTeamA"></div>
+      </div>
+      <div class="status-banner" id="roleHintA">Sıra durumu bekleniyor...</div>
+    </aside>
+
+    <!-- ORTA KUTU: KELİMELER VE YASAKLI KELİMELER -->
+    <main class="center-word-column">
+      <!-- Tur Üst Bilgisi -->
+      <div class="turn-hud">
+        <div>
+          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">ANLATAN OYUNCU</div>
+          <div style="font-size:1.05rem; font-weight:800;" id="activeDescriberLabel">-</div>
+        </div>
+        <div class="timer-box" id="timerDisplay">⏱️ 60</div>
+        <div style="text-align:right;">
+          <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">KALAN PAS</div>
+          <div style="font-size:1.05rem; font-weight:800; color:#fbbf24;" id="passLeftLabel">3 / 3</div>
+        </div>
+      </div>
+
+      <!-- KELİME & YASAKLI KELİMELER KARTI -->
+      <div class="tabu-card-container">
+        <div class="main-word-section">
+          <div class="main-word-label">ANLATILACAK KELİME</div>
+          <div class="main-word-text" id="mainWordText">HAZIR MISIN?</div>
+        </div>
+        <div class="forbidden-section">
+          <div class="forbidden-label">🚫 YASAKLI KELİMELER</div>
+          <ul class="forbidden-list" id="forbiddenList">
+            <li class="forbidden-item">-</li>
+            <li class="forbidden-item">-</li>
+            <li class="forbidden-item">-</li>
+            <li class="forbidden-item">-</li>
+            <li class="forbidden-item">-</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- DOĞRU / TABU / PAS BUTONLARI -->
+      <div class="action-bar">
+        <button class="btn-action btn-correct" id="btnCorrect" type="button">✅ DOĞRU (+1)</button>
+        <button class="btn-action btn-tabu" id="btnTabu" type="button">🚨 TABU (-1)</button>
+        <button class="btn-action btn-pass" id="btnPass" type="button">⏭️ PAS (3)</button>
+      </div>
+
+      <!-- Tur Başlangıç / Bitiş Perdesi (Kelimelerin önceden görünmesini engeller) -->
+      <div class="turn-overlay" id="turnOverlay">
+        <span class="badge" id="overlayTeamBadge" style="font-size:0.9rem; padding:6px 14px;">SIRADAKİ TUR</span>
+        <h3 id="overlayTitle">A Takımı Anlatıyor</h3>
+        <p id="overlayDesc">Anlatıcı hazır olduğunda aşağıdaki butona basarak süreyi ve kelimeleri başlatır.</p>
+        <button class="btn-primary" id="startTurnBtn" type="button">🎙️ ANLATMAYA BAŞLA</button>
+      </div>
+    </main>
+
+    <!-- SAĞ KUTU: B TAKIMI -->
+    <aside class="team-column team-b" id="colTeamB">
+      <div>
+        <h2 class="team-col-title">B TAKIMI</h2>
+        <div class="team-score-box">
+          <div class="team-score-number" id="scoreTeamB">0</div>
+          <div class="team-score-label">TOPLAM PUAN</div>
+        </div>
+        <div style="margin-bottom:10px; font-size:0.8rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">
+          Takım Kadrosu & Roller
+        </div>
+        <div class="team-roster" id="rosterTeamB"></div>
+      </div>
+      <div class="status-banner" id="roleHintB">Sıra durumu bekleniyor...</div>
+    </aside>
+
+  </section>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+  (() => {
+    const $ = id => document.getElementById(id);
+    const socket = io();
+    let room = null, myId = null, roomCode = null, localTimer = null;
+    const sound = {enabled:true,ctx:null,play(type){if(!this.enabled)return;try{if(!this.ctx)this.ctx=new (window.AudioContext||window.webkitAudioContext)();if(this.ctx.state==='suspended')this.ctx.resume();const o=this.ctx.createOscillator(),g=this.ctx.createGain(),n=this.ctx.currentTime;o.connect(g);g.connect(this.ctx.destination);o.frequency.value=type==='correct'?660:type==='tabu'?130:420;g.gain.setValueAtTime(.08,n);g.gain.exponentialRampToValueAtTime(.001,n+.18);o.start(n);o.stop(n+.18);}catch(_){}}};
+    function message(text, bad=false){$('connectMessage').textContent=text||'';$('connectMessage').style.color=bad?'#f87171':'#fbbf24';}
+    function emit(event,payload={}){return new Promise(resolve=>socket.emit(event,payload,resolve));}
+    async function connect(event,payload){
+      if(!socket.connected){message('Sunucuya bağlanılıyor, bir saniye bekle.',true);return;}
+      message('Ortak lobiye bağlanılıyor…');
+      const result=await emit(event,payload);
+      if(!result?.ok){message(result?.error||'Bağlantı kurulamadı.',true);return;}
+      roomCode=result.code;myId=result.playerId;room=result.room;
+      $('roomConnectView').style.display='none';$('lobbyView').style.display='flex';
+      $('onlineRoomCode').style.display='inline-flex';$('onlineRoomCode').textContent='TEK ORTAK LOBİ';
+      $('leaveRoomBtn').style.display='inline-flex';
+      render();
+    }
+    $('enterLobbyBtn').addEventListener('click',()=>connect('tabu:enter',{name:$('onlinePlayerName').value.trim()}));
+    $('leaveRoomBtn').addEventListener('click',async()=>{await emit('tabu:leave');location.reload();});
+    socket.on('connect',()=>message("Sunucuya bağlandı. Tabu'nun ortak lobisine katılabilirsin."));
+    socket.on('disconnect',()=>message('Sunucu bağlantısı kesildi. Sayfayı yenileyip yeniden bağlan.',true));
+    socket.on('tabu:state',snapshot=>{room=snapshot;render();});
+    socket.on('tabu:notice',data=>message(data.message||''));
+    function playerName(id){return room?.players.find(p=>p.id===id)?.name||'Oyuncu';}
+    function render(){
+      if(!room)return;
+      if(room.status==='playing'||room.status==='finished'){
+        $('lobbyView').style.display='none';$('gameView').style.display='grid';$('backToLobbyBtn').style.display='inline-flex';
+        $('roomPhaseBadge').textContent=room.status==='finished'?'OYUN BİTTİ':'OYUN DEVAM EDİYOR';
+        renderGame();return;
+      }
+      $('gameView').style.display='none';$('lobbyView').style.display='flex';$('backToLobbyBtn').style.display='none';$('backToLobbyBtn').textContent='⚙️ Lobiye Dön';$('roomPhaseBadge').textContent='HAZIRLIK LOBİSİ';
+      const a=room.players.filter(p=>p.team==='A'),b=room.players.filter(p=>p.team==='B');
+      $('lobbyCountA').textContent=a.length+' Oyuncu';$('lobbyCountB').textContent=b.length+' Oyuncu';
+      function list(items,id){
+        const host=$(id);host.innerHTML='';
+        if(!items.length){host.textContent='Bu takımda henüz oyuncu yok.';return;}
+        items.forEach(p=>{
+          const row=document.createElement('div');row.className='player-row '+(p.ready?'is-ready':'');
+          const info=document.createElement('div');info.className='player-info';info.textContent=p.name+(p.connected===false?' (bağlantı yok)':'');
+          const badge=document.createElement('span');badge.className='ready-pill '+(p.ready?'yes':'no');badge.textContent=p.ready?'HAZIR':'BEKLİYOR';info.appendChild(badge);row.appendChild(info);
+          if(p.id===myId){
+            const controls=document.createElement('div');controls.style.display='flex';controls.style.gap='6px';
+            const switchBtn=document.createElement('button');switchBtn.className='btn-sm';switchBtn.textContent=p.team==='A'?"B Takımına geç":"A Takımına geç";switchBtn.onclick=async()=>{const r=await emit('tabu:set-team',{team:p.team==='A'?'B':'A'});if(!r.ok)message(r.error,true);};
+            const readyBtn=document.createElement('button');readyBtn.className='btn-sm';readyBtn.textContent=p.ready?'Hazır değilim':'Hazırım';readyBtn.onclick=async()=>{const r=await emit('tabu:ready',{ready:!p.ready});if(!r.ok)message(r.error,true);};
+            controls.append(switchBtn,readyBtn);row.appendChild(controls);
+          }
+          host.appendChild(row);
+        });
+      }
+      list(a,'lobbyListA');list(b,'lobbyListB');
+      const me=room.players.find(p=>p.id===myId),host=room.hostId===myId;
+      $('readyAllBtn').style.display='none';
+      $('startGameBtn').style.display=host?'block':'none';
+      $('startGameBtn').disabled=!room.canStart;
+      $('lobbyStatusBanner').textContent=room.canStart?'Herkes hazır. Oda sahibi oyunu başlatabilir.':`Oyuncu: ${room.players.length}. Her iki takımda en az bir kişi olmalı ve herkes hazır vermeli.`;
+      $('lobbyStatusBanner').textContent += me?` Sen ${me.team} takımındasın.`:'';
+    }
+    function renderGame(){
+      const g=room.game;if(!g)return;
+      $('scoreTeamA').textContent=g.scores.A;$('scoreTeamB').textContent=g.scores.B;
+      $('colTeamA').classList.toggle('active-turn',g.activeTeam==='A');$('colTeamB').classList.toggle('active-turn',g.activeTeam==='B');
+      for(const team of ['A','B']){
+        const host=$('rosterTeam'+team);host.innerHTML='';
+        room.players.filter(p=>p.team===team).forEach(p=>{
+          const el=document.createElement('div');el.className='roster-member'+(p.id===g.describerId?' is-describer':'');
+          el.textContent=p.name+(p.id===g.describerId?' · ANLATICI':'');host.appendChild(el);
+        });
+        $('roleHint'+team).textContent=g.activeTeam===team?'Bu takım anlatıyor ve tahmin ediyor.':'Rakip takımın anlatımını denetle.';
+      }
+      const active=g.turnPhase==='active';
+      $('activeDescriberLabel').textContent=playerName(g.describerId);
+      $('passLeftLabel').textContent=`${g.passesLeft} / ${room.settings.passLimit}`;
+      $('btnPass').textContent=`⏭️ PAS (${g.passesLeft})`;
+      const canAct=g.describerId===myId&&active;
+      ['btnCorrect','btnTabu','btnPass'].forEach(id=>$(id).disabled=!canAct||(id==='btnPass'&&g.passesLeft<=0));
+      if(g.canSeeCard&&g.card){
+        $('mainWordText').textContent=g.card.word;
+        $('forbiddenList').innerHTML='';
+        g.card.forbidden.forEach(word=>{const li=document.createElement('li');li.className='forbidden-item';li.textContent=word;$('forbiddenList').appendChild(li);});
+      }else{
+        $('mainWordText').textContent=active?'ANLATILAN KELİME GİZLİ':'SIRA BEKLENİYOR';
+        $('forbiddenList').innerHTML='<li class="forbidden-item">Kart yalnızca anlatıcı ve denetçi takımda görünür.</li>';
+      }
+      const overlay=$('turnOverlay');overlay.style.display=active?'none':'flex';
+      if(room.status==='finished'){
+        overlay.style.display='flex';$('overlayTeamBadge').textContent='🏆 OYUN BİTTİ';$('overlayTitle').textContent=`${g.winner} TAKIMI KAZANDI!`;
+        $('overlayDesc').textContent=`Skor: A ${g.scores.A} - B ${g.scores.B}`;$('startTurnBtn').style.display='none';
+        $('backToLobbyBtn').textContent='Lobiye dön';$('backToLobbyBtn').style.display=room.hostId===myId?'inline-flex':'none';
+      }else{
+        $('startTurnBtn').style.display=g.describerId===myId&&!active?'inline-flex':'none';
+        $('overlayTeamBadge').textContent=g.activeTeam==='A'?'🟦 A TAKIMI SIRASI':'🟥 B TAKIMI SIRASI';
+        $('overlayTitle').textContent=`Anlatıcı: ${playerName(g.describerId)}`;
+        $('overlayDesc').textContent=g.describerId===myId?'Hazır olduğunda anlatmaya başla.':'Anlatıcının turu başlatması bekleniyor.';
+        $('backToLobbyBtn').style.display='none';
+      }
+      if(localTimer)clearInterval(localTimer);
+      const updateTimer=()=>{const seconds=active&&g.turnEndsAt?Math.max(0,Math.ceil((g.turnEndsAt-Date.now())/1000)):room.settings.turnSeconds;$('timerDisplay').textContent='⏱️ '+seconds;$('timerDisplay').classList.toggle('urgent',seconds<=10);};
+      updateTimer();if(active)localTimer=setInterval(updateTimer,250);
+    }
+    $('startGameBtn').addEventListener('click',async()=>{
+      const r=await emit('tabu:start',{turnSeconds:$('turnTimeSelect').value,passLimit:$('passLimitSelect').value,targetScore:$('targetScoreSelect').value});
+      if(!r.ok)message(r.error,true);
+    });
+    $('startTurnBtn').addEventListener('click',async()=>{const r=await emit('tabu:start-turn');if(!r.ok)message(r.error,true);});
+    $('btnCorrect').addEventListener('click',()=>emit('tabu:action',{kind:'correct'}));
+    $('btnTabu').addEventListener('click',()=>emit('tabu:action',{kind:'tabu'}));
+    $('btnPass').addEventListener('click',()=>emit('tabu:action',{kind:'pass'}));
+    $('backToLobbyBtn').addEventListener('click',async()=>{const r=await emit('tabu:back-to-lobby');if(!r.ok)message(r.error,true);});
+    $('soundToggleBtn').addEventListener('click',()=>{sound.enabled=!sound.enabled;$('soundToggleBtn').textContent=sound.enabled?'🔊 Ses: Açık':'🔇 Ses: Kapalı';});
+  })();
+  </script>
+</body>
+</html>
