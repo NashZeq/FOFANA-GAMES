@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: fofana-games
+    runtime: node
+    plan: free
+    buildCommand: npm install --prefix server --omit=dev --no-audit --no-fund
+    startCommand: node server/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
