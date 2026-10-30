@@ -1,0 +1,24 @@
+/* Shared touch-first baseline for FOFANA GAMES. Game-specific layouts remain in each game. */
+html { -webkit-text-size-adjust: 100%; }
+@media (max-width: 700px) {
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { padding-bottom: max(8px, env(safe-area-inset-bottom)); -webkit-overflow-scrolling: touch; }
+  button, [role="button"], input:not([type="range"]), select, textarea {
+    box-sizing: border-box;
+    max-width: 100%;
+    font-size: max(16px, 1em);
+  }
+  button, [role="button"] { min-height: 44px; touch-action: manipulation; }
+  input:not([type="range"]), select, textarea { min-height: 44px; }
+  input[type="range"] { min-height: 30px; touch-action: pan-x; }
+  img, video, canvas, iframe { max-width: 100%; }
+  .row, .actions, .controls, .online-form, .online-buttons, .btns { gap: 8px; }
+  .row > *, .online-form > *, .online-fields > * { min-width: 0; }
+  .panel, .game, .home-shell, .game-shell, main { box-sizing: border-box; max-width: 100%; }
+  .actions > button, .btns > button, .online-actions > button { flex: 1 1 130px; }
+  .online-card, .online-modal, .panel, .game-panel { overscroll-behavior: contain; }
+}
+@media (pointer: coarse) {
+  button, [role="button"] { touch-action: manipulation; }
+  input[type="range"] { min-height: 36px; }
+}
